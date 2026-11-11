@@ -24,6 +24,7 @@ import { exportFailureRequested, readDemoMode, withoutParam } from '../../shared
 import { CustomerForm } from './CustomerForm'
 import { useCustomers } from './useCustomers'
 import { initials } from './initials'
+import { mergeCustomers } from './directory'
 import { customerCsv, downloadCsv } from './export'
 import type { Customer } from '../../shared/types'
 
@@ -53,7 +54,7 @@ export function Customers(): ReactElement {
   )
   const all =
     state.status === 'success'
-      ? [...state.data.data, ...(mode === 'empty' ? [] : addedCustomers)]
+      ? mergeCustomers(state.data.data, mode === 'empty' ? [] : addedCustomers)
       : []
   const visible = all.filter(
     (customer) =>

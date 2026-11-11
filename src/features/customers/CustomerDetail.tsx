@@ -2,14 +2,14 @@ import { useCallback } from 'react'
 import type { ReactElement } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router'
 import { ArrowLeft, ArrowRight, CalendarDays, MapPin, ShoppingBag, Wallet } from 'lucide-react'
-import { getCustomer } from '../../data/api'
-import { customers } from '../../data/customers'
+import { customerIds, getCustomer } from '../../data/api'
 import { useAsync } from '../../shared/useAsync'
 import { EmptyState } from '../../shared/Feedback'
 import { money } from '../store/logic'
 import { readDemoMode, withoutParam } from '../../shared/demoMode'
 import { useCustomers } from './useCustomers'
 import { initials } from './initials'
+import { nextCustomerId } from './directory'
 
 export function CustomerDetail(): ReactElement {
   const { id = '' } = useParams()
@@ -24,9 +24,10 @@ export function CustomerDetail(): ReactElement {
     [id, addedCustomers, mode],
   )
   const [state, retry] = useAsync(loader)
-  const all = [...customers, ...addedCustomers]
-  const position = all.findIndex((customer) => customer.id === id)
-  const next = position >= 0 ? all[(position + 1) % all.length] : all[0]
+  const nextId = nextCustomerId(
+    [...customerIds(), ...addedCustomers.map((customer) => customer.id)],
+    id,
+  )
   return (
     <main className="detail-page page-container">
       <Link className="back-link" to="/customers">
@@ -38,8 +39,8 @@ export function CustomerDetail(): ReactElement {
           <span className="eyebrow">A LITTLE MORE FAMILIAR</span>
           <h1>Behind the order.</h1>
         </div>
-        {next && (
-          <Link className="button secondary" to={`/customers/${next.id}`}>
+        {nextId && (
+          <Link className="button secondary" to={`/customers/${nextId}`}>
             Next customer <ArrowRight size={16} />
           </Link>
         )}

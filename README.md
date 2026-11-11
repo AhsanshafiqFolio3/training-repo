@@ -54,7 +54,7 @@ These demo switches only work in development (`npm run dev`). A production build
 
 ## Architecture
 
-`src/data/` owns the datasets and asynchronous typed API adapters. Components never embed product records. `useAsync` owns request lifetime, aborts old requests and guards response order. The store keeps filter inputs and cart lines as source state; visible products, counts and prices are derived. Cart transitions and pricing are pure functions, separate from UI. The dashboard keeps newly added customers in a shared context so list/detail navigation works throughout a session.
+`src/data/` owns the datasets and asynchronous typed API adapters. Components never embed product records. `useAsync` owns request lifetime, aborts old requests and guards response order. The store keeps filter inputs and cart lines as source state; visible products, counts and prices are derived. Cart transitions and pricing are pure functions, separate from UI. Built-in customers come from the data module; customers added during a session live in `CustomerProvider`. The list and detail pages combine the two through `mergeCustomers` and `nextCustomerId` in `directory.ts`, so no component reads the dataset directly.
 
 Types cover products, cart items, customer drafts, props, discriminated load states, API responses and function returns. Strict compilation is enabled; no `any` is used in application code. Product art is original SVG rendered in React, with no external product-image dependency. DM Sans and Manrope are served locally with their SIL Open Font Licenses and system-font fallbacks; the app makes no third-party font requests.
 

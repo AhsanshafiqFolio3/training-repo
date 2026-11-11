@@ -43,6 +43,9 @@ export function getCustomers(
 ): Promise<ApiResponse<Customer[]>> {
   return respond(customers, mode, signal)
 }
+export function customerIds(): string[] {
+  return customers.map((customer) => customer.id)
+}
 export async function getCustomer(
   id: string,
   signal?: AbortSignal,
