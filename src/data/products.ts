@@ -1,6 +1,5 @@
 import type { Product } from '../shared/types'
 
-// Original, project-created dataset. Prices are PKR and inclusive of tax.
 export const products: readonly Product[] = [
   {
     id: 'p01',

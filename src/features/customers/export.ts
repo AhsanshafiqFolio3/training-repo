@@ -2,7 +2,6 @@ import type { Customer } from '../../shared/types'
 
 export function csvCell(value: string | number): string {
   const text = String(value)
-  // Spreadsheet programs interpret these prefixes as formulas, even inside quotes.
   const safe = /^[\s]*[=+\-@]/.test(text) ? `'${text}` : text
   return `"${safe.replaceAll('"', '""')}"`
 }

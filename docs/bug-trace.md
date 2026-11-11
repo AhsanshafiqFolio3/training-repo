@@ -9,13 +9,13 @@ The naive implementation would issue A, issue B, render B, then render A when th
 | Relative time       | Request/route                         | Naive result       | Correct result                              |
 | ------------------- | ------------------------------------- | ------------------ | ------------------------------------------- |
 | 0 ms                | c01 starts                            | Loading            | Loading                                     |
-| Shortly after       | Navigate to c02                       | A still pending    | A is aborted; generation advances           |
+| Shortly after       | Navigate to c02                       | A still pending    | A is aborted; loader changes                |
 | ~220 ms after c02   | c02 resolves                          | Omar               | Omar                                        |
-| ~1,100 ms after c01 | c01 completes if cancellation ignored | Incorrectly Ayesha | Response rejected by abort/generation guard |
+| ~1,100 ms after c01 | c01 completes if cancellation ignored | Incorrectly Ayesha | Response rejected by abort/identity guard   |
 
 Cause: asynchronous work does not complete in navigation order. A closed-over request can update a component that now represents a different selection.
 
-Fix: `useAsync` creates an AbortController for each loader, increments its request generation, resets the load state, and checks both cancellation and generation before accepting success/error callbacks. Cleanup aborts the prior request and prevents updates after unmount. `getCustomer` accepts the signal.
+Fix: `useAsync` creates an AbortController for each loader run and ignores any result that settles after its controller was aborted. Each stored result is tagged with the loader and retry attempt that produced it; the hook only shows a result whose tag matches the current loader and attempt, and reports loading otherwise. Loading is therefore derived during render instead of being set inside the effect. Cleanup aborts the prior request and prevents updates after unmount. `getCustomer` accepts the signal.
 
 Verification: the deferred-response regression deliberately ignores transport cancellation, resolves the newer request first and the old request last, and asserts that the newer data remains. The real-browser scenario navigates immediately, waits past the old delay and refreshes the selected route. See `verification.md` for executed results.
 

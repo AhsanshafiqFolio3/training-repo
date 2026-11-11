@@ -30,7 +30,7 @@ This maps all 18 rows and every column from the supplied snapshot to project evi
 - [x] Required implementation and project-created preparation materials are present.
 - [x] Discount and stock/decrement/count semantics are explicit in README.
 - [x] No production payments, real customer writes or sign-in are implied.
-- [x] Final unit/component test result recorded: 48 passed, including 5 Part B cases.
+- [x] Final unit/component test result recorded: 51 passed, including 5 Part B cases.
 - [x] Final browser result, narrow-layout evidence and local route refresh recorded: 9 passed, 16 page/width combinations.
 - [x] Final strict type check and production build recorded: passed.
 - [x] Source remote and first verified pushed commit recorded; final publication status is reported by Sites in the handoff.

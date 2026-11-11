@@ -21,17 +21,16 @@ import {
 } from 'lucide-react'
 import { getProducts } from '../../data/api'
 import { categories } from '../../shared/types'
-import type { Category, DemoMode, Product } from '../../shared/types'
+import type { Category, Product } from '../../shared/types'
 import { useAsync } from '../../shared/useAsync'
+import { readDemoMode } from '../../shared/demoMode'
 import { ProductVisual } from '../../shared/ProductVisual'
 import { EmptyState, LoadingCards } from '../../shared/Feedback'
-import { filterProducts, money } from './logic'
-import { useCart } from './CartContext'
+import { filterProducts, isSortOption, money, sortOptions, sortProducts } from './logic'
+import type { SortOption } from './logic'
+import { useCart } from './useCart'
 import { Cart } from './Cart'
 
-export function readDemoMode(value: string | null): DemoMode {
-  return value === 'slow' || value === 'empty' || value === 'error' ? value : 'success'
-}
 const categoryIcons = {
   'All products': LayoutGrid,
   Audio: Headphones,
@@ -42,31 +41,16 @@ const categoryIcons = {
 export function Store(): ReactElement {
   const [params, setParams] = useSearchParams()
   const mode = readDemoMode(params.get('state'))
-  const [retry, setRetry] = useState(0)
-  const loader = useCallback(
-    (signal: AbortSignal) => {
-      void retry
-      return getProducts(mode, signal)
-    },
-    [mode, retry],
-  )
-  const state = useAsync(loader)
+  const loader = useCallback((signal: AbortSignal) => getProducts(mode, signal), [mode])
+  const [state, retry] = useAsync(loader)
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState<Category | 'All products'>('All products')
   const [inStock, setInStock] = useState(false)
-  const [sort, setSort] = useState('featured')
+  const [sort, setSort] = useState<SortOption>('featured')
   const [toast, setToast] = useState('')
   const { dispatch, items } = useCart()
   const source = state.status === 'success' ? state.data.data : []
-  const visible = filterProducts(source, { search, category, inStock }).sort((a, b) =>
-    sort === 'price-low'
-      ? a.price - b.price
-      : sort === 'price-high'
-        ? b.price - a.price
-        : sort === 'rating'
-          ? b.rating - a.rating
-          : 0,
-  )
+  const visible = sortProducts(filterProducts(source, { search, category, inStock }), sort)
   const hasFilters = search !== '' || category !== 'All products' || inStock
   function clearFilters(): void {
     setSearch('')
@@ -75,7 +59,7 @@ export function Store(): ReactElement {
   }
   function retryLoad(): void {
     setParams({})
-    setRetry((value) => value + 1)
+    retry()
   }
   function add(product: Product): void {
     dispatch({ type: 'add', product })
@@ -192,12 +176,15 @@ export function Store(): ReactElement {
               <select
                 aria-label="Sort products"
                 value={sort}
-                onChange={(event) => setSort(event.target.value)}
+                onChange={(event) => {
+                  if (isSortOption(event.target.value)) setSort(event.target.value)
+                }}
               >
-                <option value="featured">Featured</option>
-                <option value="price-low">Price: low to high</option>
-                <option value="price-high">Price: high to low</option>
-                <option value="rating">Top rated</option>
+                {Object.entries(sortOptions).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
               </select>
             </div>
           </div>

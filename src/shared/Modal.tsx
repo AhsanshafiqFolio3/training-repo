@@ -1,18 +1,25 @@
-import { useEffect, useRef } from 'react'
-import type { ReactElement, ReactNode } from 'react'
+import { useEffect, useEffectEvent, useId, useRef } from 'react'
+import type { ReactElement, ReactNode, RefObject } from 'react'
 import { X } from 'lucide-react'
 
 interface ModalProps {
   title: string
   children: ReactNode
   onClose: () => void
+  fallbackFocus?: RefObject<HTMLElement | null>
 }
-export function Modal({ title, children, onClose }: ModalProps): ReactElement {
+function canReceiveFocus(element: HTMLElement | null): element is HTMLElement {
+  return Boolean(element?.isConnected && !element.matches(':disabled'))
+}
+export function Modal({ title, children, onClose, fallbackFocus }: ModalProps): ReactElement {
   const dialog = useRef<HTMLDivElement>(null)
-  const closeRef = useRef(onClose)
-  closeRef.current = onClose
+  const titleId = useId()
+  const requestClose = useEffectEvent((): void => {
+    onClose()
+  })
   useEffect(() => {
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    const fallback = fallbackFocus?.current ?? null
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     const getFocusable = (): HTMLElement[] =>
@@ -29,7 +36,7 @@ export function Modal({ title, children, onClose }: ModalProps): ReactElement {
     const handleKey = (event: KeyboardEvent): void => {
       if (event.key === 'Escape') {
         event.preventDefault()
-        closeRef.current()
+        requestClose()
         return
       }
       if (event.key !== 'Tab') return
@@ -59,9 +66,10 @@ export function Modal({ title, children, onClose }: ModalProps): ReactElement {
     return (): void => {
       document.body.style.overflow = previousOverflow
       document.removeEventListener('keydown', handleKey)
-      if (previous?.isConnected) previous.focus()
+      if (canReceiveFocus(previous)) previous.focus()
+      else if (canReceiveFocus(fallback)) fallback.focus()
     }
-  }, [])
+  }, [fallbackFocus])
   return (
     <div
       className="modal-backdrop"
@@ -73,12 +81,12 @@ export function Modal({ title, children, onClose }: ModalProps): ReactElement {
         className="modal"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="modal-title"
+        aria-labelledby={titleId}
         tabIndex={-1}
         ref={dialog}
       >
         <div className="modal-heading">
-          <h2 id="modal-title">{title}</h2>
+          <h2 id={titleId}>{title}</h2>
           <button className="icon-button" aria-label="Close dialog" onClick={onClose}>
             <X size={20} />
           </button>

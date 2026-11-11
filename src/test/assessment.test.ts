@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import { products } from '../data/products'
 import { calculateTotals, cartReducer } from '../features/store/logic'
 
-// Execute the five project-created Part B snippets against the documented key.
 describe('Part B practice assessment: executable output grading', () => {
   it('Q1: lexical shadowing prints 3 1', () => {
     const value = 1

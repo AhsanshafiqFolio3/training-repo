@@ -19,7 +19,7 @@ describe('async loading and race prevention', () => {
       return old.promise
     }
     const second = (): Promise<string> => recent.promise
-    const { result, rerender } = renderHook(({ loader }) => useAsync(loader), {
+    const { result, rerender } = renderHook(({ loader }) => useAsync(loader)[0], {
       initialProps: { loader: first },
     })
     expect(result.current.status).toBe('loading')
@@ -34,13 +34,30 @@ describe('async loading and race prevention', () => {
     })
     expect(result.current).toEqual({ status: 'success', data: 'Omar' })
   })
-  it('exposes a rejected load as an error and supports a fresh loader for retry', async () => {
+  it('exposes a rejected load as an error and supports a fresh loader', async () => {
     const failed = (): Promise<string> => Promise.reject(new Error('Offline'))
-    const { result, rerender } = renderHook(({ loader }) => useAsync(loader), {
+    const { result, rerender } = renderHook(({ loader }) => useAsync(loader)[0], {
       initialProps: { loader: failed },
     })
     await waitFor(() => expect(result.current).toEqual({ status: 'error', message: 'Offline' }))
     rerender({ loader: (): Promise<string> => Promise.resolve('Recovered') })
     await waitFor(() => expect(result.current).toEqual({ status: 'success', data: 'Recovered' }))
+  })
+  it('retries the same loader and shows loading while the retry is pending', async () => {
+    let calls = 0
+    const retryLater = deferred<string>()
+    const loader = (): Promise<string> =>
+      ++calls === 1 ? Promise.reject(new Error('Offline')) : retryLater.promise
+    const { result } = renderHook(() => useAsync(loader))
+    await waitFor(() => expect(result.current[0]).toEqual({ status: 'error', message: 'Offline' }))
+    act(() => {
+      result.current[1]()
+    })
+    expect(result.current[0]).toEqual({ status: 'loading' })
+    await act(async () => {
+      retryLater.resolve('Recovered')
+    })
+    expect(result.current[0]).toEqual({ status: 'success', data: 'Recovered' })
+    expect(calls).toBe(2)
   })
 })

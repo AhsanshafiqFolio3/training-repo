@@ -3,8 +3,6 @@ import { mkdir, writeFile } from 'node:fs/promises'
 import { chromium, request } from 'playwright'
 import { expect } from '@playwright/test'
 
-// Credentials are accepted only through hidden stdin, kept in memory, and never
-// forwarded to the browser, written into evidence, or sent to another origin.
 function readInput() {
   process.stderr.write('Ready for hosted verification JSON on stdin (input is hidden).\n')
   if (process.stdin.isTTY) process.stdin.setRawMode(true)
@@ -63,8 +61,6 @@ try {
   })
   browser = await chromium.launch({ channel: 'chromium' })
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } })
-  // Node fetches the real hosted responses. Only response bytes are supplied to
-  // Chromium, so the private bearer token never enters browser state or traces.
   await context.route('**/*', async (route) => {
     if (new URL(route.request().url()).origin !== origin) {
       await route.abort()

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import type { ReactElement } from 'react'
 import {
   ArrowRight,
@@ -13,7 +13,7 @@ import {
 import { ProductVisual } from '../../shared/ProductVisual'
 import { Modal } from '../../shared/Modal'
 import { calculateTotals, DISCOUNT_RATE, DISCOUNT_THRESHOLD, money } from './logic'
-import { useCart } from './CartContext'
+import { useCart } from './useCart'
 
 export function Cart(): ReactElement {
   const { items, dispatch } = useCart()
@@ -21,6 +21,7 @@ export function Cart(): ReactElement {
   const [checkout, setCheckout] = useState(false)
   const [orderPlaced, setOrderPlaced] = useState(false)
   const [processing, setProcessing] = useState(false)
+  const heading = useRef<HTMLHeadingElement>(null)
   async function placeOrder(): Promise<void> {
     setProcessing(true)
     await new Promise<void>((resolve) => setTimeout(resolve, 650))
@@ -33,7 +34,9 @@ export function Cart(): ReactElement {
       <div className="cart-heading">
         <div>
           <ShoppingBag size={19} />
-          <h2>Your bag</h2>
+          <h2 ref={heading} tabIndex={-1}>
+            Your bag
+          </h2>
         </div>
         <span className="count-bubble">{totals.count}</span>
       </div>
@@ -137,6 +140,7 @@ export function Cart(): ReactElement {
       {checkout && (
         <Modal
           title={orderPlaced ? 'Good things are on the way.' : 'One last look.'}
+          fallbackFocus={heading}
           onClose={() => {
             if (!processing) setCheckout(false)
           }}
@@ -145,7 +149,7 @@ export function Cart(): ReactElement {
             <div className="order-success">
               <CheckCircle2 size={48} />
               <p>Your demo order has been placed. Thank you for shopping with Form.</p>
-              <button className="button dark" onClick={() => setCheckout(false)}>
+              <button className="button dark" autoFocus onClick={() => setCheckout(false)}>
                 Back to the collection <ArrowRight size={16} />
               </button>
             </div>

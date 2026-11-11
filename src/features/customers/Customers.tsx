@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import type { ReactElement } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import {
+  AlertCircle,
   ArrowDownToLine,
   ArrowRight,
   CheckCircle2,
@@ -9,6 +10,7 @@ import {
   Mail,
   Plus,
   Search,
+  RotateCcw,
   ShoppingBag,
   Users,
   Wallet,
@@ -18,36 +20,26 @@ import { getCustomers, wait } from '../../data/api'
 import { useAsync } from '../../shared/useAsync'
 import { EmptyState } from '../../shared/Feedback'
 import { money } from '../store/logic'
-import { readDemoMode } from '../store/Store'
+import { readDemoMode } from '../../shared/demoMode'
 import { CustomerForm } from './CustomerForm'
-import { useCustomers } from './CustomerContext'
+import { useCustomers } from './useCustomers'
+import { initials } from './initials'
 import { customerCsv, downloadCsv } from './export'
 import type { Customer } from '../../shared/types'
 
-export function initials(name: string): string {
-  return name
-    .split(' ')
-    .filter(Boolean)
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase()
+const statusFilters = ['All customers', 'Active', 'Inactive'] as const
+type StatusFilter = (typeof statusFilters)[number]
+function isStatusFilter(value: string): value is StatusFilter {
+  return statusFilters.some((option) => option === value)
 }
 export function Customers(): ReactElement {
   const [params, setParams] = useSearchParams()
   const mode = readDemoMode(params.get('state'))
-  const [retry, setRetry] = useState(0)
-  const loader = useCallback(
-    (signal: AbortSignal) => {
-      void retry
-      return getCustomers(mode, signal)
-    },
-    [mode, retry],
-  )
-  const state = useAsync(loader)
+  const loader = useCallback((signal: AbortSignal) => getCustomers(mode, signal), [mode])
+  const [state, retry] = useAsync(loader)
   const { addedCustomers, addCustomer } = useCustomers()
   const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState('All customers')
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('All customers')
   const [modal, setModal] = useState(false)
   const [notice, setNotice] = useState('')
   const [exportState, setExportState] = useState<'idle' | 'running' | 'success' | 'error'>('idle')
@@ -73,9 +65,9 @@ export function Customers(): ReactElement {
   const active = all.filter((customer) => customer.status === 'Active').length
   function retryLoad(): void {
     setParams({})
-    setRetry((current) => current + 1)
+    retry()
   }
-  async function startExport(): Promise<void> {
+  async function startExport(simulateFailure = params.get('exportError') === '1'): Promise<void> {
     if (exportController.current && !exportController.current.signal.aborted) return
     const controller = new AbortController()
     exportController.current = controller
@@ -83,17 +75,27 @@ export function Customers(): ReactElement {
     setExportState('running')
     try {
       await wait(1300, controller.signal)
-      if (params.get('exportError') === '1') {
+      if (simulateFailure) {
         setExportState('error')
         return
       }
       setExportContent(snapshot)
       setExportState('success')
     } catch {
-      /* Unmount cancellation deliberately produces no update. */
+      return
     } finally {
       if (exportController.current === controller) exportController.current = null
     }
+  }
+  function retryExport(): void {
+    setParams(
+      (current) => {
+        current.delete('exportError')
+        return current
+      },
+      { replace: true },
+    )
+    void startExport(false)
   }
   function saveCustomer(customer: Customer): void {
     addCustomer(customer)
@@ -177,7 +179,13 @@ export function Customers(): ReactElement {
       {exportState !== 'idle' && (
         <div className={`export-banner ${exportState}`} role="status">
           <div>
-            {exportState === 'running' ? <span className="spinner" /> : <CheckCircle2 size={20} />}
+            {exportState === 'running' ? (
+              <span className="spinner" />
+            ) : exportState === 'error' ? (
+              <AlertCircle size={20} />
+            ) : (
+              <CheckCircle2 size={20} />
+            )}
             <span>
               <strong>
                 {exportState === 'running'
@@ -201,14 +209,9 @@ export function Customers(): ReactElement {
               Download CSV
             </button>
           ) : exportState === 'error' ? (
-            <button
-              className="button secondary"
-              onClick={() => {
-                setParams({})
-                setExportState('idle')
-              }}
-            >
-              Reset export
+            <button className="button secondary" onClick={retryExport}>
+              <RotateCcw size={15} />
+              Try again
             </button>
           ) : null}
           {exportState !== 'running' && (
@@ -244,11 +247,13 @@ export function Customers(): ReactElement {
             <select
               aria-label="Filter customer status"
               value={statusFilter}
-              onChange={(event) => setStatusFilter(event.target.value)}
+              onChange={(event) => {
+                if (isStatusFilter(event.target.value)) setStatusFilter(event.target.value)
+              }}
             >
-              <option>All customers</option>
-              <option>Active</option>
-              <option>Inactive</option>
+              {statusFilters.map((option) => (
+                <option key={option}>{option}</option>
+              ))}
             </select>
           </div>
         </div>

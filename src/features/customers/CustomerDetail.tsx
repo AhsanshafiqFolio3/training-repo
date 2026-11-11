@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import type { ReactElement } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router'
 import { ArrowLeft, ArrowRight, CalendarDays, MapPin, ShoppingBag, Wallet } from 'lucide-react'
@@ -7,25 +7,23 @@ import { customers } from '../../data/customers'
 import { useAsync } from '../../shared/useAsync'
 import { EmptyState } from '../../shared/Feedback'
 import { money } from '../store/logic'
-import { readDemoMode } from '../store/Store'
-import { useCustomers } from './CustomerContext'
-import { initials } from './Customers'
+import { readDemoMode } from '../../shared/demoMode'
+import { useCustomers } from './useCustomers'
+import { initials } from './initials'
 
 export function CustomerDetail(): ReactElement {
   const { id = '' } = useParams()
   const [params, setParams] = useSearchParams()
   const mode = readDemoMode(params.get('state'))
-  const [retry, setRetry] = useState(0)
   const { addedCustomers } = useCustomers()
   const loader = useCallback(
     async (signal: AbortSignal) => {
-      void retry
       const local = addedCustomers.find((customer) => customer.id === id)
       return local && mode === 'success' ? { data: local, total: 1 } : getCustomer(id, signal, mode)
     },
-    [id, addedCustomers, mode, retry],
+    [id, addedCustomers, mode],
   )
-  const state = useAsync(loader)
+  const [state, retry] = useAsync(loader)
   const all = [...customers, ...addedCustomers]
   const position = all.findIndex((customer) => customer.id === id)
   const next = position >= 0 ? all[(position + 1) % all.length] : all[0]
@@ -55,7 +53,7 @@ export function CustomerDetail(): ReactElement {
           error
           action={() => {
             setParams({})
-            setRetry((value) => value + 1)
+            retry()
           }}
         />
       ) : !state.data.data ? (

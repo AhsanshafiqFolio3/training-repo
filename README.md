@@ -34,7 +34,7 @@ If a managed Windows machine restricts npm/browser caches, point `npm_config_cac
 | `/`               | Collection of 20 products, live filters, sort, stock limits, cart and demo checkout                              |
 | `/customers`      | Customer list, search/status filters, summary metrics, add-customer modal, simulated export job and CSV download |
 | `/customers/:id`  | Customer detail, rapid next-customer navigation, loading/error/missing states                                    |
-| `/project`        | Requirement coverage and links to reproducible UI states                                                         |
+| `/project`        | Project overview and links to reproducible UI states                                                             |
 | Any unknown route | Useful 404 page with a way back                                                                                  |
 
 Try `?state=slow`, `?state=empty`, or `?state=error` on the store, customer list or detail route. Retry restores normal data. Use `/customers?exportError=1` to simulate export failure. `c01` responds slower than `c02`, making rapid detail navigation a reproducible race scenario.
@@ -73,9 +73,9 @@ Types cover products, cart items, customer drafts, props, discriminated load sta
 
 ## Hosting and Git
 
-The Sites identity is retained in `.openai/hosting.json`. Static output is `dist/`. A static host must serve `index.html` for non-asset application routes; `public/_redirects` supplies this rule for compatible hosts. Vite already supports direct detail-route navigation in local development. Publication and hosted refresh results belong in the verification record; configuration alone does not prove a host honors fallback behavior.
+Static output is `dist/`. A static host must serve `index.html` for non-asset application routes; `public/_redirects` supplies this rule for compatible hosts. Vite already supports direct detail-route navigation in local development. Publication and hosted refresh results belong in the verification record; configuration alone does not prove a host honors fallback behavior.
 
-The Sites source remote, if synchronized successfully, is the project remote. No personal GitHub repository was supplied. To add one later, preserve the existing remote and add a second remote using the user's actual URL.
+Source: https://github.com/AhsanshafiqFolio3/training-repo (branch `main`).
 
 ## Practical limits
 

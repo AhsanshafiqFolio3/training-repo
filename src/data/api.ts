@@ -47,7 +47,6 @@ export async function getCustomer(
   signal?: AbortSignal,
   mode: DemoMode = 'success',
 ): Promise<ApiResponse<Customer | null>> {
-  // Unequal latency makes rapid navigation a reproducible stale-response scenario.
   const response = await respond(
     customers.filter((customer) => customer.id === id),
     mode,

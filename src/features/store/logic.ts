@@ -52,6 +52,23 @@ export function filterProducts(products: readonly Product[], filters: ProductFil
       (!filters.inStock || product.stock > 0),
   )
 }
+export const sortOptions = {
+  featured: 'Featured',
+  'price-low': 'Price: low to high',
+  'price-high': 'Price: high to low',
+  rating: 'Top rated',
+} as const
+export type SortOption = keyof typeof sortOptions
+export function isSortOption(value: string): value is SortOption {
+  return Object.hasOwn(sortOptions, value)
+}
+export function sortProducts(products: readonly Product[], sort: SortOption): Product[] {
+  const sorted = [...products]
+  if (sort === 'price-low') return sorted.sort((a, b) => a.price - b.price)
+  if (sort === 'price-high') return sorted.sort((a, b) => b.price - a.price)
+  if (sort === 'rating') return sorted.sort((a, b) => b.rating - a.rating)
+  return sorted
+}
 export function money(value: number): string {
   return `Rs. ${value.toLocaleString('en-PK', { minimumFractionDigits: Number.isInteger(value) ? 0 : 2, maximumFractionDigits: 2 })}`
 }

@@ -18,7 +18,11 @@ test('store filters, duplicate adds and demo order work together', async ({ page
   await page.getByRole('button', { name: 'Review order' }).click()
   await page.getByRole('button', { name: 'Place demo order' }).click()
   await expect(page.getByRole('dialog')).toContainText('Your demo order has been placed.')
-  await page.getByRole('button', { name: 'Back to the collection' }).click()
+  const back = page.getByRole('button', { name: 'Back to the collection' })
+  await expect(back).toBeFocused()
+  await page.keyboard.press('Enter')
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  await expect(page.getByRole('heading', { name: 'Your bag' })).toBeFocused()
   await expect(page.getByTestId('cart-row')).toHaveCount(0)
   expect(errors).toEqual([])
 })
@@ -93,9 +97,11 @@ test('dashboard error, empty and failed export paths are recoverable', async ({ 
   await page.goto('/customers?exportError=1')
   await page.getByRole('button', { name: 'Export customers' }).click()
   await expect(page.getByText('The export couldn’t be prepared.')).toBeVisible()
-  await page.getByRole('button', { name: 'Reset export' }).click()
-  await page.getByRole('button', { name: 'Export customers' }).click()
+  await expect(page.locator('.export-banner svg.lucide-circle-alert')).toBeVisible()
+  await page.getByRole('button', { name: 'Try again' }).click()
+  await expect(page.getByText('Getting your customer export ready…')).toBeVisible()
   await expect(page.getByText('Your export is ready.')).toBeVisible()
+  await expect(page).not.toHaveURL(/exportError/)
 })
 
 for (const width of [390, 768, 1024, 1440]) {
@@ -111,14 +117,6 @@ for (const width of [390, 768, 1024, 1440]) {
         () => document.documentElement.scrollWidth > window.innerWidth,
       )
       expect(overflow, `${route} at ${width}px`).toBe(false)
-      if (width === 390 && route === '/')
-        await page.screenshot({ path: 'artifacts/store-mobile.png', fullPage: true })
-      if (width === 390 && route === '/customers')
-        await page.screenshot({ path: 'artifacts/customers-mobile.png', fullPage: true })
-      if (width === 1440 && route === '/')
-        await page.screenshot({ path: 'artifacts/store-desktop.png' })
-      if (width === 1440 && route === '/customers')
-        await page.screenshot({ path: 'artifacts/customers-desktop.png', fullPage: true })
     }
   })
 }

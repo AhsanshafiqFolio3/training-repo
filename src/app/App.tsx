@@ -3,26 +3,37 @@ import type { ReactElement } from 'react'
 import { Link, NavLink, Route, Routes, useLocation } from 'react-router'
 import { ArrowUpRight, ArrowRight, ShoppingBag } from 'lucide-react'
 import { Store } from '../features/store/Store'
-import { CartProvider, useCart } from '../features/store/CartContext'
+import { CartProvider } from '../features/store/CartProvider'
+import { useCart } from '../features/store/useCart'
 import { calculateTotals } from '../features/store/logic'
-import { CustomerProvider } from '../features/customers/CustomerContext'
+import { CustomerProvider } from '../features/customers/CustomerProvider'
 import { Customers } from '../features/customers/Customers'
 import { CustomerDetail } from '../features/customers/CustomerDetail'
 import { Guide } from '../features/Guide'
 
+function pageTitle(pathname: string): string {
+  if (pathname.startsWith('/customers')) return 'Customer workspace — Form'
+  if (pathname === '/project') return 'Project guide — Form'
+  return 'Everyday, considered. — Form'
+}
 function Shell(): ReactElement {
   const { items } = useCart()
   const { pathname, hash } = useLocation()
   useEffect(() => {
-    if (hash)
-      requestAnimationFrame(() =>
-        document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'smooth' }),
-      )
-    else window.scrollTo(0, 0)
-    document.title = `${pathname.startsWith('/customers') ? 'Customer workspace' : pathname === '/project' ? 'Project guide' : 'Everyday, considered.'} — Form`
+    if (!hash) {
+      window.scrollTo(0, 0)
+      return
+    }
+    const frame = requestAnimationFrame(() =>
+      document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'smooth' }),
+    )
+    return (): void => {
+      cancelAnimationFrame(frame)
+    }
   }, [pathname, hash])
   return (
     <>
+      <title>{pageTitle(pathname)}</title>
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>

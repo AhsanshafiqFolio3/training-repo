@@ -1863,58 +1863,6 @@ html {
 .state-links a:hover {
   color: var(--orange);
 }
-.requirements {
-  margin-top: 42px;
-}
-.requirements-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-}
-.requirements-title h2 {
-  font-family: 'Manrope', sans-serif;
-  font-size: 24px;
-  letter-spacing: -0.8px;
-  font-weight: 550;
-}
-.requirements-title > span {
-  font-size: 8px;
-  color: #a0af89;
-  letter-spacing: 1px;
-}
-.requirements-note {
-  font-size: 11px;
-  color: #9ba98a;
-  line-height: 1.8;
-  margin: 13px 0 18px;
-}
-.requirement-row {
-  display: grid;
-  grid-template-columns: 25px 120px 1fr 18px;
-  gap: 12px;
-  align-items: center;
-  border-bottom: 1px solid #e2e8d6;
-  padding: 17px 0;
-}
-.requirement-index {
-  font-size: 9px;
-  color: #a7b591;
-}
-.requirement-row strong {
-  font-size: 11px;
-  font-weight: 550;
-  color: #718b58;
-}
-.requirement-row p {
-  font-size: 11px;
-  line-height: 1.7;
-  color: #9aac87;
-}
-.requirement-row > svg {
-  color: #98ae7d;
-  stroke-width: 1.5;
-}
 .guide-footnote {
   padding: 22px;
   background: #f1f3e9;
@@ -1933,11 +1881,9 @@ html {
   color: #9eaa8e;
   margin-bottom: 30px;
 }
-/* A positioned table header keeps its visually hidden label inside the horizontal scroll region. */
 .customer-table th {
   position: relative;
 }
-/* Keep supporting copy readable on the warm paper and sage surfaces. */
 .catalog-top p,
 .product-description,
 .product-meta,
@@ -1974,9 +1920,6 @@ html {
 .state-lab p,
 .state-links h3,
 .state-links a,
-.requirements-note,
-.requirement-row p,
-.requirement-index,
 .guide-footnote,
 .form-info,
 .modal-description,
@@ -2063,9 +2006,7 @@ html {
   font-size: 10px;
 }
 .guide-cards p,
-.requirement-row p,
-.state-lab p,
-.requirements-note {
+.state-lab p {
   font-size: 12px;
 }
 .guide-footnote {
@@ -2858,42 +2799,6 @@ html {
   .state-links a {
     font-size: 11px;
     padding: 14px 0;
-  }
-  .requirements-title {
-    align-items: flex-start;
-  }
-  .requirements-title h2 {
-    font-size: 22px;
-    max-width: 220px;
-  }
-  .requirements-title > span {
-    font-size: 6px;
-    white-space: nowrap;
-    margin-top: 8px;
-  }
-  .requirement-row {
-    grid-template-columns: 21px 1fr 18px;
-    gap: 7px;
-    padding: 16px 0;
-  }
-  .requirement-row p {
-    grid-column: 2;
-    grid-row: 2;
-    font-size: 10px;
-  }
-  .requirement-row strong {
-    font-size: 11px;
-  }
-  .requirement-row > svg {
-    grid-column: 3;
-    grid-row: 1 / 3;
-  }
-  .requirement-index {
-    grid-row: 1;
-    font-size: 8px;
-  }
-  .requirements-note {
-    font-size: 10px;
   }
   .guide-footnote {
     font-size: 9px;

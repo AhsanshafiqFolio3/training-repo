@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import { products } from '../../data/products'
-import { calculateTotals, cartReducer, filterProducts, money } from './logic'
+import {
+  calculateTotals,
+  cartReducer,
+  filterProducts,
+  isSortOption,
+  money,
+  sortProducts,
+} from './logic'
 import type { Product } from '../../shared/types'
 
 const product = products[0]
@@ -91,5 +98,23 @@ describe('product filtering', () => {
       filterProducts(products, { search: 'Studio', category: 'Wearables', inStock: false }),
     ).toEqual([])
     expect(products).toHaveLength(20)
+  })
+})
+describe('product sorting', () => {
+  it('orders by price and rating without mutating the input', () => {
+    const before = products.map((p) => p.id)
+    const low = sortProducts(products, 'price-low').map((p) => p.price)
+    const high = sortProducts(products, 'price-high').map((p) => p.price)
+    const rating = sortProducts(products, 'rating').map((p) => p.rating)
+    expect(low).toEqual([...low].sort((a, b) => a - b))
+    expect(high).toEqual([...high].sort((a, b) => b - a))
+    expect(rating).toEqual([...rating].sort((a, b) => b - a))
+    expect(sortProducts(products, 'featured').map((p) => p.id)).toEqual(before)
+    expect(products.map((p) => p.id)).toEqual(before)
+  })
+  it('accepts only known sort options', () => {
+    expect(isSortOption('price-low')).toBe(true)
+    expect(isSortOption('cheapest')).toBe(false)
+    expect(isSortOption('toString')).toBe(false)
   })
 })

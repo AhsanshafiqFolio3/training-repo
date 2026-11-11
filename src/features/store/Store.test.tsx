@@ -3,7 +3,7 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
 import { Store } from './Store'
-import { CartProvider } from './CartContext'
+import { CartProvider } from './CartProvider'
 import { getProducts } from '../../data/api'
 import { products } from '../../data/products'
 
