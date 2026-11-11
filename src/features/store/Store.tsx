@@ -1,43 +1,21 @@
 import { useCallback, useState } from 'react'
 import type { ReactElement } from 'react'
 import { useSearchParams } from 'react-router'
-import {
-  ArrowDownWideNarrow,
-  ArrowRight,
-  Check,
-  Headphones,
-  LayoutGrid,
-  Monitor,
-  Plus,
-  Search,
-  ShieldCheck,
-  SlidersHorizontal,
-  Sparkles,
-  Star,
-  Truck,
-  Watch,
-  X,
-  Zap,
-} from 'lucide-react'
+import { ArrowDownWideNarrow, Check, Search, SlidersHorizontal, X } from 'lucide-react'
 import { getProducts } from '../../data/api'
-import { categories } from '../../shared/types'
 import type { Category, Product } from '../../shared/types'
 import { useAsync } from '../../shared/useAsync'
 import { readDemoMode, withoutParam } from '../../shared/demoMode'
-import { ProductVisual } from '../../shared/ProductVisual'
 import { EmptyState, LoadingCards } from '../../shared/Feedback'
-import { filterProducts, isSortOption, money, sortOptions, sortProducts } from './logic'
+import { Toast } from '../../shared/Toast'
+import { filterProducts, isSortOption, sortOptions, sortProducts } from './logic'
 import type { SortOption } from './logic'
 import { useCart } from './useCart'
 import { Cart } from './Cart'
+import { StoreHero } from './StoreHero'
+import { FilterPanel } from './FilterPanel'
+import { ProductCard } from './ProductCard'
 
-const categoryIcons = {
-  'All products': LayoutGrid,
-  Audio: Headphones,
-  Workspace: Monitor,
-  Wearables: Watch,
-  Accessories: Zap,
-}
 export function Store(): ReactElement {
   const [params, setParams] = useSearchParams()
   const mode = readDemoMode(params.get('state'))
@@ -65,103 +43,20 @@ export function Store(): ReactElement {
     dispatch({ type: 'add', product })
     setToast(`${product.name} added to your bag.`)
   }
+  function quantityInBag(product: Product): number {
+    return items.find((item) => item.product.id === product.id)?.quantity ?? 0
+  }
   return (
     <main>
-      <section className="hero">
-        <div className="hero-copy">
-          <span className="eyebrow">
-            <span /> THE EVERYDAY COLLECTION
-          </span>
-          <h1>
-            Everyday,
-            <br />
-            <em>considered.</em>
-          </h1>
-          <p>
-            Good design. Useful things. A little more joy.
-            <br />
-            Discover tech that fits the way you live.
-          </p>
-          <a className="hero-link" href="#collection">
-            Find your everyday <ArrowRight size={18} />
-          </a>
-        </div>
-        <div className="hero-visual">
-          <span className="hero-circle" />
-          <div className="hero-headphones">
-            <ProductVisual product={{ kind: 'headphones', color: '#3c453b' }} />
-          </div>
-          <div className="hero-speaker">
-            <ProductVisual product={{ kind: 'speaker', color: '#bf885d' }} />
-          </div>
-          <span className="hero-product-label">
-            LESS NOISE.
-            <br />
-            MORE YOU.<span>Studio Wireless — 01</span>
-          </span>
-          <span className="hero-edition">CURATED WITH PURPOSE / VOL. 01</span>
-        </div>
-      </section>
-      <div className="benefits">
-        <span>
-          <Truck size={16} /> Free delivery, every order
-        </span>
-        <span>
-          <ShieldCheck size={16} /> Quality you can count on
-        </span>
-        <span>
-          <Sparkles size={16} /> 10% off above Rs. 5,000
-        </span>
-        <span className="benefits-end">Small details. Big difference.</span>
-      </div>
+      <StoreHero />
       <div className="shop-layout" id="collection">
-        <aside className="filters-panel" aria-label="Product filters">
-          <div className="section-eyebrow">EXPLORE THE COLLECTION</div>
-          <h2>Find your thing.</h2>
-          <div className="category-list">
-            {(['All products', ...categories] as const).map((item) => {
-              const Icon = categoryIcons[item]
-              return (
-                <button
-                  key={item}
-                  className={`category-button ${category === item ? 'active' : ''}`}
-                  onClick={() => setCategory(item)}
-                  aria-pressed={category === item}
-                >
-                  <Icon size={17} />
-                  <span>{item}</span>
-                  <span className="category-count">
-                    {item === 'All products'
-                      ? source.length
-                      : source.filter((product) => product.category === item).length}
-                  </span>
-                </button>
-              )
-            })}
-          </div>
-          <div className="availability">
-            <h3>Availability</h3>
-            <label className="stock-toggle">
-              <span>In stock only</span>
-              <input
-                type="checkbox"
-                checked={inStock}
-                onChange={(event) => setInStock(event.target.checked)}
-              />
-              <span className="toggle-track" />
-            </label>
-          </div>
-          <div className="sidebar-note">
-            <span className="note-spark">✳</span>
-            <h3>Less, but better.</h3>
-            <p>
-              Thoughtfully selected.
-              <br />
-              Made for your everyday.
-            </p>
-            <span className="note-rule" />
-          </div>
-        </aside>
+        <FilterPanel
+          products={source}
+          category={category}
+          inStock={inStock}
+          onCategoryChange={setCategory}
+          onInStockChange={setInStock}
+        />
         <section className="catalog" aria-label="Product collection">
           <div className="catalog-top">
             <div>
@@ -247,59 +142,14 @@ export function Store(): ReactElement {
             />
           ) : (
             <div className="product-grid">
-              {visible.map((product) => {
-                const quantity = items.find((item) => item.product.id === product.id)?.quantity ?? 0
-                const soldOut = product.stock === 0,
-                  atLimit = quantity >= product.stock
-                return (
-                  <article className="product-card" key={product.id}>
-                    <div className="product-image" style={{ background: product.background }}>
-                      <div className="product-badges">
-                        {product.badge && (
-                          <span
-                            className={`badge ${product.badge === 'Bestseller' ? 'badge-best' : ''}`}
-                          >
-                            {product.badge === 'Bestseller' && (
-                              <Star size={9} fill="currentColor" />
-                            )}
-                            {product.badge}
-                          </span>
-                        )}
-                        {soldOut && <span className="badge badge-sold">Back soon</span>}
-                      </div>
-                      <ProductVisual product={product} />
-                      <span className="image-label">FORM / {product.category.toUpperCase()}</span>
-                    </div>
-                    <div className="product-meta">
-                      <span>{product.category}</span>
-                      <span className="rating">
-                        <Star size={11} fill="currentColor" />
-                        {product.rating.toFixed(1)}
-                      </span>
-                    </div>
-                    <h3>{product.name}</h3>
-                    <p className="product-description">{product.description}</p>
-                    <div className="product-bottom">
-                      <strong>{money(product.price)}</strong>
-                      <button
-                        className={`add-button ${quantity > 0 ? 'added' : ''}`}
-                        disabled={soldOut || atLimit}
-                        onClick={() => add(product)}
-                        aria-label={`Add ${product.name} to bag`}
-                      >
-                        {quantity > 0 && !atLimit ? <Check size={14} /> : <Plus size={14} />}{' '}
-                        {soldOut
-                          ? 'Sold out'
-                          : atLimit
-                            ? 'Max added'
-                            : quantity > 0
-                              ? `Add (${quantity})`
-                              : 'Add'}
-                      </button>
-                    </div>
-                  </article>
-                )
-              })}
+              {visible.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  quantityInBag={quantityInBag(product)}
+                  onAdd={add}
+                />
+              ))}
             </div>
           )}
           {state.status === 'success' && visible.length > 0 && (
@@ -313,25 +163,16 @@ export function Store(): ReactElement {
         <Cart />
       </div>
       {toast && (
-        <div className="toast" role="status">
-          <CheckCircleIcon />
-          <span>{toast}</span>
-          <button
-            className="icon-button"
-            aria-label="Dismiss notification"
-            onClick={() => setToast('')}
-          >
-            <X size={15} />
-          </button>
-        </div>
+        <Toast
+          message={toast}
+          onDismiss={() => setToast('')}
+          icon={
+            <span className="toast-check">
+              <Check size={13} />
+            </span>
+          }
+        />
       )}
     </main>
-  )
-}
-function CheckCircleIcon(): ReactElement {
-  return (
-    <span className="toast-check">
-      <Check size={13} />
-    </span>
   )
 }

@@ -1,37 +1,32 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import type { ReactElement } from 'react'
-import { Link, useSearchParams } from 'react-router'
-import {
-  AlertCircle,
-  ArrowDownToLine,
-  ArrowRight,
-  CheckCircle2,
-  Circle,
-  Mail,
-  Plus,
-  Search,
-  RotateCcw,
-  ShoppingBag,
-  Users,
-  Wallet,
-  X,
-} from 'lucide-react'
-import { getCustomers, wait } from '../../data/api'
+import { useSearchParams } from 'react-router'
+import { ArrowDownToLine, CheckCircle2, Plus, Search } from 'lucide-react'
+import { getCustomers } from '../../data/api'
 import { useAsync } from '../../shared/useAsync'
 import { EmptyState } from '../../shared/Feedback'
-import { money } from '../store/logic'
+import { Toast } from '../../shared/Toast'
 import { exportFailureRequested, readDemoMode, withoutParam } from '../../shared/demoMode'
-import { CustomerForm } from './CustomerForm'
-import { useCustomers } from './useCustomers'
-import { initials } from './initials'
-import { mergeCustomers } from './directory'
-import { customerCsv, downloadCsv } from './export'
 import type { Customer } from '../../shared/types'
+import { CustomerForm } from './CustomerForm'
+import { CustomerStats } from './CustomerStats'
+import { CustomerTable } from './CustomerTable'
+import { ExportBanner } from './ExportBanner'
+import { useCustomers } from './useCustomers'
+import { useExportJob } from './useExportJob'
+import { mergeCustomers } from './directory'
 
 const statusFilters = ['All customers', 'Active', 'Inactive'] as const
 type StatusFilter = (typeof statusFilters)[number]
 function isStatusFilter(value: string): value is StatusFilter {
   return statusFilters.some((option) => option === value)
+}
+function matches(customer: Customer, search: string, status: StatusFilter): boolean {
+  const text = `${customer.name} ${customer.email} ${customer.city}`.toLowerCase()
+  return (
+    text.includes(search.trim().toLowerCase()) &&
+    (status === 'All customers' || customer.status === status)
+  )
 }
 export function Customers(): ReactElement {
   const [params, setParams] = useSearchParams()
@@ -39,58 +34,27 @@ export function Customers(): ReactElement {
   const loader = useCallback((signal: AbortSignal) => getCustomers(mode, signal), [mode])
   const [state, retry] = useAsync(loader)
   const { addedCustomers, addCustomer } = useCustomers()
+  const exportJob = useExportJob()
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('All customers')
   const [modal, setModal] = useState(false)
   const [notice, setNotice] = useState('')
-  const [exportState, setExportState] = useState<'idle' | 'running' | 'success' | 'error'>('idle')
-  const exportController = useRef<AbortController | null>(null)
-  const [exportContent, setExportContent] = useState('')
-  useEffect(
-    () => (): void => {
-      exportController.current?.abort()
-    },
-    [],
-  )
   const all =
     state.status === 'success'
       ? mergeCustomers(state.data.data, mode === 'empty' ? [] : addedCustomers)
       : []
-  const visible = all.filter(
-    (customer) =>
-      `${customer.name} ${customer.email} ${customer.city}`
-        .toLowerCase()
-        .includes(search.trim().toLowerCase()) &&
-      (statusFilter === 'All customers' || customer.status === statusFilter),
-  )
-  const active = all.filter((customer) => customer.status === 'Active').length
+  const visible = all.filter((customer) => matches(customer, search, statusFilter))
   function retryLoad(): void {
     setParams((current) => withoutParam(current, 'state'), { replace: true })
     retry()
   }
-  async function startExport(simulateFailure = exportFailureRequested(params)): Promise<void> {
-    if (exportController.current && !exportController.current.signal.aborted) return
-    const controller = new AbortController()
-    exportController.current = controller
-    const snapshot = customerCsv(visible)
-    setExportState('running')
-    try {
-      await wait(1300, controller.signal)
-      if (simulateFailure) {
-        setExportState('error')
-        return
-      }
-      setExportContent(snapshot)
-      setExportState('success')
-    } catch {
-      return
-    } finally {
-      if (exportController.current === controller) exportController.current = null
-    }
+  function clearFilters(): void {
+    setSearch('')
+    setStatusFilter('All customers')
   }
   function retryExport(): void {
     setParams((current) => withoutParam(current, 'exportError'), { replace: true })
-    void startExport(false)
+    exportJob.start(visible, false)
   }
   function saveCustomer(customer: Customer): void {
     addCustomer(customer)
@@ -108,14 +72,12 @@ export function Customers(): ReactElement {
           <button
             className="button secondary"
             disabled={
-              state.status !== 'success' || visible.length === 0 || exportState === 'running'
+              state.status !== 'success' || visible.length === 0 || exportJob.status === 'running'
             }
-            onClick={() => {
-              void startExport()
-            }}
+            onClick={() => exportJob.start(visible, exportFailureRequested(params))}
           >
             <ArrowDownToLine size={16} />
-            {exportState === 'running' ? 'Preparing export…' : 'Export customers'}
+            {exportJob.status === 'running' ? 'Preparing export…' : 'Export customers'}
           </button>
           <button
             className="button dark"
@@ -127,98 +89,14 @@ export function Customers(): ReactElement {
           </button>
         </div>
       </div>
-      <div className="stats-grid">
-        <div className="stat-card">
-          <span>
-            Total customers <Users size={18} />
-          </span>
-          <strong>
-            {state.status === 'success' ? all.length.toString().padStart(2, '0') : '—'}
-          </strong>
-          <small>Every connection counts</small>
-        </div>
-        <div className="stat-card">
-          <span>
-            Active customers <Circle size={17} />
-          </span>
-          <strong>{state.status === 'success' ? active.toString().padStart(2, '0') : '—'}</strong>
-          <small>
-            {all.length
-              ? `${Math.round((active / all.length) * 100)}% of your community`
-              : 'Your growing community'}
-          </small>
-        </div>
-        <div className="stat-card">
-          <span>
-            Total orders <ShoppingBag size={18} />
-          </span>
-          <strong>
-            {state.status === 'success'
-              ? all.reduce((sum, customer) => sum + customer.orders, 0)
-              : '—'}
-          </strong>
-          <small>Thoughtfully packed essentials</small>
-        </div>
-        <div className="stat-card">
-          <span>
-            Customer spend <Wallet size={18} />
-          </span>
-          <strong className="stat-money">
-            {state.status === 'success'
-              ? money(all.reduce((sum, customer) => sum + customer.spent, 0))
-              : '—'}
-          </strong>
-          <small>Across all customer orders</small>
-        </div>
-      </div>
-      {exportState !== 'idle' && (
-        <div className={`export-banner ${exportState}`} role="status">
-          <div>
-            {exportState === 'running' ? (
-              <span className="spinner" />
-            ) : exportState === 'error' ? (
-              <AlertCircle size={20} />
-            ) : (
-              <CheckCircle2 size={20} />
-            )}
-            <span>
-              <strong>
-                {exportState === 'running'
-                  ? 'Getting your customer export ready…'
-                  : exportState === 'success'
-                    ? 'Your export is ready.'
-                    : 'The export couldn’t be prepared.'}
-              </strong>
-              <small>
-                {exportState === 'running'
-                  ? 'You can keep exploring while we prepare your file.'
-                  : exportState === 'success'
-                    ? 'A CSV snapshot of the customers matching your filters.'
-                    : 'No customer data was changed. Please try again.'}
-              </small>
-            </span>
-          </div>
-          {exportState === 'success' ? (
-            <button className="button secondary" onClick={() => downloadCsv(exportContent)}>
-              <ArrowDownToLine size={15} />
-              Download CSV
-            </button>
-          ) : exportState === 'error' ? (
-            <button className="button secondary" onClick={retryExport}>
-              <RotateCcw size={15} />
-              Try again
-            </button>
-          ) : null}
-          {exportState !== 'running' && (
-            <button
-              className="icon-button"
-              aria-label="Dismiss export result"
-              onClick={() => setExportState('idle')}
-            >
-              <X size={17} />
-            </button>
-          )}
-        </div>
+      <CustomerStats customers={state.status === 'success' ? all : null} />
+      {exportJob.status !== 'idle' && (
+        <ExportBanner
+          status={exportJob.status}
+          onDownload={exportJob.download}
+          onRetry={retryExport}
+          onDismiss={exportJob.dismiss}
+        />
       )}
       <section className="customer-section">
         <div className="customer-toolbar">
@@ -273,71 +151,11 @@ export function Customers(): ReactElement {
                 ? 'Try another search or customer status.'
                 : 'There are no customers to show in this view.'
             }
-            action={
-              all.length
-                ? () => {
-                    setSearch('')
-                    setStatusFilter('All customers')
-                  }
-                : retryLoad
-            }
+            action={all.length ? clearFilters : retryLoad}
             actionLabel={all.length ? 'Clear filters' : 'Reload customers'}
           />
         ) : (
-          <div className="table-scroll">
-            <table className="customer-table">
-              <thead>
-                <tr>
-                  <th>Customer</th>
-                  <th>Location</th>
-                  <th>Status</th>
-                  <th>Orders</th>
-                  <th>Total spent</th>
-                  <th>
-                    <span className="sr-only">View customer</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {visible.map((customer) => (
-                  <tr key={customer.id}>
-                    <td>
-                      <Link className="customer-name" to={`/customers/${customer.id}`}>
-                        <span className="avatar" style={{ background: customer.color }}>
-                          {initials(customer.name)}
-                        </span>
-                        <span>
-                          <strong>{customer.name}</strong>
-                          <small>
-                            <Mail size={10} />
-                            {customer.email}
-                          </small>
-                        </span>
-                      </Link>
-                    </td>
-                    <td>{customer.city}</td>
-                    <td>
-                      <span className={`status-pill ${customer.status.toLowerCase()}`}>
-                        <span />
-                        {customer.status}
-                      </span>
-                    </td>
-                    <td>{customer.orders}</td>
-                    <td className="spend-cell">{money(customer.spent)}</td>
-                    <td>
-                      <Link
-                        className="row-link"
-                        aria-label={`View ${customer.name}`}
-                        to={`/customers/${customer.id}`}
-                      >
-                        <ArrowRight size={17} />
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <CustomerTable customers={visible} />
         )}
         <div className="table-footer">
           <span>
@@ -351,17 +169,7 @@ export function Customers(): ReactElement {
         <CustomerForm existing={all} onSave={saveCustomer} onClose={() => setModal(false)} />
       )}
       {notice && (
-        <div className="toast" role="status">
-          <CheckCircle2 size={18} />
-          {notice}
-          <button
-            className="icon-button"
-            aria-label="Dismiss notification"
-            onClick={() => setNotice('')}
-          >
-            <X size={15} />
-          </button>
-        </div>
+        <Toast message={notice} onDismiss={() => setNotice('')} icon={<CheckCircle2 size={18} />} />
       )}
     </main>
   )
