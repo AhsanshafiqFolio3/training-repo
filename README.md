@@ -1,8 +1,8 @@
 # Form — Everyday, considered.
 
-**Status: final-project delivery complete.** Source, tests, hosted application, practice assessments, AI review and submission ZIP have been delivered. The user confirmed that earlier course records and formal training approval are outside this project's completion gate.
+A React + TypeScript + Vite final project: an online store with a cart and pricing rules, plus a customer dashboard with list/detail routes, a keyboard-accessible modal and a CSV export job.
 
-A React + TypeScript + Vite final project implementing the supplied store and customer-dashboard requirements. All products, customer records, business rules and practice assessments are original project material, created with the user's approval because the original guides/dataset were unavailable.
+The original guides and dataset weren't available, so the products, customer records, business rules and practice assessment questions were written for this project. The build requirements are implemented and tested; the assessment sections still need reviewer sign-off.
 
 ## Run locally
 
@@ -65,7 +65,7 @@ Types cover products, cart items, customer drafts, props, discriminated load sta
 - [Per-term notes](docs/term-notes.md)
 - [Practice assessment Parts A–D and Supplement](docs/assessment-prep.md)
 - [Review-call rubric and rehearsal](docs/review-call.md)
-- [Completed AI technical review: 92/100](docs/review-report.md)
+- [Practice technical review (AI-assisted, not an official score)](docs/review-report.md)
 - [Current submission package index](docs/submissions/README.md)
 - [Optional course approval form](docs/external-approval.md)
 - [Verification record](docs/verification.md)
@@ -73,16 +73,10 @@ Types cover products, cart items, customer drafts, props, discriminated load sta
 
 ## Hosting and Git
 
-Static output is `dist/`. A static host must serve `index.html` for non-asset application routes; `public/_redirects` supplies this rule for compatible hosts. Vite already supports direct detail-route navigation in local development. Publication and hosted refresh results belong in the verification record; configuration alone does not prove a host honors fallback behavior.
-
 Source: https://github.com/AhsanshafiqFolio3/training-repo (branch `main`).
+
+`npm run build` writes a static site to `dist/`. Any static host works, as long as it serves `index.html` for application routes such as `/customers/c02`; `public/_redirects` sets this up on hosts that read that file.
 
 ## Practical limits
 
-This is a frontend training project. Customer records are fictional. Cart and new customers live in memory and reset on refresh. Existing fixture customers remain available after refresh. Checkout collects no payment and sends no order; customer saves and export jobs have no backend. The hosted Site is private through the Sites access boundary; the demo app has no separate sign-in or authorization layer. Assessment materials are project-created equivalents. The completed AI artifact review scored 92/100, and all five practice output predictions were verified. Formal learner assessment and earlier course records are outside this completed project delivery; no human interview results or historical submissions are claimed.
-
-## Hosted verification
-
-The deployed detail route was opened directly and refreshed in Chromium: both returned HTTP 200 and displayed the correct customer. Eleven hosted checks passed, including access protection, cart pricing, race prevention, modal focus and export snapshots. Sanitized results are committed in docs/evidence/hosted-verification.json.
-
-`npm run verify:hosted` is a maintainer verification command. It accepts a JSON object containing the selected Site URL and its short-lived Sites service credential through hidden stdin. It never embeds a credential in source, browser state, evidence or command arguments. Credentials must be obtained from the native Sites tool, sent only to that Site, and never committed. See the verification script for the exact contract.
+This is a frontend training project with fictional customer records. The cart and newly added customers live in memory and reset on refresh; the built-in customers are always available. Checkout collects no payment and sends no order, and customer saves and export jobs have no backend. There is no sign-in or authorization layer.

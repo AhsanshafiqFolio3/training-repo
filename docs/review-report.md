@@ -46,7 +46,7 @@ These are project-created questions. No original-guide examination or independen
 - `npm run test`: **48 passed across 7 files**, including the five Part B cases.
 - `npm run build`: strict TypeScript and production bundle **passed**.
 - Existing local Chromium suite: **9 passed**; application source and bundled output are unchanged by this review. No redundant local browser rerun was needed for documentation and added grading cases.
-- Authenticated hosted Chromium review: **11 checks passed**, recorded in `evidence/hosted-verification.json`.
+- Authenticated hosted Chromium review: **11 checks passed** on an earlier preview deployment that has since been retired.
 - Hosted detail direct load **HTTP 200** and refresh **HTTP 200**, both displaying Omar Farooq at `/customers/c02`.
 - Private access preserved: a fresh anonymous request was rejected or redirected to sign-in; the Site remains owner-private.
 - Export review downloaded 9 customer records after starting the job, then changing visible results to one customer. The file retained the original snapshot, including the session-created fictional record.
