@@ -1881,6 +1881,11 @@ html {
   color: #9eaa8e;
   margin-bottom: 30px;
 }
+.error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
 .customer-table th {
   position: relative;
 }

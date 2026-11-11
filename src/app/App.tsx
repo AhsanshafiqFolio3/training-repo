@@ -10,6 +10,28 @@ import { CustomerProvider } from '../features/customers/CustomerProvider'
 import { Customers } from '../features/customers/Customers'
 import { CustomerDetail } from '../features/customers/CustomerDetail'
 import { Guide } from '../features/Guide'
+import { ErrorBoundary } from '../shared/ErrorBoundary'
+
+function PageError({ reset }: { reset: () => void }): ReactElement {
+  return (
+    <main className="not-found page-container" role="alert">
+      <span className="eyebrow">SOMETHING WENT WRONG</span>
+      <h1>
+        This page hit
+        <br />a snag.
+      </h1>
+      <p>Try loading it again, or head back to the collection.</p>
+      <div className="error-actions">
+        <button className="button dark" onClick={reset}>
+          Try again
+        </button>
+        <Link className="button secondary" to="/">
+          Back to the collection
+        </Link>
+      </div>
+    </main>
+  )
+}
 
 function pageTitle(pathname: string): string {
   if (pathname.startsWith('/customers')) return 'Customer workspace — Form'
@@ -65,29 +87,31 @@ function Shell(): ReactElement {
         </Link>
       </header>
       <div id="main-content" tabIndex={-1}>
-        <Routes>
-          <Route path="/" element={<Store />} />
-          <Route path="/customers" element={<Customers />} />
-          <Route path="/customers/:id" element={<CustomerDetail />} />
-          <Route path="/project" element={<Guide />} />
-          <Route
-            path="*"
-            element={
-              <main className="not-found page-container">
-                <span className="eyebrow">404 / A LITTLE OFF TRACK</span>
-                <h1>
-                  Good things are
-                  <br />
-                  this way.
-                </h1>
-                <p>We couldn’t find that page. Let’s get you back to the everyday.</p>
-                <Link className="button dark" to="/">
-                  Back to the collection <ArrowRight size={17} />
-                </Link>
-              </main>
-            }
-          />
-        </Routes>
+        <ErrorBoundary key={pathname} fallback={(reset) => <PageError reset={reset} />}>
+          <Routes>
+            <Route path="/" element={<Store />} />
+            <Route path="/customers" element={<Customers />} />
+            <Route path="/customers/:id" element={<CustomerDetail />} />
+            <Route path="/project" element={<Guide />} />
+            <Route
+              path="*"
+              element={
+                <main className="not-found page-container">
+                  <span className="eyebrow">404 / A LITTLE OFF TRACK</span>
+                  <h1>
+                    Good things are
+                    <br />
+                    this way.
+                  </h1>
+                  <p>We couldn’t find that page. Let’s get you back to the everyday.</p>
+                  <Link className="button dark" to="/">
+                    Back to the collection <ArrowRight size={17} />
+                  </Link>
+                </main>
+              }
+            />
+          </Routes>
+        </ErrorBoundary>
       </div>
       <footer className="footer">
         <div>
