@@ -18,9 +18,11 @@ Local verification completed successfully. Do not treat feature descriptions or 
 - `npm run build`: strict TypeScript compilation and production bundling passed, exit code 0. Output includes local font assets and SPA redirect configuration. Main JS bundle approximately 322 kB (101 kB gzip).
 - Source scan: no `any`, TODO or FIXME in src/.
 - Visual review: desktop store, desktop dashboard and mobile dashboard screenshots inspected. Screenshots are generated in ignored `artifacts/` and reproducible with the browser suite.
-- Source remote and commit: pending
-- Hosting/publication: pending
-- Hosted direct route refresh: pending
+- Source remote: synchronized successfully to the private Sites-managed repository documented in repository.md. First verified pushed commit: `9bf516ccc8f256eb0b0b120bb45d5bb33da03e29`. Final packaging may include documentation updates; `git rev-parse HEAD` and the saved Site version identify the final commit.
+- Private hosting: publication runs after source packaging; its authoritative status and URL are returned by Sites and reported in the handoff. A manifest or build alone does not establish deployment success.
+- Hosted direct route refresh: not yet browser-verified through the private access boundary. Local direct navigation and refresh of the fixture detail route passed. The redirect file is included for compatible static hosts.
+
+The first Git synchronization attempt failed because the sandbox could not initialize Windows Schannel credentials. Configuring this repository to use Git's OpenSSL TLS backend resolved it while keeping certificate verification enabled. The retry verified the pushed commit and generated the deployment archive.
 
 The first responsive run identified the hidden-label overflow described in bug-trace.md. After correction the 16-combination check passed. A subsequent combined test exceeded its 30-second budget, so coverage was split into a test per viewport. Fonts were self-hosted to remove an external loading dependency. The final nine-test browser suite passed without retries.
 

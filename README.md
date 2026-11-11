@@ -64,6 +64,7 @@ Types cover products, cart items, customer drafts, props, discriminated load sta
 - [Practice assessment Parts A–D and Supplement](docs/assessment-prep.md)
 - [Review-call rubric and rehearsal](docs/review-call.md)
 - [Verification record](docs/verification.md)
+- [Source repository destination](docs/repository.md)
 
 ## Hosting and Git
 

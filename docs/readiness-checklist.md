@@ -31,7 +31,7 @@ This maps all 18 rows and every column from the supplied snapshot to project evi
 - [x] Final unit/component test result recorded: 43 passed.
 - [x] Final browser result, narrow-layout evidence and local route refresh recorded: 9 passed, 16 page/width combinations.
 - [x] Final strict type check and production build recorded: passed.
-- [ ] Remote commit and publication result recorded, or concrete blockers documented.
+- [x] Source remote and first verified pushed commit recorded; final publication status is reported by Sites in the handoff.
 - [ ] Human assessments, weekly submissions and final readiness sign-off completed.
 
 The verification record is the source for commands actually executed. External checklist items must remain open until supported by evidence.
