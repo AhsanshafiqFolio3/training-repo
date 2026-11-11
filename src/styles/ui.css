@@ -1,0 +1,216 @@
+.icon-button {
+  background: transparent;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px;
+  color: inherit;
+  border-radius: 3px;
+}
+.icon-button:hover {
+  background: #6a745410;
+}
+.toast {
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #2e3929;
+  color: #f8f9f2;
+  box-shadow: 0 6px 30px #29332022;
+  padding: 13px 16px;
+  border-radius: 7px;
+  font-size: 11px;
+  max-width: calc(100vw - 32px);
+  animation: toast-in 0.25s ease-out;
+}
+.toast-check {
+  height: 20px;
+  width: 20px;
+  background: #789063;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+.toast .icon-button {
+  margin-left: 10px;
+}
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: #20281c66;
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 100;
+}
+.modal {
+  background: #fafaf5;
+  border: 1px solid #eeeee5;
+  width: 100%;
+  max-width: 480px;
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
+  border-radius: 12px;
+  padding: 29px;
+  box-shadow: 0 20px 100px #16200f33;
+}
+.modal-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+.modal-heading h2 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 24px;
+  letter-spacing: -0.8px;
+  font-weight: 600;
+}
+.modal-description {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #878e78;
+  margin: 11px 0 24px;
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 25px;
+}
+.full {
+  width: 100%;
+}
+.form-field {
+  margin-bottom: 17px;
+}
+.form-field label {
+  display: block;
+  font-size: 11px;
+  color: #677057;
+  margin-bottom: 8px;
+  font-weight: 550;
+}
+.form-field input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #dce0d0;
+  border-radius: 5px;
+  background: #fffefa;
+  color: #363e2e;
+  font-size: 12px;
+}
+.form-field input[aria-invalid='true'] {
+  border-color: #c2674d;
+}
+.field-error {
+  font-size: 10px;
+  color: #b44830;
+  margin-top: 6px;
+  line-height: 1.6;
+}
+.form-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: #959d83;
+  line-height: 1.5;
+}
+.order-lines > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: 11px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e3e7d8;
+}
+.order-lines strong {
+  font-weight: 550;
+  white-space: nowrap;
+}
+.order-lines .order-discount {
+  color: #6b8455;
+}
+.order-lines .order-total {
+  font-size: 14px;
+  border: 0;
+  padding: 20px 0 25px;
+}
+.order-success {
+  text-align: center;
+  padding-top: 25px;
+  color: #6c8459;
+}
+.order-success p {
+  font-size: 12px;
+  line-height: 1.8;
+  color: #7f8872;
+  margin: 15px 0 25px;
+}
+.empty-state {
+  text-align: center;
+  padding: 65px 20px;
+  border: 1px dashed #dfe3d4;
+  border-radius: 7px;
+  background: #f4f5ec;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.empty-icon {
+  width: 61px;
+  height: 61px;
+  display: grid;
+  place-items: center;
+  background: #e9eddd;
+  border-radius: 50%;
+  color: #8d9b75;
+  margin-bottom: 18px;
+}
+.empty-state h3 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 20px;
+  font-weight: 550;
+  letter-spacing: -0.6px;
+}
+.empty-state p {
+  font-size: 11px;
+  color: #8b947b;
+  margin-top: 10px;
+  line-height: 1.8;
+  max-width: 320px;
+}
+.empty-state .button {
+  margin-top: 20px;
+}
+.skeleton-image {
+  aspect-ratio: 1.06;
+  border-radius: 6px;
+}
+.skeleton-line {
+  height: 12px;
+  margin-top: 15px;
+  width: 75%;
+  border-radius: 4px;
+}
+.skeleton-line.short {
+  width: 45%;
+  height: 10px;
+  margin-top: 10px;
+}
+.shimmer {
+  background: linear-gradient(100deg, #e8eadf 10%, #f0f1e8 40%, #e8eadf 70%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
