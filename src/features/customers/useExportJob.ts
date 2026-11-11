@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { wait } from '../../data/api'
+import { wait } from '../../shared/wait'
 import type { Customer } from '../../shared/types'
 import { customerCsv, downloadCsv } from './export'
 

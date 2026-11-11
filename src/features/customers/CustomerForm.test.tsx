@@ -36,4 +36,16 @@ describe('customer modal form', () => {
     })
     expect(close).toHaveBeenCalledTimes(1)
   })
+  it('drops a pending save when the form is closed before it finishes', async () => {
+    const user = userEvent.setup(),
+      save = vi.fn()
+    const { unmount } = render(<CustomerForm existing={[]} onSave={save} onClose={vi.fn()} />)
+    await user.type(screen.getByLabelText('Full name'), 'Sara Malik')
+    await user.type(screen.getByLabelText('Email address'), 'sara@example.com')
+    await user.type(screen.getByLabelText('City'), 'Multan')
+    await user.click(screen.getByRole('button', { name: 'Add customer' }))
+    unmount()
+    await new Promise((resolve) => setTimeout(resolve, 600))
+    expect(save).not.toHaveBeenCalled()
+  })
 })

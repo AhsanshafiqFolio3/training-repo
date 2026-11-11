@@ -2,24 +2,8 @@ import { products } from './products'
 import { customers } from './customers'
 import type { ApiResponse, Customer, DemoMode, Product } from '../shared/types'
 import { demoControlsEnabled } from '../shared/demoMode'
+import { wait } from '../shared/wait'
 
-export function wait(ms: number, signal?: AbortSignal): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (signal?.aborted) {
-      reject(new DOMException('Aborted', 'AbortError'))
-      return
-    }
-    const onAbort = (): void => {
-      clearTimeout(timer)
-      reject(new DOMException('Aborted', 'AbortError'))
-    }
-    const timer = setTimeout(() => {
-      signal?.removeEventListener('abort', onAbort)
-      resolve()
-    }, ms)
-    signal?.addEventListener('abort', onAbort, { once: true })
-  })
-}
 async function respond<T>(
   items: readonly T[],
   mode: DemoMode,

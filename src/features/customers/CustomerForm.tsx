@@ -3,7 +3,8 @@ import type { FormEvent, ReactElement } from 'react'
 import { ArrowRight, Info } from 'lucide-react'
 import { Modal } from '../../shared/Modal'
 import type { Customer, CustomerDraft, ValidationErrors } from '../../shared/types'
-import { wait } from '../../data/api'
+import { wait } from '../../shared/wait'
+import { useUnmountSignal } from '../../shared/useUnmountSignal'
 import { validateCustomer } from './validation'
 
 interface CustomerFormProps {
@@ -16,6 +17,7 @@ export function CustomerForm({ existing, onSave, onClose }: CustomerFormProps): 
   const [errors, setErrors] = useState<ValidationErrors>({})
   const [saving, setSaving] = useState(false)
   const pending = useRef(false)
+  const unmountSignal = useUnmountSignal()
   async function submit(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     if (pending.current) return
@@ -28,7 +30,11 @@ export function CustomerForm({ existing, onSave, onClose }: CustomerFormProps): 
     if (Object.keys(nextErrors).length > 0) return
     pending.current = true
     setSaving(true)
-    await wait(500)
+    try {
+      await wait(500, unmountSignal())
+    } catch {
+      return
+    }
     onSave({
       id: `c-${crypto.randomUUID()}`,
       name: draft.name.trim(),

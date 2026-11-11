@@ -12,6 +12,8 @@ import {
 } from 'lucide-react'
 import { ProductVisual } from '../../shared/ProductVisual'
 import { Modal } from '../../shared/Modal'
+import { wait } from '../../shared/wait'
+import { useUnmountSignal } from '../../shared/useUnmountSignal'
 import { calculateTotals, DISCOUNT_RATE, DISCOUNT_THRESHOLD, money } from './logic'
 import { useCart } from './useCart'
 
@@ -22,9 +24,14 @@ export function Cart(): ReactElement {
   const [orderPlaced, setOrderPlaced] = useState(false)
   const [processing, setProcessing] = useState(false)
   const heading = useRef<HTMLHeadingElement>(null)
+  const unmountSignal = useUnmountSignal()
   async function placeOrder(): Promise<void> {
     setProcessing(true)
-    await new Promise<void>((resolve) => setTimeout(resolve, 650))
+    try {
+      await wait(650, unmountSignal())
+    } catch {
+      return
+    }
     dispatch({ type: 'clear' })
     setProcessing(false)
     setOrderPlaced(true)
