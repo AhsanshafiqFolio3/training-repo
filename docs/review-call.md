@@ -30,15 +30,17 @@ This is a project-created practice rubric. The original training rubric was not 
 
 ## Reviewer record
 
-- Reviewer: pending
-- Review date: pending
-- Score: pending (target at least 70/100)
-- Part A sign-off: pending
-- Part B independently marked result: pending (target 5/5)
-- Part C rewrite accepted: pending
-- Part D sign-off: pending
-- Supplement sign-off: pending
-- Weekly submissions evidence: pending; not available in this workspace
-- Final readiness confirmation: pending
+- AI technical reviewer: Codex, at the user's request.
+- AI review date: 11 November 2026 (Asia/Karachi).
+- AI artifact-review score: **92/100**. The rubric's technical target is exceeded; 8 points were reserved for unaided learner explanations during a live review.
+- Part A written answers: accepted in AI content review.
+- Part B answer key: **5/5 executable cases passed**; reasons accepted in AI review. Learner exam score not awarded.
+- Part C delivered rewrite: accepted in AI technical review; regression tests passed.
+- Part D written answers: all five accepted in AI review.
+- Supplement written answers and practical: accepted in AI review; hosted practical checks passed.
+- Current final-project submission: indexed in submissions/README.md.
+- AI technical readiness: approved; details and evidence in review-report.md.
+- Formal learner review call and human approval: not held; fields in external-approval.md.
+- Historical weekly submissions: not supplied, so their completion cannot be verified.
 
-Working software and prepared answers do not award a score, establish weekly submissions or replace human sign-off.
+The completed AI artifact assessment is separate from an official review-call score, a record of earlier weekly submissions, or a human signature. No such external outcome has been fabricated.

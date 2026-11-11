@@ -1,6 +1,6 @@
 # Practice assessment
 
-These questions and answers were created for this project with the user's approval. They cover the snapshot topics; they are not the unavailable original Main Guide or Supplement. Answers are preparation material. A reviewer must evaluate the learner's own explanations.
+These questions and answers were created for this project with the user's approval. They cover the snapshot topics; they are not the unavailable original Main Guide or Supplement. The written answers have now passed AI content review, and the five Part B outputs have passed executable checks. See review-report.md for the completed assessment. The learner's own unaided explanations require a separate live review.
 
 ## Part A — Explain with examples
 
@@ -88,7 +88,7 @@ console.log('C')
 
 Answer, in order: `A`, `C`, `B`. Synchronous work completes before the queued promise continuation.
 
-Target: explain all five correctly without relying only on memorized output. The five supplied solutions are an answer key, not an independently awarded 5/5 score.
+Result: all five output predictions matched the executable cases in src/test/assessment.test.ts, for an answer-key verification of 5/5. The explanations were accepted in AI review. This verifies the submitted material; it is not an independently awarded learner exam score. The learner should still explain the outputs without relying only on memorization.
 
 ## Part C — Debug and rewrite Cart
 

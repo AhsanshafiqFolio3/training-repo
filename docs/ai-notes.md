@@ -38,4 +38,6 @@
 
 ## AI review procedure
 
+Follow-up request: the user asked to complete the pending checks. Codex reviewed the written Parts A–D and Supplement, verified five Part B outputs through executable cases, performed eleven checks against the real hosted private Site, and produced review-report.md with an explicitly labeled AI artifact score of 92/100. No human review, learner performance or historical weekly-submission record was invented. Service credentials stayed in session memory and Node-side requests; sanitized evidence contains no token.
+
 Read the diff; trace source and derived state; check threshold, stock and validation boundaries; inspect failure/unmount paths; run tests and strict build; exercise keyboard and narrow layouts; record remaining external assessments. Reject generated statements that are not supported by the actual implementation or test evidence.

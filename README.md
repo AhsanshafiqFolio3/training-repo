@@ -63,6 +63,9 @@ Types cover products, cart items, customer drafts, props, discriminated load sta
 - [Per-term notes](docs/term-notes.md)
 - [Practice assessment Parts A–D and Supplement](docs/assessment-prep.md)
 - [Review-call rubric and rehearsal](docs/review-call.md)
+- [Completed AI technical review: 92/100](docs/review-report.md)
+- [Current submission package index](docs/submissions/README.md)
+- [External training approval record](docs/external-approval.md)
 - [Verification record](docs/verification.md)
 - [Source repository destination](docs/repository.md)
 
@@ -74,4 +77,10 @@ The Sites source remote, if synchronized successfully, is the project remote. No
 
 ## Practical limits
 
-This is a frontend training project. Customer records are fictional. Cart and new customers live in memory and reset on refresh. Existing fixture customers remain available after refresh. Checkout collects no payment and sends no order; customer saves and export jobs have no backend. There is no sign-in or real authorization layer. The assessment materials are project-created equivalents, not the unavailable original Main Guide/Supplement. A human reviewer must award the score, verify weekly submissions and sign off readiness.
+This is a frontend training project. Customer records are fictional. Cart and new customers live in memory and reset on refresh. Existing fixture customers remain available after refresh. Checkout collects no payment and sends no order; customer saves and export jobs have no backend. The hosted Site is private through the Sites access boundary; the demo app has no separate sign-in or authorization layer. Assessment materials are project-created equivalents. The completed AI artifact review scored 92/100, and all five practice output predictions were verified. A human training reviewer must still assess the learner's live explanations, verify the earlier weekly submissions and grant formal training approval.
+
+## Hosted verification
+
+The deployed detail route was opened directly and refreshed in Chromium: both returned HTTP 200 and displayed the correct customer. Eleven hosted checks passed, including access protection, cart pricing, race prevention, modal focus and export snapshots. Sanitized results are committed in docs/evidence/hosted-verification.json.
+
+`npm run verify:hosted` is a maintainer verification command. It accepts a JSON object containing the selected Site URL and its short-lived Sites service credential through hidden stdin. It never embeds a credential in source, browser state, evidence or command arguments. Credentials must be obtained from the native Sites tool, sent only to that Site, and never committed. See the verification script for the exact contract.
