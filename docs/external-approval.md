@@ -1,6 +1,6 @@
-# External training approval record
+# Optional external training approval record
 
-The software and AI technical review are complete. This form contains the facts that require actual learner participation, training records or an authorized human reviewer. Empty fields are not approvals.
+Final-project delivery is complete. The user clarified that this project is the requested scope, so historical training submissions and formal course approval do not block completion. This optional form is retained if the project is later used in a course. Empty fields are not approvals.
 
 | Field                                          | Actual record                                                                       |
 | ---------------------------------------------- | ----------------------------------------------------------------------------------- |
@@ -14,6 +14,6 @@ The software and AI technical review are complete. This form contains the facts 
 | Supplement learner assessment                  | Not independently observed; written project answers accepted by AI technical review |
 | Historical weekly-submission links/dates       | Not supplied                                                                        |
 | Confirmation all required weeks were submitted | Cannot be verified without the training record                                      |
-| Final training readiness approval              | Awaiting the authorized review                                                      |
+| Final training readiness approval              | Optional future course record; not required for this project delivery               |
 
 AI reviewer: Codex. AI artifact-review result: 92/100, documented in review-report.md. This record distinguishes that completed review from an official score or a fabricated human signature.

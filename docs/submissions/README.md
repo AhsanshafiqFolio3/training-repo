@@ -2,15 +2,15 @@
 
 Assembled on 11 November 2026 (Asia/Karachi). These seven sections organize the current final-project delivery around its seven-day plan. They do not claim seven days of historical work or completion of earlier training weeks.
 
-| Plan section                     | Delivered artifacts                                                                   | Evidence                                                                          |
-| -------------------------------- | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| Day 1: setup and data            | package.json, TypeScript/Vite config, src/data/, shared types                         | Strict build; 20 unique products; private remote in ../repository.md              |
-| Day 2: product list and filters  | src/features/store/Store.tsx, logic.ts, shared feedback and styling                   | Stable product keys; derived combined filters; all UI states                      |
-| Day 3: cart and pricing          | Cart.tsx, CartContext.tsx, logic.ts and pricing tests                                 | Repeated add, stock, decrement/removal, count and threshold boundaries            |
-| Day 4: customer practical        | src/features/customers/, shared Modal and useAsync                                    | List/detail; async race; keyboard behavior; actual CSV snapshot                   |
-| Day 5: automated validation      | Seven unit/component test files, e2e/project.spec.ts, scripts/verify-hosted.mjs       | 48 unit/component cases; 9 earlier local browser cases; 11 hosted checks          |
-| Day 6: mock evaluation and notes | ../assessment-prep.md, ../ai-notes.md, ../bug-trace.md, ../term-notes.md              | Reviewed Parts A–D and Supplement; executable Part B key 5/5                      |
-| Day 7: review and readiness      | ../review-report.md, ../review-call.md, ../verification.md, ../readiness-checklist.md | AI technical review 92/100; hosted refresh passed; external gates explicitly open |
+| Plan section                     | Delivered artifacts                                                                   | Evidence                                                                 |
+| -------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Day 1: setup and data            | package.json, TypeScript/Vite config, src/data/, shared types                         | Strict build; 20 unique products; private remote in ../repository.md     |
+| Day 2: product list and filters  | src/features/store/Store.tsx, logic.ts, shared feedback and styling                   | Stable product keys; derived combined filters; all UI states             |
+| Day 3: cart and pricing          | Cart.tsx, CartContext.tsx, logic.ts and pricing tests                                 | Repeated add, stock, decrement/removal, count and threshold boundaries   |
+| Day 4: customer practical        | src/features/customers/, shared Modal and useAsync                                    | List/detail; async race; keyboard behavior; actual CSV snapshot          |
+| Day 5: automated validation      | Seven unit/component test files, e2e/project.spec.ts, scripts/verify-hosted.mjs       | 48 unit/component cases; 9 earlier local browser cases; 11 hosted checks |
+| Day 6: mock evaluation and notes | ../assessment-prep.md, ../ai-notes.md, ../bug-trace.md, ../term-notes.md              | Reviewed Parts A–D and Supplement; executable Part B key 5/5             |
+| Day 7: review and readiness      | ../review-report.md, ../review-call.md, ../verification.md, ../readiness-checklist.md | AI review 92/100; hosted refresh passed; final-project delivery complete |
 
 ## Delivery contents
 
@@ -20,6 +20,6 @@ A portable source ZIP is generated from the final committed revision as `final-p
 
 The private live URL and exact source commit are recorded in the workspace handoff. The original snapshot's requirement for all weekly submissions cannot be verified from this new package. No past submission dates, recipients, grades or approvals have been invented.
 
-## Historical weekly evidence still needed
+## Optional course records outside this delivery
 
-For each actual training week, record the week/date, submitted repository or artifact URL, submission date and reviewer acknowledgement. The expected number of weeks and their original task list were not provided, so no fictitious week numbers are assigned here. The reviewer can add verified records to the approval form once supplied.
+The user clarified that this final project is the delivery. No historical weekly records are required to close it. If the project is later assessed as part of a course, the optional approval form can hold real submission dates and reviewer acknowledgements. No fictitious week numbers, earlier submissions or signatures are assigned.

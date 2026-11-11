@@ -26,6 +26,6 @@ The first Git synchronization attempt failed because the sandbox could not initi
 
 The first responsive run identified the hidden-label overflow described in bug-trace.md. After correction the 16-combination check passed. A subsequent combined test exceeded its 30-second budget, so coverage was split into a test per viewport. Fonts were self-hosted to remove an external loading dependency. The final nine-test browser suite passed without retries.
 
-## External assessment
+## Project completion
 
-AI content review of Parts A–D and the Supplement is complete. The Part B answer key matched all five executable cases. The AI artifact score is 92/100; see review-report.md. This is not a learner interview score. Historical weekly submissions and human training approval are not available. Current project artifacts have been indexed without inventing past submissions.
+AI content review of Parts A–D and the Supplement is complete. The Part B answer key matched all five executable cases. The AI artifact score is 92/100; see review-report.md. This is not a learner interview score. The user clarified that earlier course records and formal human training approval are outside this final-project delivery. The implementation, project-created assessment, AI review, hosted checks and submission package are complete. No past submissions or human approvals are claimed.

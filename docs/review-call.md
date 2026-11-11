@@ -1,6 +1,6 @@
 # Review call and practice rubric
 
-This is a project-created practice rubric. The original training rubric was not supplied. The snapshot's external target remains an overall score of at least 70% with all weekly submissions done.
+This is a project-created practice rubric. The original training rubric was not supplied. The snapshot listed a 70% review target and weekly submissions. The user clarified that the delivery is this final project; prior training records and a formal course interview are outside its completion gate.
 
 ## Demonstration script
 
@@ -40,7 +40,7 @@ This is a project-created practice rubric. The original training rubric was not 
 - Supplement written answers and practical: accepted in AI review; hosted practical checks passed.
 - Current final-project submission: indexed in submissions/README.md.
 - AI technical readiness: approved; details and evidence in review-report.md.
-- Formal learner review call and human approval: not held; fields in external-approval.md.
-- Historical weekly submissions: not supplied, so their completion cannot be verified.
+- Final-project delivery: complete under the user's clarified scope.
+- Formal course interviews and earlier weekly records: optional external training records; not required to close this delivery. No such outcomes are claimed.
 
 The completed AI artifact assessment is separate from an official review-call score, a record of earlier weekly submissions, or a human signature. No such external outcome has been fabricated.

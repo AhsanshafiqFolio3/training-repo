@@ -1,5 +1,7 @@
 # Form — Everyday, considered.
 
+**Status: final-project delivery complete.** Source, tests, hosted application, practice assessments, AI review and submission ZIP have been delivered. The user confirmed that earlier course records and formal training approval are outside this project's completion gate.
+
 A React + TypeScript + Vite final project implementing the supplied store and customer-dashboard requirements. All products, customer records, business rules and practice assessments are original project material, created with the user's approval because the original guides/dataset were unavailable.
 
 ## Run locally
@@ -65,7 +67,7 @@ Types cover products, cart items, customer drafts, props, discriminated load sta
 - [Review-call rubric and rehearsal](docs/review-call.md)
 - [Completed AI technical review: 92/100](docs/review-report.md)
 - [Current submission package index](docs/submissions/README.md)
-- [External training approval record](docs/external-approval.md)
+- [Optional course approval form](docs/external-approval.md)
 - [Verification record](docs/verification.md)
 - [Source repository destination](docs/repository.md)
 
@@ -77,7 +79,7 @@ The Sites source remote, if synchronized successfully, is the project remote. No
 
 ## Practical limits
 
-This is a frontend training project. Customer records are fictional. Cart and new customers live in memory and reset on refresh. Existing fixture customers remain available after refresh. Checkout collects no payment and sends no order; customer saves and export jobs have no backend. The hosted Site is private through the Sites access boundary; the demo app has no separate sign-in or authorization layer. Assessment materials are project-created equivalents. The completed AI artifact review scored 92/100, and all five practice output predictions were verified. A human training reviewer must still assess the learner's live explanations, verify the earlier weekly submissions and grant formal training approval.
+This is a frontend training project. Customer records are fictional. Cart and new customers live in memory and reset on refresh. Existing fixture customers remain available after refresh. Checkout collects no payment and sends no order; customer saves and export jobs have no backend. The hosted Site is private through the Sites access boundary; the demo app has no separate sign-in or authorization layer. Assessment materials are project-created equivalents. The completed AI artifact review scored 92/100, and all five practice output predictions were verified. Formal learner assessment and earlier course records are outside this completed project delivery; no human interview results or historical submissions are claimed.
 
 ## Hosted verification
 
