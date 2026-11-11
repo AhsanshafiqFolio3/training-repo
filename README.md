@@ -21,6 +21,7 @@ npm run test       # Automated unit and component checks; exits after running
 npm run typecheck  # Strict TypeScript compilation
 npm run build     # TypeScript + production bundle in dist/
 npm run preview   # Serve the production bundle locally
+npm run format:check  # Prettier check (npm run format to fix)
 npx playwright install chromium --no-shell
 npm run test:e2e  # Real Chromium user-flow checks
 ```

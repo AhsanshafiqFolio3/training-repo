@@ -6,12 +6,12 @@ Reproduction: open `/customers/c01` and immediately choose Next customer. The AP
 
 The naive implementation would issue A, issue B, render B, then render A when the slower response resolves. The route remains B but A's details overwrite it. This is a reproduction model of the bug, not a claim that a previously deployed version contained it.
 
-| Relative time       | Request/route                         | Naive result       | Correct result                              |
-| ------------------- | ------------------------------------- | ------------------ | ------------------------------------------- |
-| 0 ms                | c01 starts                            | Loading            | Loading                                     |
-| Shortly after       | Navigate to c02                       | A still pending    | A is aborted; loader changes                |
-| ~220 ms after c02   | c02 resolves                          | Omar               | Omar                                        |
-| ~1,100 ms after c01 | c01 completes if cancellation ignored | Incorrectly Ayesha | Response rejected by abort/identity guard   |
+| Relative time       | Request/route                         | Naive result       | Correct result                            |
+| ------------------- | ------------------------------------- | ------------------ | ----------------------------------------- |
+| 0 ms                | c01 starts                            | Loading            | Loading                                   |
+| Shortly after       | Navigate to c02                       | A still pending    | A is aborted; loader changes              |
+| ~220 ms after c02   | c02 resolves                          | Omar               | Omar                                      |
+| ~1,100 ms after c01 | c01 completes if cancellation ignored | Incorrectly Ayesha | Response rejected by abort/identity guard |
 
 Cause: asynchronous work does not complete in navigation order. A closed-over request can update a component that now represents a different selection.
 
