@@ -20,11 +20,21 @@ The app was briefly deployed to a private preview host. Opening `/customers/c02`
 - Failed export: the banner shows an alert icon instead of a success check, and "Try again" restarts the export directly. Covered by the dashboard browser test.
 - Product sort and customer status filter are typed unions with runtime guards instead of plain strings. Sorting moved into a pure `sortProducts` function with unit tests.
 
+## Architecture review fixes
+
+- Error boundary around the routes, reset on navigation.
+- Demo switches (`?state=`, `?exportError=`, slow `c01`) only active in dev or with `VITE_DEMO_CONTROLS=true`; retry removes only its own query parameter.
+- Detail page gets the customer order from the data module instead of importing the dataset; merging session customers goes through `directory.ts`.
+- Store and customer pages split into smaller components and a `useExportJob` hook.
+- Customer save and checkout delays are cancelled on unmount.
+- Prettier added with `format` and `format:check` scripts.
+
 ## Current checks
 
-- `npm run test`: 52 passed across 7 files, including the five Part B output checks.
+- `npm run test`: 59 passed across 10 files, including the five Part B output checks.
 - `npm run test:e2e`: 9 passed in Chromium. Covers combined filtering, repeated cart adds, demo checkout focus, all store states, validation, focus trap/restoration, customer creation, CSV download, stale detail cancellation, direct refresh, missing customers, export failure/retry and layout overflow at 390, 768, 1,024 and 1,440 px.
 - `npm run build`: strict TypeScript compilation and production bundle pass.
+- `npm run format:check`: clean.
 - No `any`, TODO or FIXME in `src/`.
 
 ## Assessment status
