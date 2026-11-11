@@ -7,7 +7,7 @@ import { CartProvider } from './CartProvider'
 import { getProducts } from '../../data/api'
 import { products } from '../../data/products'
 
-vi.mock('../../data/api', () => ({ getProducts: vi.fn() }))
+vi.mock('../../data/api', () => ({ getProducts: vi.fn<typeof getProducts>() }))
 beforeEach(() => {
   vi.mocked(getProducts).mockResolvedValue({ data: [...products], total: 20 })
 })

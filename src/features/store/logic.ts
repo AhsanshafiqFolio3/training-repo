@@ -63,11 +63,10 @@ export function isSortOption(value: string): value is SortOption {
   return Object.hasOwn(sortOptions, value)
 }
 export function sortProducts(products: readonly Product[], sort: SortOption): Product[] {
-  const sorted = [...products]
-  if (sort === 'price-low') return sorted.sort((a, b) => a.price - b.price)
-  if (sort === 'price-high') return sorted.sort((a, b) => b.price - a.price)
-  if (sort === 'rating') return sorted.sort((a, b) => b.rating - a.rating)
-  return sorted
+  if (sort === 'price-low') return products.toSorted((a, b) => a.price - b.price)
+  if (sort === 'price-high') return products.toSorted((a, b) => b.price - a.price)
+  if (sort === 'rating') return products.toSorted((a, b) => b.rating - a.rating)
+  return [...products]
 }
 export function money(value: number): string {
   return `Rs. ${value.toLocaleString('en-PK', { minimumFractionDigits: Number.isInteger(value) ? 0 : 2, maximumFractionDigits: 2 })}`

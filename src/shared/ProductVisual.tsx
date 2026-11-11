@@ -103,8 +103,8 @@ export function ProductVisual({ product, className = '' }: ProductVisualProps): 
         <g transform="translate(0 6) rotate(-15 150 130)">
           <rect x="24" y="77" width="254" height="115" rx="12" fill="#777b74" />
           <rect x="22" y="70" width="254" height="115" rx="12" fill={fill} />
-          {Array.from({ length: 5 }, (_, row) =>
-            Array.from({ length: row === 4 ? 8 : 13 }, (_, col) => (
+          {Array.from({ length: 5 }, (_row, row) =>
+            Array.from({ length: row === 4 ? 8 : 13 }, (_key, col) => (
               <rect
                 key={`${row}-${col}`}
                 x={32 + col * 18}

@@ -34,6 +34,7 @@ The app was briefly deployed to a private preview host. Opening `/customers/c02`
 - `npm run test`: 59 passed across 10 files, including the five Part B output checks.
 - `npm run test:e2e`: 9 passed in Chromium. Covers combined filtering, repeated cart adds, demo checkout focus, all store states, validation, focus trap/restoration, customer creation, CSV download, stale detail cancellation, direct refresh, missing customers, export failure/retry and layout overflow at 390, 768, 1,024 and 1,440 px.
 - `npm run build`: strict TypeScript compilation and production bundle pass.
+- `npm run lint`: Oxlint with the React, hooks, jsx-a11y, TypeScript and Vitest plugins, zero warnings. typescript-eslint doesn't support TypeScript 7 yet, which is why Oxlint is used.
 - `npm run format:check`: clean.
 - No `any`, TODO or FIXME in `src/`.
 

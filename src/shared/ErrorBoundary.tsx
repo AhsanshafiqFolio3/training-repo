@@ -1,9 +1,12 @@
 import { Component } from 'react'
-import type { ReactNode } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 
+export interface ErrorFallbackProps {
+  reset: () => void
+}
 interface ErrorBoundaryProps {
   children: ReactNode
-  fallback: (reset: () => void) => ReactNode
+  fallback: ComponentType<ErrorFallbackProps>
 }
 interface ErrorBoundaryState {
   failed: boolean
@@ -17,6 +20,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     this.setState({ failed: false })
   }
   render(): ReactNode {
-    return this.state.failed ? this.props.fallback(this.reset) : this.props.children
+    const Fallback = this.props.fallback
+    return this.state.failed ? <Fallback reset={this.reset} /> : this.props.children
   }
 }

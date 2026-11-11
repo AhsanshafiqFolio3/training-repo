@@ -25,8 +25,16 @@ export function CustomerTable({ customers }: { customers: readonly Customer[] })
           {customers.map((customer) => (
             <tr key={customer.id}>
               <td>
-                <Link className="customer-name" to={`/customers/${customer.id}`}>
-                  <span className="avatar" style={{ background: customer.color }}>
+                <Link
+                  className="customer-name"
+                  to={`/customers/${customer.id}`}
+                  aria-label={`${customer.name}, ${customer.email}`}
+                >
+                  <span
+                    className="avatar"
+                    style={{ background: customer.color }}
+                    aria-hidden="true"
+                  >
                     {initials(customer.name)}
                   </span>
                   <span>

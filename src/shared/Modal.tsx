@@ -73,6 +73,7 @@ export function Modal({ title, children, onClose, fallbackFocus }: ModalProps): 
   return (
     <div
       className="modal-backdrop"
+      role="presentation"
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose()
       }}

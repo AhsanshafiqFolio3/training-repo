@@ -3,12 +3,13 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { CustomerForm } from './CustomerForm'
 import { customers } from '../../data/customers'
+import type { Customer } from '../../shared/types'
 
 describe('customer modal form', () => {
   it('shows field errors and rejects duplicate emails case-insensitively', async () => {
     const user = userEvent.setup(),
-      save = vi.fn()
-    render(<CustomerForm existing={[...customers]} onSave={save} onClose={vi.fn()} />)
+      save = vi.fn<(customer: Customer) => void>()
+    render(<CustomerForm existing={[...customers]} onSave={save} onClose={vi.fn<() => void>()} />)
     await user.click(screen.getByRole('button', { name: 'Add customer' }))
     expect(screen.getAllByRole('alert')).toHaveLength(3)
     await user.type(screen.getByLabelText('Full name'), 'Ayesha Khan')
@@ -20,8 +21,8 @@ describe('customer modal form', () => {
   })
   it('saves once on repeated submission and normalizes values', async () => {
     const user = userEvent.setup(),
-      save = vi.fn(),
-      close = vi.fn()
+      save = vi.fn<(customer: Customer) => void>(),
+      close = vi.fn<() => void>()
     render(<CustomerForm existing={[]} onSave={save} onClose={close} />)
     await user.type(screen.getByLabelText('Full name'), '  Ali Raza  ')
     await user.type(screen.getByLabelText('Email address'), 'ALI@example.com')
@@ -38,8 +39,10 @@ describe('customer modal form', () => {
   })
   it('drops a pending save when the form is closed before it finishes', async () => {
     const user = userEvent.setup(),
-      save = vi.fn()
-    const { unmount } = render(<CustomerForm existing={[]} onSave={save} onClose={vi.fn()} />)
+      save = vi.fn<(customer: Customer) => void>()
+    const { unmount } = render(
+      <CustomerForm existing={[]} onSave={save} onClose={vi.fn<() => void>()} />,
+    )
     await user.type(screen.getByLabelText('Full name'), 'Sara Malik')
     await user.type(screen.getByLabelText('Email address'), 'sara@example.com')
     await user.type(screen.getByLabelText('City'), 'Multan')

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ReactElement } from 'react'
 import {
   ArrowRight,
@@ -24,7 +24,11 @@ export function Cart(): ReactElement {
   const [orderPlaced, setOrderPlaced] = useState(false)
   const [processing, setProcessing] = useState(false)
   const heading = useRef<HTMLHeadingElement>(null)
+  const backToCollection = useRef<HTMLButtonElement>(null)
   const unmountSignal = useUnmountSignal()
+  useEffect(() => {
+    if (orderPlaced) backToCollection.current?.focus()
+  }, [orderPlaced])
   async function placeOrder(): Promise<void> {
     setProcessing(true)
     try {
@@ -156,7 +160,11 @@ export function Cart(): ReactElement {
             <div className="order-success">
               <CheckCircle2 size={48} />
               <p>Your demo order has been placed. Thank you for shopping with Form.</p>
-              <button className="button dark" autoFocus onClick={() => setCheckout(false)}>
+              <button
+                ref={backToCollection}
+                className="button dark"
+                onClick={() => setCheckout(false)}
+              >
                 Back to the collection <ArrowRight size={16} />
               </button>
             </div>

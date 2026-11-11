@@ -9,6 +9,9 @@ function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => void } {
   })
   return { promise, resolve }
 }
+function failed(): Promise<string> {
+  return Promise.reject(new Error('Offline'))
+}
 describe('async loading and race prevention', () => {
   it('does not let an older response overwrite a newer selection even if transport ignores abort', async () => {
     const old = deferred<string>(),
@@ -35,7 +38,6 @@ describe('async loading and race prevention', () => {
     expect(result.current).toEqual({ status: 'success', data: 'Omar' })
   })
   it('exposes a rejected load as an error and supports a fresh loader', async () => {
-    const failed = (): Promise<string> => Promise.reject(new Error('Offline'))
     const { result, rerender } = renderHook(({ loader }) => useAsync(loader)[0], {
       initialProps: { loader: failed },
     })

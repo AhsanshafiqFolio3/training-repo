@@ -11,8 +11,9 @@ import { Customers } from '../features/customers/Customers'
 import { CustomerDetail } from '../features/customers/CustomerDetail'
 import { Guide } from '../features/Guide'
 import { ErrorBoundary } from '../shared/ErrorBoundary'
+import type { ErrorFallbackProps } from '../shared/ErrorBoundary'
 
-function PageError({ reset }: { reset: () => void }): ReactElement {
+function PageError({ reset }: ErrorFallbackProps): ReactElement {
   return (
     <main className="not-found page-container" role="alert">
       <span className="eyebrow">SOMETHING WENT WRONG</span>
@@ -38,9 +39,7 @@ function pageTitle(pathname: string): string {
   if (pathname === '/project') return 'Project guide — Form'
   return 'Everyday, considered. — Form'
 }
-function Shell(): ReactElement {
-  const { items } = useCart()
-  const { pathname, hash } = useLocation()
+function ScrollOnNavigate({ hash }: { hash: string }): null {
   useEffect(() => {
     if (!hash) {
       window.scrollTo(0, 0)
@@ -52,9 +51,15 @@ function Shell(): ReactElement {
     return (): void => {
       cancelAnimationFrame(frame)
     }
-  }, [pathname, hash])
+  }, [hash])
+  return null
+}
+function Shell(): ReactElement {
+  const { items } = useCart()
+  const { pathname, hash } = useLocation()
   return (
     <>
+      <ScrollOnNavigate key={pathname} hash={hash} />
       <title>{pageTitle(pathname)}</title>
       <a className="skip-link" href="#main-content">
         Skip to content
@@ -87,7 +92,7 @@ function Shell(): ReactElement {
         </Link>
       </header>
       <div id="main-content" tabIndex={-1}>
-        <ErrorBoundary key={pathname} fallback={(reset) => <PageError reset={reset} />}>
+        <ErrorBoundary key={pathname} fallback={PageError}>
           <Routes>
             <Route path="/" element={<Store />} />
             <Route path="/customers" element={<Customers />} />
