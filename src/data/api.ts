@@ -1,6 +1,7 @@
 import { products } from './products'
 import { customers } from './customers'
 import type { ApiResponse, Customer, DemoMode, Product } from '../shared/types'
+import { demoControlsEnabled } from '../shared/demoMode'
 
 export function wait(ms: number, signal?: AbortSignal): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -51,7 +52,7 @@ export async function getCustomer(
     customers.filter((customer) => customer.id === id),
     mode,
     signal,
-    id === 'c01' ? 1100 : 220,
+    id === 'c01' && demoControlsEnabled() ? 1100 : 220,
   )
   return { data: response.data[0] ?? null, total: response.total }
 }

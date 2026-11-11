@@ -1,6 +1,7 @@
 import type { ReactElement } from 'react'
 import { Link } from 'react-router'
 import { ArrowRight, Code2, FlaskConical, Layers, NotebookPen } from 'lucide-react'
+import { demoControlsEnabled } from '../shared/demoMode'
 
 const demoModes = ['success', 'slow', 'empty', 'error'] as const
 const demoPages = [
@@ -57,33 +58,36 @@ export function Guide(): ReactElement {
           <div>
             <h2>Try every state.</h2>
             <p>
-              These links make loading, empty and error states easy to review. Retry restores the
-              normal data.
+              {demoControlsEnabled()
+                ? 'These links make loading, empty and error states easy to review. Retry restores the normal data.'
+                : 'Demo states are turned off in this build. Run npm run dev, or build with VITE_DEMO_CONTROLS=true, to use them.'}
             </p>
           </div>
         </div>
-        <div className="state-links">
-          {demoPages.map(({ path, label }) => (
-            <div key={path}>
-              <h3>{label}</h3>
-              {demoModes.map((mode) => (
-                <Link key={mode} to={`${path}?state=${mode}`}>
-                  {modeLabel(mode)}
+        {demoControlsEnabled() && (
+          <div className="state-links">
+            {demoPages.map(({ path, label }) => (
+              <div key={path}>
+                <h3>{label}</h3>
+                {demoModes.map((mode) => (
+                  <Link key={mode} to={`${path}?state=${mode}`}>
+                    {modeLabel(mode)}
+                    <ArrowRight size={13} />
+                  </Link>
+                ))}
+              </div>
+            ))}
+            <div>
+              <h3>Detail & export</h3>
+              {scenarioLinks.map(({ to, label }) => (
+                <Link key={to} to={to}>
+                  {label}
                   <ArrowRight size={13} />
                 </Link>
               ))}
             </div>
-          ))}
-          <div>
-            <h3>Detail & export</h3>
-            {scenarioLinks.map(({ to, label }) => (
-              <Link key={to} to={to}>
-                {label}
-                <ArrowRight size={13} />
-              </Link>
-            ))}
           </div>
-        </div>
+        )}
       </section>
       <div className="guide-footnote">
         New customers and bag contents are kept in memory for the current session. This project has

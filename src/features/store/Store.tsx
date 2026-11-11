@@ -23,7 +23,7 @@ import { getProducts } from '../../data/api'
 import { categories } from '../../shared/types'
 import type { Category, Product } from '../../shared/types'
 import { useAsync } from '../../shared/useAsync'
-import { readDemoMode } from '../../shared/demoMode'
+import { readDemoMode, withoutParam } from '../../shared/demoMode'
 import { ProductVisual } from '../../shared/ProductVisual'
 import { EmptyState, LoadingCards } from '../../shared/Feedback'
 import { filterProducts, isSortOption, money, sortOptions, sortProducts } from './logic'
@@ -58,7 +58,7 @@ export function Store(): ReactElement {
     setInStock(false)
   }
   function retryLoad(): void {
-    setParams({})
+    setParams((current) => withoutParam(current, 'state'), { replace: true })
     retry()
   }
   function add(product: Product): void {

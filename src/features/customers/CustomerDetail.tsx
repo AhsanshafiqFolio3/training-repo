@@ -7,7 +7,7 @@ import { customers } from '../../data/customers'
 import { useAsync } from '../../shared/useAsync'
 import { EmptyState } from '../../shared/Feedback'
 import { money } from '../store/logic'
-import { readDemoMode } from '../../shared/demoMode'
+import { readDemoMode, withoutParam } from '../../shared/demoMode'
 import { useCustomers } from './useCustomers'
 import { initials } from './initials'
 
@@ -52,7 +52,7 @@ export function CustomerDetail(): ReactElement {
           message={state.message}
           error
           action={() => {
-            setParams({})
+            setParams((current) => withoutParam(current, 'state'), { replace: true })
             retry()
           }}
         />

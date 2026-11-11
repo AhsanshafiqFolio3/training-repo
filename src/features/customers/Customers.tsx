@@ -20,7 +20,7 @@ import { getCustomers, wait } from '../../data/api'
 import { useAsync } from '../../shared/useAsync'
 import { EmptyState } from '../../shared/Feedback'
 import { money } from '../store/logic'
-import { readDemoMode } from '../../shared/demoMode'
+import { exportFailureRequested, readDemoMode, withoutParam } from '../../shared/demoMode'
 import { CustomerForm } from './CustomerForm'
 import { useCustomers } from './useCustomers'
 import { initials } from './initials'
@@ -64,10 +64,10 @@ export function Customers(): ReactElement {
   )
   const active = all.filter((customer) => customer.status === 'Active').length
   function retryLoad(): void {
-    setParams({})
+    setParams((current) => withoutParam(current, 'state'), { replace: true })
     retry()
   }
-  async function startExport(simulateFailure = params.get('exportError') === '1'): Promise<void> {
+  async function startExport(simulateFailure = exportFailureRequested(params)): Promise<void> {
     if (exportController.current && !exportController.current.signal.aborted) return
     const controller = new AbortController()
     exportController.current = controller
@@ -88,13 +88,7 @@ export function Customers(): ReactElement {
     }
   }
   function retryExport(): void {
-    setParams(
-      (current) => {
-        current.delete('exportError')
-        return current
-      },
-      { replace: true },
-    )
+    setParams((current) => withoutParam(current, 'exportError'), { replace: true })
     void startExport(false)
   }
   function saveCustomer(customer: Customer): void {

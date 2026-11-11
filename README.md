@@ -39,6 +39,8 @@ If a managed Windows machine restricts npm/browser caches, point `npm_config_cac
 
 Try `?state=slow`, `?state=empty`, or `?state=error` on the store, customer list or detail route. Retry restores normal data. Use `/customers?exportError=1` to simulate export failure. `c01` responds slower than `c02`, making rapid detail navigation a reproducible race scenario.
 
+These demo switches only work in development (`npm run dev`). A production build ignores them unless it is built with `VITE_DEMO_CONTROLS=true`.
+
 ## Business rules
 
 - Prices are PKR, tax inclusive. Delivery is free.
