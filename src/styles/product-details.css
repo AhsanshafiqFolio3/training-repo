@@ -48,3 +48,31 @@
     gap: 24px;
   }
 }
+.related-products {
+  margin-top: 56px;
+}
+.related-products h2 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 20px;
+  letter-spacing: -0.5px;
+}
+.back-to-top {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgb(0 0 0 / 0.15);
+}
+.back-to-top:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 3px;
+}

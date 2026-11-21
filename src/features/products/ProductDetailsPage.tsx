@@ -5,10 +5,12 @@ import { ArrowLeft, Star } from 'lucide-react'
 import { getProduct } from '../../api/products'
 import type { Product } from '../../api/types'
 import { AsyncContent } from '../../shared/AsyncContent'
+import { BackToTopButton } from '../../shared/BackToTopButton'
 import { formatPrice } from '../../shared/formatPrice'
 import { ErrorState, LoadingDetails } from '../../shared/StatusViews'
 import { useAsync } from '../../shared/useAsync'
 import { useCart } from '../cart/useCart'
+import { RelatedProducts } from './RelatedProducts'
 
 function ProductDetails({ product }: { product: Product }): ReactElement {
   const { items, dispatch } = useCart()
@@ -45,6 +47,8 @@ function ProductDetails({ product }: { product: Product }): ReactElement {
 
 export function ProductDetailsPage(): ReactElement {
   const { id = '' } = useParams()
+  // A new id gives a new loader. useAsync then aborts the old request, so a slow
+  // response for the previous product can never replace the one now on screen.
   const loadProduct = useCallback((signal: AbortSignal) => getProduct(id, signal), [id])
   const [productState, retry] = useAsync(loadProduct)
 
@@ -75,8 +79,14 @@ export function ProductDetailsPage(): ReactElement {
           )
         }
       >
-        {(product) => <ProductDetails product={product} />}
+        {(product) => (
+          <>
+            <ProductDetails product={product} />
+            <RelatedProducts category={product.category} currentProductId={product.id} />
+          </>
+        )}
       </AsyncContent>
+      <BackToTopButton />
     </main>
   )
 }
