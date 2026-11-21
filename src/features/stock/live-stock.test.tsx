@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { readStockMessage, retryDelay } from '../../api/stock-feed'
 import { findProduct } from '../../mocks/mock-database'
 import { readMockSettings, saveMockSettings } from '../../mocks/mock-settings'
@@ -36,6 +37,17 @@ describe('live stock', () => {
     act(() => setMockStock('prod-0001', 0))
     expect(await screen.findByText('Out of stock')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Sold out' })).toBeDisabled()
+  })
+
+  it("won't let the cart go past the live stock", async () => {
+    const user = userEvent.setup()
+    renderApp('/products/prod-0001')
+    await screen.findByText('Live stock')
+    await user.click(screen.getByRole('button', { name: 'Add to cart' }))
+
+    // Someone else buys the rest: one left, and it's already in our cart.
+    act(() => setMockStock('prod-0001', 1))
+    expect(await screen.findByRole('button', { name: 'All in your cart' })).toBeDisabled()
   })
 
   it('updates the cards on screen in the shop', async () => {

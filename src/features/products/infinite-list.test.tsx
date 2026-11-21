@@ -2,9 +2,21 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { readMockSettings, saveMockSettings } from '../../mocks/mock-settings'
+import type { MockLatency } from '../../mocks/mock-settings'
+import { wait } from '../../shared/wait'
 import { countRequests, renderApp, resetMockApi } from '../../test/render-app'
 import { targetIndexForKey } from './grid-navigation'
 import { visibleRows } from './use-virtual-rows'
+
+function setLatency(latency: MockLatency): void {
+  saveMockSettings({ ...readMockSettings(), latency })
+}
+
+function cardCategories(): string[] {
+  return within(screen.getByRole('list', { name: 'Products' }))
+    .getAllByRole('article')
+    .map((card) => card.querySelector('.product-meta span')?.textContent ?? '')
+}
 
 function cardCount(): number {
   return within(screen.getByRole('list', { name: 'Products' })).getAllByRole('article').length
@@ -51,6 +63,25 @@ describe('product list loading more', () => {
     await user.click(screen.getByRole('radio', { name: 'Coffee' }))
     await waitFor(() => expect(countRequests('GET /api/products?category=coffee')).toBe(1))
     await waitFor(() => expect(cardCount()).toBe(24))
+  })
+
+  // The D2-6 race again, for the new list: page 2 of the old filters is still on its way
+  // when the filters change. It must never be added to the new results.
+  it('never adds a late page from the old filters to the new list', async () => {
+    const user = userEvent.setup()
+    renderApp()
+    await screen.findByRole('list', { name: 'Products' })
+
+    setLatency('normal')
+    await user.click(screen.getByRole('button', { name: 'Load more products' }))
+    setLatency('none')
+    await user.click(screen.getByRole('radio', { name: 'Coffee' }))
+    await waitFor(() => expect(cardCategories().every((name) => name === 'coffee')).toBe(true))
+
+    // Give the old page 2 (300 ms) time to arrive, then check nothing changed.
+    await wait(400)
+    expect(cardCount()).toBe(24)
+    expect(cardCategories().every((name) => name === 'coffee')).toBe(true)
   })
 
   it('says when every product is loaded', async () => {
