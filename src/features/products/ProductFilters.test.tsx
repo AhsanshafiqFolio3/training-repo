@@ -54,6 +54,21 @@ describe('product filters', () => {
     expect(screen.getByRole('radio', { name: 'Rubber ducks' })).toBeChecked()
   })
 
+  it('saves the search to the URL once typing pauses, and Back clears it', async () => {
+    const user = userEvent.setup()
+    renderApp()
+    await screen.findByRole('list', { name: 'Products' })
+    const searchBox = screen.getByRole('searchbox', { name: 'Search products' })
+
+    await user.type(searchBox, 'duck')
+    expect(currentUrl()).toBe('/')
+    await waitFor(() => expect(currentUrl()).toBe('/?search=duck'))
+
+    await user.click(screen.getByRole('button', { name: 'Browser back' }))
+    expect(currentUrl()).toBe('/')
+    expect(searchBox).toHaveValue('')
+  })
+
   it('clears search and filters but keeps the sort order', async () => {
     const user = userEvent.setup()
     renderApp('/?search=zzz-no-match&category=ducks&sort=rating')

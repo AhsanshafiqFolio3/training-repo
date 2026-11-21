@@ -1,6 +1,5 @@
 import type { KeyboardEvent, ReactElement } from 'react'
 import type { Product } from '../../api/types'
-import { useCart } from '../cart/useCart'
 import { ProductCard } from './ProductCard'
 
 type ProductGridProps = {
@@ -43,23 +42,11 @@ function moveGridFocus(event: KeyboardEvent<HTMLAnchorElement>): void {
 }
 
 export function ProductGrid({ products, label }: ProductGridProps): ReactElement {
-  const { items, dispatch } = useCart()
-
-  function quantityInCart(product: Product): number {
-    return items.find((item) => item.product.id === product.id)?.quantity ?? 0
-  }
-
   return (
     <ul className="product-grid" aria-label={label}>
       {products.map((product, index) => (
         <li key={product.id}>
-          <ProductCard
-            product={product}
-            index={index}
-            quantityInCart={quantityInCart(product)}
-            onAdd={(added) => dispatch({ type: 'add', product: added })}
-            onLinkKeyDown={moveGridFocus}
-          />
+          <ProductCard product={product} index={index} onLinkKeyDown={moveGridFocus} />
         </li>
       ))}
     </ul>

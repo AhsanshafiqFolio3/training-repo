@@ -10,11 +10,12 @@ import { formatPrice } from '../../shared/formatPrice'
 import { ErrorState, LoadingDetails } from '../../shared/StatusViews'
 import { useAsync } from '../../shared/useAsync'
 import { useCart } from '../cart/useCart'
+import { useQuantityInCart } from '../cart/useQuantityInCart'
 import { RelatedProducts } from './RelatedProducts'
 
 function ProductDetails({ product }: { product: Product }): ReactElement {
-  const { items, dispatch } = useCart()
-  const quantityInCart = items.find((item) => item.product.id === product.id)?.quantity ?? 0
+  const { dispatch } = useCart()
+  const quantityInCart = useQuantityInCart(product.id)
   const isSoldOut = product.stock === 0
   const isAtLimit = quantityInCart >= product.stock
 

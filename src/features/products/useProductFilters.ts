@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useSearchParams } from 'react-router'
 import { toProductSearchParams } from '../../api/products'
 import { readFilters } from './productFilters'
@@ -21,21 +21,29 @@ export function useProductFilters(): UseProductFiltersResult {
   const [params, setParams] = useSearchParams()
   const filters = useMemo(() => readFilters(params), [params])
 
+  // React Router gives setParams a new identity on every URL change. Keeping it in a
+  // ref lets updateFilters and clearFilters stay the same function for the component's
+  // whole life, so effects that depend on them don't re-run on every navigation.
+  const setParamsRef = useRef(setParams)
+  useEffect(() => {
+    setParamsRef.current = setParams
+  })
+
   const updateFilters = useCallback(
     (changes: Partial<ProductFilters>, { replace = false }: UpdateOptions = {}) => {
-      setParams(
+      setParamsRef.current(
         // Any filter change starts again from page 1, unless the page itself changed.
         (current) => toProductSearchParams({ ...readFilters(current), page: 1, ...changes }),
         { replace },
       )
     },
-    [setParams],
+    [],
   )
 
   const clearFilters = useCallback(() => {
     // Keep the sort order: it isn't a filter, it only changes the order.
-    setParams((current) => toProductSearchParams({ sort: readFilters(current).sort }))
-  }, [setParams])
+    setParamsRef.current((current) => toProductSearchParams({ sort: readFilters(current).sort }))
+  }, [])
 
   return { filters, updateFilters, clearFilters }
 }

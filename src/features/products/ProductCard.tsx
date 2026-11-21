@@ -3,12 +3,12 @@ import { Link } from 'react-router'
 import { Check, Plus, Star } from 'lucide-react'
 import type { Product } from '../../api/types'
 import { formatPrice } from '../../shared/formatPrice'
+import { useCart } from '../cart/useCart'
+import { useQuantityInCart } from '../cart/useQuantityInCart'
 
 type ProductCardProps = {
   product: Product
   index: number
-  quantityInCart: number
-  onAdd: (product: Product) => void
   onLinkKeyDown: (event: KeyboardEvent<HTMLAnchorElement>) => void
 }
 
@@ -18,13 +18,9 @@ function addButtonLabel(isSoldOut: boolean, isAtLimit: boolean, quantity: number
   return quantity > 0 ? `Add (${quantity})` : 'Add'
 }
 
-export function ProductCard({
-  product,
-  index,
-  quantityInCart,
-  onAdd,
-  onLinkKeyDown,
-}: ProductCardProps): ReactElement {
+export function ProductCard({ product, index, onLinkKeyDown }: ProductCardProps): ReactElement {
+  const { dispatch } = useCart()
+  const quantityInCart = useQuantityInCart(product.id)
   const isSoldOut = product.stock === 0
   const isAtLimit = quantityInCart >= product.stock
 
@@ -62,7 +58,7 @@ export function ProductCard({
         <button
           className={`add-button ${quantityInCart > 0 ? 'added' : ''}`}
           disabled={isSoldOut || isAtLimit}
-          onClick={() => onAdd(product)}
+          onClick={() => dispatch({ type: 'add', product })}
           aria-label={`Add ${product.name} to cart`}
         >
           {quantityInCart > 0 && !isAtLimit ? <Check size={14} /> : <Plus size={14} />}{' '}
