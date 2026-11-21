@@ -1,30 +1,15 @@
 .catalog-top p,
-.product-description,
 .product-meta,
-.category-count,
-.section-eyebrow,
-.stock-toggle,
-.sidebar-note p,
 .cart-empty p,
-.tax-note,
-.secure-note,
-.collection-end,
 .footer p,
-.footer > span,
-.search-box input::placeholder {
+.footer > span {
   color: #6e7565;
 }
-.modal-description,
 .empty-state p {
   color: #68765a;
 }
 .product-card h3 {
   font-size: 14px;
-}
-.product-description {
-  font-size: 11px;
-  line-height: 1.6;
-  min-height: 18px;
 }
 .product-meta {
   font-size: 10px;
@@ -39,16 +24,7 @@
   font-size: 11px;
   min-height: 32px;
 }
-.category-button {
-  font-size: 12px;
-}
-.category-count {
-  font-size: 10px;
-}
 .catalog-top p {
-  font-size: 11px;
-}
-.search-box input {
   font-size: 11px;
 }
 .cart-heading h2 {
@@ -60,15 +36,6 @@
 .cart-empty p {
   font-size: 11px;
 }
-.discount-note {
-  font-size: 10px;
-}
 .cart-summary > div {
   font-size: 11px;
-}
-.tax-note {
-  font-size: 9px;
-}
-.secure-note {
-  font-size: 8px;
 }

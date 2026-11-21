@@ -39,80 +39,8 @@
 .toast .icon-button {
   margin-left: 10px;
 }
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: #20281c66;
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  z-index: 100;
-}
-.modal {
-  background: #fafaf5;
-  border: 1px solid #eeeee5;
-  width: 100%;
-  max-width: 480px;
-  max-height: calc(100dvh - 48px);
-  overflow: auto;
-  border-radius: 12px;
-  padding: 29px;
-  box-shadow: 0 20px 100px #16200f33;
-}
-.modal-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-}
-.modal-heading h2 {
-  font-family: 'Manrope', sans-serif;
-  font-size: 24px;
-  letter-spacing: -0.8px;
-  font-weight: 600;
-}
-.modal-description {
-  font-size: 12px;
-  line-height: 1.7;
-  color: #878e78;
-  margin: 11px 0 24px;
-}
 .full {
   width: 100%;
-}
-.order-lines > div {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  font-size: 11px;
-  padding: 12px 0;
-  border-bottom: 1px solid #e3e7d8;
-}
-.order-lines strong {
-  font-weight: 550;
-  white-space: nowrap;
-}
-.order-lines .order-discount {
-  color: #6b8455;
-}
-.order-lines .order-total {
-  font-size: 14px;
-  border: 0;
-  padding: 20px 0 25px;
-}
-.order-success {
-  text-align: center;
-  padding-top: 25px;
-  color: #6c8459;
-}
-.order-success p {
-  font-size: 12px;
-  line-height: 1.8;
-  color: #7f8872;
-  margin: 15px 0 25px;
 }
 .empty-state {
   text-align: center;

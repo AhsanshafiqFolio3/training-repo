@@ -109,7 +109,6 @@
   padding: 50px 5% 70px;
   min-height: calc(100vh - 230px);
 }
-.workspace h1,
 .not-found h1 {
   font-family: 'Manrope', sans-serif;
   font-size: 43px;

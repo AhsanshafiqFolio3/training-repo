@@ -1,120 +1,61 @@
 import { describe, expect, it } from 'vitest'
-import { products } from '../../data/products'
-import {
-  calculateTotals,
-  cartReducer,
-  filterProducts,
-  isSortOption,
-  money,
-  sortProducts,
-} from './logic'
-import type { Product } from '../../shared/types'
+import type { Product } from '../../api/types'
+import { calculateTotals, cartReducer } from './logic'
 
-const product = products[0]
-function priced(price: number): Product {
-  return { ...product, price }
+function makeProduct(overrides: Partial<Product> = {}): Product {
+  return {
+    id: 'prod-0001',
+    name: 'Classic Debugging Rubber Duck',
+    price: 999,
+    category: 'ducks',
+    stock: 3,
+    rating: 4.5,
+    imageUrl: '/images/products/ducks.svg',
+    ...overrides,
+  }
 }
-describe('cart behavior', () => {
-  it('increments quantity in the same row when a product is added twice', () => {
-    const first = cartReducer([], { type: 'add', product })
-    const next = cartReducer(first, { type: 'add', product })
-    expect(next).toHaveLength(1)
-    expect(next[0].quantity).toBe(2)
-    expect(first[0].quantity).toBe(1)
+
+describe('cart reducer', () => {
+  it('adds the same product into one row and counts up', () => {
+    const duck = makeProduct()
+    const once = cartReducer([], { type: 'add', product: duck })
+    const twice = cartReducer(once, { type: 'add', product: duck })
+    expect(twice).toEqual([{ product: duck, quantity: 2 }])
+    // The earlier state is left untouched.
+    expect(once).toEqual([{ product: duck, quantity: 1 }])
   })
-  it('keeps different products in separate rows', () => {
-    const first = cartReducer([], { type: 'add', product })
-    expect(cartReducer(first, { type: 'add', product: products[1] })).toHaveLength(2)
+
+  it('never adds more than the stock, or anything that is sold out', () => {
+    const duck = makeProduct({ stock: 1 })
+    const full = cartReducer([], { type: 'add', product: duck })
+    expect(cartReducer(full, { type: 'add', product: duck })).toBe(full)
+    expect(cartReducer([], { type: 'add', product: makeProduct({ stock: 0 }) })).toEqual([])
   })
-  it('never adds sold-out products or exceeds stock', () => {
-    expect(cartReducer([], { type: 'add', product: { ...product, stock: 0 } })).toEqual([])
-    const items = [{ product, quantity: product.stock }]
-    expect(cartReducer(items, { type: 'add', product })).toBe(items)
-  })
-  it('decrements and removes at zero while preserving unrelated rows', () => {
+
+  it('removes a row when decreasing from one, and keeps other rows', () => {
+    const duck = makeProduct()
+    const coffee = makeProduct({ id: 'prod-0002', category: 'coffee' })
     const items = [
-      { product, quantity: 2 },
-      { product: products[1], quantity: 1 },
+      { product: duck, quantity: 1 },
+      { product: coffee, quantity: 2 },
     ]
-    const once = cartReducer(items, { type: 'decrement', id: product.id })
-    expect(once[0].quantity).toBe(1)
-    expect(cartReducer(once, { type: 'decrement', id: product.id })).toEqual([items[1]])
-  })
-  it('supports explicit remove and clear', () => {
-    const items = [{ product, quantity: 3 }]
-    expect(cartReducer(items, { type: 'remove', id: product.id })).toEqual([])
+    expect(cartReducer(items, { type: 'decrement', id: duck.id })).toEqual([
+      { product: coffee, quantity: 2 },
+    ])
+    expect(cartReducer(items, { type: 'remove', id: coffee.id })).toEqual([
+      { product: duck, quantity: 1 },
+    ])
     expect(cartReducer(items, { type: 'clear' })).toEqual([])
   })
 })
-describe('pricing', () => {
-  it('returns zero totals for an empty bag', () =>
-    expect(calculateTotals([])).toEqual({ count: 0, subtotal: 0, discount: 0, total: 0 }))
-  it.each([
-    [4999, 0, 4999],
-    [5000, 0, 5000],
-    [5001, 500.1, 4500.9],
-    [5000.01, 500, 4500.01],
-    [10000, 1000, 9000],
-  ])(
-    'prices a subtotal of %s with a strict threshold and two-decimal rounding',
-    (price, discount, total) => {
-      expect(calculateTotals([{ product: priced(price), quantity: 1 }])).toEqual({
-        count: 1,
-        subtotal: price,
-        discount,
-        total,
-      })
-    },
-  )
-  it('counts units rather than rows and discounts the complete subtotal', () => {
-    expect(
-      calculateTotals([
-        { product: priced(2000), quantity: 3 },
-        { product: priced(1000), quantity: 1 },
-      ]),
-    ).toEqual({ count: 4, subtotal: 7000, discount: 700, total: 6300 })
-  })
-  it('handles fractional currency without binary floating-point residue', () => {
-    expect(calculateTotals([{ product: priced(0.1), quantity: 3 }]).subtotal).toBe(0.3)
-    expect(money(4500.9)).toBe('Rs. 4,500.90')
-  })
-})
-describe('product filtering', () => {
-  it('has 20 uniquely identified products across four categories', () => {
-    expect(products).toHaveLength(20)
-    expect(new Set(products.map((p) => p.id)).size).toBe(20)
-    expect(new Set(products.map((p) => p.category)).size).toBe(4)
-  })
-  it('combines trimmed case-insensitive search, category and stock', () => {
-    const result = filterProducts(products, {
-      search: '  PEBBLE  ',
-      category: 'Audio',
-      inStock: true,
-    })
-    expect(result.map((p) => p.id)).toEqual(['p02'])
-  })
-  it('returns no results for mismatched category and does not mutate source data', () => {
-    expect(
-      filterProducts(products, { search: 'Studio', category: 'Wearables', inStock: false }),
-    ).toEqual([])
-    expect(products).toHaveLength(20)
-  })
-})
-describe('product sorting', () => {
-  it('orders by price and rating without mutating the input', () => {
-    const before = products.map((p) => p.id)
-    const low = sortProducts(products, 'price-low').map((p) => p.price)
-    const high = sortProducts(products, 'price-high').map((p) => p.price)
-    const rating = sortProducts(products, 'rating').map((p) => p.rating)
-    expect(low).toEqual(low.toSorted((a, b) => a - b))
-    expect(high).toEqual(high.toSorted((a, b) => b - a))
-    expect(rating).toEqual(rating.toSorted((a, b) => b - a))
-    expect(sortProducts(products, 'featured').map((p) => p.id)).toEqual(before)
-    expect(products.map((p) => p.id)).toEqual(before)
-  })
-  it('accepts only known sort options', () => {
-    expect(isSortOption('price-low')).toBe(true)
-    expect(isSortOption('cheapest')).toBe(false)
-    expect(isSortOption('toString')).toBe(false)
+
+describe('cart totals', () => {
+  it('adds up units and cents without rounding errors', () => {
+    const items = [
+      { product: makeProduct({ price: 10 }), quantity: 1 },
+      { product: makeProduct({ id: 'prod-0002', price: 20 }), quantity: 1 },
+    ]
+    // 0.10 + 0.20 is 0.30000000000000004 in floats, but 10 + 20 cents is exactly 30.
+    expect(calculateTotals(items)).toEqual({ count: 2, total: 30 })
   })
 })

@@ -6,9 +6,6 @@
   .product-card h3 {
     font-size: 14px;
   }
-  .product-description {
-    font-size: 10px;
-  }
   .product-meta {
     font-size: 9px;
   }
@@ -47,9 +44,6 @@
   .product-card h3 {
     font-size: 11px;
   }
-  .product-description {
-    font-size: 8px;
-  }
   .product-bottom > strong {
     font-size: 11px;
   }
@@ -61,31 +55,11 @@
   .cart-panel {
     padding: 17px 14px;
   }
-  .filters-panel h2 {
-    font-size: 17px;
-  }
-  .section-eyebrow {
-    font-size: 7px;
-  }
-  .category-button {
-    padding: 10px 8px;
-    gap: 7px;
-    font-size: 10px;
-  }
-  .category-button svg {
-    width: 15px;
-  }
-  .sidebar-note {
-    padding: 18px 12px;
-  }
   .catalog-top h2 {
     font-size: 20px;
   }
   .catalog-top p {
     font-size: 9px;
-  }
-  .sort-control select {
-    max-width: 88px;
   }
 }
 @media (max-width: 1000px) {
@@ -110,9 +84,6 @@
   }
   .product-card h3 {
     font-size: 13px;
-  }
-  .product-description {
-    font-size: 10px;
   }
   .product-bottom > strong {
     font-size: 13px;
@@ -163,89 +134,10 @@
     padding: 28px 5% 40px;
     gap: 27px;
   }
-  .filters-panel {
-    display: grid;
-    grid-template-columns: 1fr auto;
-  }
-  .filters-panel > .section-eyebrow {
-    grid-column: 1/-1;
-    font-size: 7px;
-  }
-  .filters-panel > h2 {
-    margin: 8px 0 16px;
-    font-size: 19px;
-  }
-  .category-list {
-    grid-column: 1/-1;
-    grid-row: 3;
-    flex-direction: row;
-    overflow: auto;
-    gap: 7px;
-    scrollbar-width: none;
-  }
-  .category-button {
-    width: auto;
-    flex-shrink: 0;
-    gap: 7px;
-    padding: 10px 12px;
-    font-size: 9px;
-    border: 1px solid #e2e5d8;
-    border-radius: 5px;
-  }
-  .category-button svg {
-    width: 13px;
-    height: 13px;
-  }
-  .category-count {
-    font-size: 8px;
-  }
-  .category-button.active {
-    border-color: #cfd6bf;
-    background: #e9eddd;
-  }
-  .availability {
-    grid-column: 2;
-    grid-row: 2;
-    border: 0;
-    margin: 0;
-    padding: 0;
-    align-self: start;
-    margin-top: 9px;
-  }
-  .availability h3 {
-    display: none;
-  }
-  .stock-toggle {
-    gap: 12px;
-    font-size: 9px;
-  }
-  .toggle-track {
-    width: 27px;
-    height: 16px;
-  }
-  .stock-toggle input:checked + .toggle-track:after {
-    transform: translateX(10px);
-  }
-  .toggle-track:after {
-    top: 2.5px;
-    left: 3px;
-  }
-  .sidebar-note {
-    display: none;
-  }
   .catalog-top h2 {
     font-size: 23px;
   }
   .catalog-top p {
-    font-size: 10px;
-  }
-  .sort-control select {
-    max-width: 107px;
-  }
-  .search-row {
-    margin-top: 19px;
-  }
-  .search-box input {
     font-size: 10px;
   }
   .product-grid {
@@ -254,9 +146,6 @@
   }
   .product-card h3 {
     font-size: 12px;
-  }
-  .product-description {
-    font-size: 9px;
   }
   .product-bottom > strong {
     font-size: 12px;
@@ -281,24 +170,11 @@
   .cart-empty p {
     font-size: 11px;
   }
-  .discount-note {
-    font-size: 10px;
-  }
   .cart-summary > div {
     font-size: 11px;
   }
   .cart-summary .cart-total {
     font-size: 16px;
-  }
-  .tax-note {
-    font-size: 9px;
-  }
-  .checkout-button {
-    font-size: 12px;
-    min-height: 44px;
-  }
-  .secure-note {
-    font-size: 8px;
   }
   .cart-thumbnail {
     width: 65px;
@@ -344,26 +220,6 @@
   }
   .page-container {
     padding: 35px 5% 45px;
-  }
-  .workspace h1 {
-    font-size: 34px;
-    letter-spacing: -1.5px;
-  }
-  .workspace .eyebrow {
-    font-size: 7px;
-  }
-  .modal-backdrop {
-    padding: 16px;
-  }
-  .modal {
-    padding: 24px;
-    max-height: calc(100dvh - 32px);
-  }
-  .modal-heading h2 {
-    font-size: 23px;
-  }
-  .modal-description {
-    font-size: 11px;
   }
   .toast {
     font-size: 10px;

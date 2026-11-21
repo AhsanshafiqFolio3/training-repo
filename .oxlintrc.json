@@ -12,13 +12,34 @@
     "react/react-in-jsx-scope": "off",
     "typescript/no-explicit-any": "error",
     "jsx-a11y/prefer-tag-over-role": "off",
-    "typescript/ban-ts-comment": "error"
+    "typescript/ban-ts-comment": "error",
+    "no-restricted-globals": [
+      "error",
+      {
+        "name": "fetch",
+        "message": "Components never make network calls. Use the functions in src/api instead."
+      },
+      {
+        "name": "XMLHttpRequest",
+        "message": "Components never make network calls. Use the functions in src/api instead."
+      },
+      {
+        "name": "WebSocket",
+        "message": "Open sockets in src/api only."
+      }
+    ]
   },
   "overrides": [
     {
       "files": ["**/*.test.ts", "**/*.test.tsx"],
       "rules": {
         "react/only-export-components": "off"
+      }
+    },
+    {
+      "files": ["src/api/client.ts"],
+      "rules": {
+        "no-restricted-globals": "off"
       }
     }
   ],
