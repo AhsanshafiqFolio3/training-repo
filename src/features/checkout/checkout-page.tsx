@@ -147,7 +147,11 @@ export function CheckoutPage(): ReactElement {
         disabled={isPlacing || kind === 'out-of-stock'}
         onClick={() => void placeOrder()}
       >
-        {isPlacing ? 'Placing your order…' : error ? 'Try again' : 'Place order'}
+        {isPlacing
+          ? 'Placing your order…'
+          : error && kind !== 'out-of-stock'
+            ? 'Try again'
+            : 'Place order'}
       </button>
       <p className="form-hint">This is a demo store. No payment is taken.</p>
     </main>
