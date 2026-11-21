@@ -38,6 +38,15 @@ to AI.
   I asked for one format everywhere, so every file is now kebab-case and lint enforces it.
   <!-- add anything else you changed -->
 
+### 5. Measuring and speeding up the product list (Day 4)
+
+- **Prompt:** "Start Day 4: accessibility, performance with before and after numbers,
+  virtualization for the 5,000-item list, live stock over WebSockets, tests, CI and
+  monitoring."
+- **Kept:** Measuring before fixing (the numbers in `performance.md`), `memo` plus our own
+  window virtualization, the reconnecting stock feed, the two CI workflows.
+- **Changed:** <!-- your own words: e.g. anything you questioned or asked to be done differently -->
+
 ## AI mistakes caught
 
 ### The first debounced search broke the Back button (Day 2)
@@ -62,6 +71,41 @@ The class `active` is never written in our code, because React Router's `NavLink
 runtime. So the script removed the nav link's active underline. It was caught by reading the
 diff of the stylesheet before committing, and the rule was restored.
 **Lesson:** a text search can't see class names that libraries add at runtime.
+
+### The performance doc claimed a tool we never used (Day 4)
+
+The first draft of `performance.md` said "React DevTools' Profiler showed why" every card
+re-rendered. No one had opened the Profiler: the evidence was the script-time numbers.
+It was caught by reading the draft against what had actually been run, and rewritten to
+say what the numbers show.
+**Lesson:** check every "we measured" and "we saw" in AI-written docs against what was
+really done. An evaluator can ask to see it.
+
+### Keyboard jumps broke in the virtual grid (Day 4)
+
+After virtualization, pressing Home far down the list scrolled only part of the way and
+focused nothing. The page has `scroll-behavior: smooth`, so `window.scrollTo` animated
+instead of jumping, and the card to focus wasn't drawn yet. The unit tests passed, because
+the test DOM has no layout or scrolling. It was caught by a check in real Chrome, and fixed
+with `behavior: 'instant'`.
+**Lesson:** anything that depends on layout (virtualization, scrolling, sizes) needs a check
+in a real browser.
+
+### A dependency added only to re-run an effect (Day 4)
+
+To make infinite scroll keep loading on tall screens, the AI added `items.length` to an
+effect's dependencies without using it inside. Lint flagged it as an extra dependency.
+The fix was to say what we meant: keep "is the button near the screen" in state, and load
+whenever it's near and nothing is loading.
+**Lesson:** a dependency the effect doesn't read is a sign the logic is hidden somewhere else.
+
+### The wrong minimum Node version since Day 1 (Day 4)
+
+`package.json` said Node `>=22.12`. While choosing a Node version for CI, we read what our
+dependencies require: jsdom and React Router need at least 22.22. Someone on 22.12 would
+have hit confusing errors. Fixed in the `engines` field and the README.
+**Lesson:** when you write down a requirement, check it against the dependencies instead of
+copying it from a template.
 
 ## Something I wouldn't hand to AI
 
