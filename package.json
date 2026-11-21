@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint": "oxlint --max-warnings 0"
+    "lint": "oxlint --max-warnings 0",
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm test"
   },
   "dependencies": {
     "lucide-react": "1.72.0",
@@ -34,5 +35,8 @@
     "typescript": "7.0.2",
     "vite": "8.3.8",
     "vitest": "5.1.0"
+  },
+  "engines": {
+    "node": ">=22.12"
   }
 }

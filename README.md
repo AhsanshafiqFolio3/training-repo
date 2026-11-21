@@ -1,14 +1,100 @@
 # The Bug Bazaar
 
-A small online store for developer gear: rubber ducks, mechanical keyboards, coffee and stickers. Built with React and TypeScript.
+A small online store for developer gear: rubber ducks, mechanical keyboards, coffee and
+stickers. Built with React and TypeScript on top of a mock API, so it runs without a backend.
 
 This project grew out of the Week 1 store project, and its git history is kept.
 
-## Run locally
+## Quick start
+
+You need **Node.js 22.12 or newer** (check with `node -v`) and npm.
 
 ```bash
+git clone https://github.com/AhsanshafiqFolio3/training-repo.git
+cd training-repo
 npm ci
 npm run dev
 ```
 
-Open the URL Vite prints, normally `http://127.0.0.1:5173`.
+Open the URL Vite prints, normally <http://127.0.0.1:5173>. That's it: the mock API starts
+with the app and no `.env` file is needed.
+
+Demo login: `ada@bugbazaar.dev` / `debug123`.
+
+## Scripts
+
+| Command                | What it does                                                         |
+| ---------------------- | -------------------------------------------------------------------- |
+| `npm run dev`          | Start the dev server with hot reload                                 |
+| `npm run build`        | Type-check, then build the production site into `dist/`              |
+| `npm run preview`      | Serve the `dist/` build locally                                      |
+| `npm test`             | Run all tests once (Vitest + Testing Library)                        |
+| `npm run test:watch`   | Re-run tests as files change                                         |
+| `npm run typecheck`    | Strict TypeScript check, no output files                             |
+| `npm run lint`         | Lint with oxlint; any warning fails                                  |
+| `npm run format`       | Format every file with Prettier                                      |
+| `npm run format:check` | Check formatting without changing files                              |
+| `npm run check`        | Formatting, lint, type check and tests together (run before pushing) |
+
+## Environment variables
+
+None are required. To change them, copy `.env.example` to `.env.local`.
+
+| Variable            | Default | Meaning                                                           |
+| ------------------- | ------- | ----------------------------------------------------------------- |
+| `VITE_USE_MOCK_API` | `true`  | `true` uses the in-browser mock API; `false` calls a real backend |
+| `VITE_API_BASE_URL` | `/api`  | Base URL of the API                                               |
+
+## Triggering errors and slow responses
+
+While the mock API is on, a **Mock API controls** panel sits in the bottom-left corner. Use it
+to slow responses down, make product requests fail with a 500, or expire the session. The full
+list of ways to trigger each error is in [docs/api-contract.md](docs/api-contract.md).
+
+## Folder structure
+
+```text
+src/
+  api/        The only code that talks to the server: client, endpoint functions, types
+  app/        App shell and routes
+  features/   One folder per feature (store, cart, …) with its components, hooks and tests
+  mocks/      The mock API: fetch replacement, seeded data, handlers, controls panel
+  shared/     Reusable components, hooks and helpers used by several features
+  styles/     CSS, one file per area, imported in order from index.css
+  test/       Test setup
+docs/         Written tasks: API contract, decisions, AI notes and so on
+public/       Static files served as-is (fonts, product images)
+```
+
+Tests sit next to the file they test, as `<name>.test.ts` or `<name>.test.tsx`.
+
+## Naming conventions
+
+| What                           | Style             | Example                              |
+| ------------------------------ | ----------------- | ------------------------------------ |
+| Folders                        | lowercase         | `features/store`, `mocks/handlers`   |
+| React component files          | PascalCase        | `ProductCard.tsx`                    |
+| Hook files                     | `use` + camelCase | `useAsync.ts`                        |
+| Other TypeScript files         | camelCase         | `formatPrice.ts`, `mockSettings.ts`  |
+| CSS files and class names      | kebab-case        | `mock-controls.css`, `.product-card` |
+| Components, types              | PascalCase        | `ProductCard`, `RequestState`        |
+| Functions and variables        | camelCase         | `getProducts`, `quantityInCart`      |
+| Booleans                       | `is`/`has` prefix | `isSoldOut`, `hasFilters`            |
+| Fixed values and lookup tables | UPPER_SNAKE_CASE  | `PAGE_SIZE`, `LATENCY_MS`            |
+| API functions                  | HTTP-style verb   | `getProduct`, `createOrder`, `login` |
+
+Lint enforces the file name styles (`unicorn/filename-case`). Prettier handles formatting.
+
+## Rules this codebase follows
+
+- Components never call `fetch`. They use the functions in `src/api/`, which all go through
+  `src/api/client.ts`. Lint blocks `fetch` anywhere else.
+- Prices are whole cents everywhere and are only turned into dollars by `formatPrice`.
+- No `any` and no `@ts-ignore`. TypeScript runs in strict mode with
+  `noUncheckedIndexedAccess`.
+
+## Docs
+
+- [API contract](docs/api-contract.md)
+- [Decisions](docs/decisions.md): what we chose for each task and why
+- [AI notes](docs/ai-notes.md)

@@ -27,6 +27,15 @@
         "name": "WebSocket",
         "message": "Open sockets in src/api only."
       }
+    ],
+    "unicorn/filename-case": [
+      "error",
+      {
+        "cases": {
+          "camelCase": true,
+          "pascalCase": true
+        }
+      }
     ]
   },
   "overrides": [
