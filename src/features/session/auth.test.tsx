@@ -54,6 +54,7 @@ describe('auth', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('Please fix the fields below.')
     expect(screen.getByLabelText('Email')).toHaveAccessibleDescription('Enter your email address.')
     expect(screen.getByLabelText('Password')).toHaveAccessibleDescription('Enter your password.')
+    expect(screen.getByLabelText('Email')).toBeInvalid()
   })
 
   it('shows our own message for a wrong password, not the server’s', async () => {

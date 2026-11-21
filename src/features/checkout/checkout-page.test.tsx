@@ -95,7 +95,7 @@ describe('caching', () => {
     // The list was fetched once, even though we visited it twice.
     expect(countRequests('GET /api/products')).toBe(1)
 
-    await user.click(screen.getByRole('button', { name: `Add ${product.name} to cart` }))
+    await user.click(screen.getByRole('button', { name: `Add, ${product.name}` }))
     await user.click(screen.getByRole('link', { name: /items in cart/ }))
     await user.click(await screen.findByRole('link', { name: 'Go to checkout' }))
     await user.click(await screen.findByRole('button', { name: 'Place order' }))

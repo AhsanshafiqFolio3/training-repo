@@ -29,7 +29,7 @@ describe('cart', () => {
     const { name } = seeded('prod-0002')
     const badge = screen.getByLabelText('0 items in cart')
 
-    await user.click(await screen.findByRole('button', { name: `Add ${name} to cart` }))
+    await user.click(await screen.findByRole('button', { name: `Add, ${name}` }))
     expect(badge).toHaveAccessibleName('1 items in cart')
     expect(badge).toHaveTextContent('1')
   })

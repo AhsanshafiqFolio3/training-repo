@@ -83,7 +83,12 @@ export function VirtualProductGrid({
           // Screen readers only see the drawn cards, so tell them where each one sits
           // in the full list ("product 120 of 2,400").
           <li key={product.id} aria-posinset={index + 1} aria-setsize={products.length}>
-            <ProductCard product={product} index={index} onLinkKeyDown={moveGridFocus} />
+            <ProductCard
+              product={product}
+              index={index}
+              onLinkKeyDown={moveGridFocus}
+              headingLevel={2}
+            />
           </li>
         )
       })}

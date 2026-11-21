@@ -2,12 +2,12 @@
 .product-meta,
 .footer p,
 .footer > span {
-  color: #6e7565;
+  color: var(--muted);
 }
 .status-message p {
-  color: #68765a;
+  color: #56644a;
 }
-.product-card h3 {
+.product-title {
   font-size: 14px;
 }
 .product-meta {

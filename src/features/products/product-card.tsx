@@ -13,6 +13,9 @@ type ProductCardProps = {
   product: Product
   index: number
   onLinkKeyDown: (event: KeyboardEvent<HTMLAnchorElement>) => void
+  // The shop's cards sit right under the page's h1, so they are h2. Related products
+  // sit under their own h2, so there they are h3. Screen reader users jump by heading.
+  headingLevel?: 2 | 3
 }
 
 function addButtonLabel(isSoldOut: boolean, isAtLimit: boolean, quantity: number): string {
@@ -28,7 +31,9 @@ export const ProductCard = memo(function ProductCard({
   product,
   index,
   onLinkKeyDown,
+  headingLevel = 3,
 }: ProductCardProps): ReactElement {
+  const Heading = headingLevel === 2 ? 'h2' : 'h3'
   const dispatch = useAppDispatch()
   const quantityInCart = useQuantityInCart(product.id)
   // Live from the stock feed when we have it. Only this card re-renders when it changes.
@@ -54,7 +59,7 @@ export const ProductCard = memo(function ProductCard({
           {product.rating.toFixed(1)}
         </span>
       </div>
-      <h3>
+      <Heading className="product-title">
         {/* data-grid-index lets the grid move focus between cards with arrow keys. */}
         <Link
           to={`/products/${product.id}`}
@@ -64,21 +69,29 @@ export const ProductCard = memo(function ProductCard({
         >
           {product.name}
         </Link>
-      </h3>
+      </Heading>
       {/* A new key restarts the highlight animation each time the live stock changes. */}
       <p key={stock} className={`product-stock ${hasChangedLive ? 'stock-changed' : ''}`}>
         {isSoldOut ? 'Out of stock' : `${stock} in stock`}
       </p>
       <div className="product-bottom">
         <strong>{formatPrice(product.price)}</strong>
+        {/* The spoken name starts with the visible text ("Add (2)"), so someone using
+            voice control can say what they see. The product name is only for screen
+            readers, so twenty "Add" buttons can be told apart. */}
         <button
+          type="button"
           className={`add-button ${quantityInCart > 0 ? 'added' : ''}`}
           disabled={isSoldOut || isAtLimit}
           onClick={() => dispatch(itemAdded({ ...product, stock }))}
-          aria-label={`Add ${product.name} to cart`}
         >
-          {quantityInCart > 0 && !isAtLimit ? <Check size={14} /> : <Plus size={14} />}{' '}
+          {quantityInCart > 0 && !isAtLimit ? (
+            <Check size={14} aria-hidden="true" />
+          ) : (
+            <Plus size={14} aria-hidden="true" />
+          )}{' '}
           {addButtonLabel(isSoldOut, isAtLimit, quantityInCart)}
+          <span className="visually-hidden">, {product.name}</span>
         </button>
       </div>
     </article>

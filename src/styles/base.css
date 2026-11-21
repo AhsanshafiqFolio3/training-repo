@@ -10,7 +10,8 @@
   font-size: 14px;
   --orange: #e65b32;
   --ink: #262922;
-  --muted: #85867b;
+  /* 5.1:1 on the page background, enough for small text (WCAG AA needs 4.5:1). */
+  --muted: #696a60;
   --line: #e5e4dd;
   --green: #516447;
 }
