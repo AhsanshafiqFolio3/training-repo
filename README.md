@@ -130,3 +130,4 @@ Lint enforces kebab-case file names (`unicorn/filename-case`), so a file like
 - [Performance](docs/performance.md): what we measured, what we fixed, what we skipped
 - [Monitoring](docs/monitoring.md): how errors are caught and logged, and what we'd track
 - [AI notes](docs/ai-notes.md)
+- [Reflection](docs/reflection.md): how I rate myself on each topic, and what to learn next
