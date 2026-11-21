@@ -25,7 +25,7 @@ describe('UI states on the product list', () => {
     setProductRequestsFailing(true)
     const user = userEvent.setup()
     renderApp()
-    expect(await screen.findByRole('alert')).toHaveTextContent('We couldn’t load the products.')
+    expect(await screen.findByRole('alert')).toHaveTextContent('Something went wrong on our side.')
 
     setProductRequestsFailing(false)
     await user.click(screen.getByRole('button', { name: 'Try again' }))
@@ -51,17 +51,19 @@ describe('UI states on the details page', () => {
     setProductRequestsFailing(true)
     const user = userEvent.setup()
     renderApp('/products/prod-0001')
-    expect(await screen.findByRole('alert')).toHaveTextContent('We couldn’t load this product.')
+    expect(await screen.findByRole('alert')).toHaveTextContent('Something went wrong on our side.')
 
     setProductRequestsFailing(false)
     await user.click(screen.getByRole('button', { name: 'Try again' }))
     expect(await screen.findByRole('heading', { level: 1 })).toBeInTheDocument()
   })
 
-  it('shows a not-found message for an unknown product, without a retry', async () => {
+  it('shows the Not Found page for an unknown product, without a retry', async () => {
     renderApp('/products/prod-9999')
-    expect(await screen.findByRole('alert')).toHaveTextContent('We couldn’t find that product.')
+    expect(
+      await screen.findByRole('heading', { name: 'We couldn’t find that product.' }),
+    ).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Browse all products' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Back to the shop' })).toBeInTheDocument()
   })
 })

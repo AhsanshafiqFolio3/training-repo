@@ -2,19 +2,21 @@ import { useCallback } from 'react'
 import type { ReactElement } from 'react'
 import { Link, useParams } from 'react-router'
 import { ArrowLeft, Star } from 'lucide-react'
-import { getProduct } from '../../api/products'
+import { getProduct, productCacheKey } from '../../api/products'
 import type { Product } from '../../api/types'
+import { ApiErrorView } from '../../shared/api-error-view'
 import { AsyncContent } from '../../shared/async-content'
 import { BackToTopButton } from '../../shared/back-to-top-button'
 import { formatPrice } from '../../shared/format-price'
-import { ErrorState, LoadingDetails } from '../../shared/status-views'
+import { LoadingDetails } from '../../shared/status-views'
 import { useAsync } from '../../shared/use-async'
-import { useCart } from '../cart/use-cart'
+import { useAppDispatch } from '../../store/hooks'
+import { itemAdded } from '../cart/cart-slice'
 import { useQuantityInCart } from '../cart/use-quantity-in-cart'
 import { RelatedProducts } from './related-products'
 
 function ProductDetails({ product }: { product: Product }): ReactElement {
-  const { dispatch } = useCart()
+  const dispatch = useAppDispatch()
   const quantityInCart = useQuantityInCart(product.id)
   const isSoldOut = product.stock === 0
   const isAtLimit = quantityInCart >= product.stock
@@ -36,7 +38,7 @@ function ProductDetails({ product }: { product: Product }): ReactElement {
           type="button"
           className="button dark"
           disabled={isSoldOut || isAtLimit}
-          onClick={() => dispatch({ type: 'add', product })}
+          onClick={() => dispatch(itemAdded(product))}
         >
           {isSoldOut ? 'Sold out' : isAtLimit ? 'All in your cart' : 'Add to cart'}
         </button>
@@ -51,7 +53,7 @@ export function ProductDetailsPage(): ReactElement {
   // A new id gives a new loader. useAsync then aborts the old request, so a slow
   // response for the previous product can never replace the one now on screen.
   const loadProduct = useCallback((signal: AbortSignal) => getProduct(id, signal), [id])
-  const [productState, retry] = useAsync(loadProduct)
+  const [productState, retry] = useAsync(loadProduct, productCacheKey(id))
 
   return (
     <main className="page-container product-details">
@@ -61,24 +63,13 @@ export function ProductDetailsPage(): ReactElement {
       <AsyncContent
         state={productState}
         loading={<LoadingDetails label="Loading product" />}
-        error={(error) =>
-          error.httpStatus === 404 ? (
-            <ErrorState
-              title="We couldn’t find that product."
-              message="It may have been removed, or the link is wrong."
-            >
-              <Link to="/" className="button dark">
-                Browse all products
-              </Link>
-            </ErrorState>
-          ) : (
-            <ErrorState
-              title="We couldn’t load this product."
-              message="Something went wrong on our side. Please try again."
-              onRetry={retry}
-            />
-          )
-        }
+        error={(error) => (
+          <ApiErrorView
+            error={error}
+            onRetry={retry}
+            notFoundTitle="We couldn’t find that product."
+          />
+        )}
       >
         {(product) => (
           <>

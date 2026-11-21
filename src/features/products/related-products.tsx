@@ -1,9 +1,10 @@
 import { useCallback } from 'react'
 import type { ReactElement } from 'react'
-import { getProducts } from '../../api/products'
+import { getProducts, productListCacheKey } from '../../api/products'
 import type { Category } from '../../api/types'
+import { ApiErrorView } from '../../shared/api-error-view'
 import { AsyncContent } from '../../shared/async-content'
-import { ErrorState, LoadingGrid } from '../../shared/status-views'
+import { LoadingGrid } from '../../shared/status-views'
 import { useAsync } from '../../shared/use-async'
 import { ProductGrid } from './product-grid'
 
@@ -22,7 +23,10 @@ export function RelatedProducts({
     (signal: AbortSignal) => getProducts({ category, inStock: true, sort: 'rating' }, signal),
     [category],
   )
-  const [relatedState, retry] = useAsync(loadRelated)
+  const [relatedState, retry] = useAsync(
+    loadRelated,
+    productListCacheKey({ category, inStock: true, sort: 'rating' }),
+  )
 
   return (
     <section className="related-products" aria-labelledby="related-heading">
@@ -30,13 +34,7 @@ export function RelatedProducts({
       <AsyncContent
         state={relatedState}
         loading={<LoadingGrid label="Loading related products" />}
-        error={() => (
-          <ErrorState
-            title="We couldn’t load related products."
-            message="Please try again."
-            onRetry={retry}
-          />
-        )}
+        error={(error) => <ApiErrorView error={error} onRetry={retry} />}
       >
         {(data) => (
           <ProductGrid
