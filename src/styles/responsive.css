@@ -221,16 +221,6 @@
   .page-container {
     padding: 35px 5% 45px;
   }
-  .toast {
-    font-size: 10px;
-    padding: 12px;
-    bottom: 15px;
-    gap: 8px;
-    white-space: normal;
-  }
-  .toast > .icon-button {
-    margin-left: 4px;
-  }
   .not-found h1 {
     font-size: 50px;
   }

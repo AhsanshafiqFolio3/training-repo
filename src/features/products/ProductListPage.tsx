@@ -2,7 +2,8 @@ import { useCallback, useRef } from 'react'
 import type { ReactElement } from 'react'
 import { getProducts } from '../../api/products'
 import { PAGE_SIZE } from '../../api/types'
-import { EmptyState, LoadingCards } from '../../shared/Feedback'
+import { AsyncContent } from '../../shared/AsyncContent'
+import { EmptyState, ErrorState, LoadingGrid } from '../../shared/StatusViews'
 import { useAsync } from '../../shared/useAsync'
 import { Cart } from '../cart/Cart'
 import { FilterSidebar } from './FilterSidebar'
@@ -55,32 +56,41 @@ export function ProductListPage(): ReactElement {
               ? resultSummary(page, productsState.data.items.length, productsState.data.total)
               : ' '}
           </p>
-          {productsState.status === 'loading' || productsState.status === 'idle' ? (
-            <LoadingCards />
-          ) : productsState.status === 'error' ? (
-            <EmptyState
-              title="We couldn’t load the products."
-              message="Something went wrong on our side. Please try again."
-              error
-              action={retry}
-            />
-          ) : productsState.data.items.length === 0 ? (
-            <EmptyState
-              title="No products match."
-              message="Try a different search, or clear the filters."
-              action={hasActiveFilters(filters) ? clearFilters : undefined}
-              actionLabel="Clear filters"
-            />
-          ) : (
-            <>
-              <ProductGrid products={productsState.data.items} label="Products" />
-              <Pagination
-                page={page}
-                pageCount={Math.ceil(productsState.data.total / PAGE_SIZE)}
-                onChange={goToPage}
+          <AsyncContent
+            state={productsState}
+            loading={<LoadingGrid label="Loading products" />}
+            error={() => (
+              <ErrorState
+                title="We couldn’t load the products."
+                message="Something went wrong on our side. Please try again."
+                onRetry={retry}
               />
-            </>
-          )}
+            )}
+            isEmpty={(data) => data.items.length === 0}
+            empty={
+              <EmptyState
+                title="No products match."
+                message="Try a different search, or clear the filters."
+              >
+                {hasActiveFilters(filters) && (
+                  <button type="button" className="button dark" onClick={clearFilters}>
+                    Clear filters
+                  </button>
+                )}
+              </EmptyState>
+            }
+          >
+            {(data) => (
+              <>
+                <ProductGrid products={data.items} label="Products" />
+                <Pagination
+                  page={page}
+                  pageCount={Math.ceil(data.total / PAGE_SIZE)}
+                  onChange={goToPage}
+                />
+              </>
+            )}
+          </AsyncContent>
         </section>
         <Cart />
       </div>
