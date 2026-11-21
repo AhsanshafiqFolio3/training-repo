@@ -61,3 +61,6 @@ export function saveMockSettings(settings: MockSettings): void {
     // Storage can be blocked (private mode). The settings then last until reload.
   }
 }
+
+// Fired by the "Crash this page" button; CrashTrigger listens for it (D4-7).
+export const CRASH_EVENT = 'bug-bazaar:crash'

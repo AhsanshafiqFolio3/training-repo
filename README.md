@@ -106,4 +106,5 @@ Lint enforces kebab-case file names (`unicorn/filename-case`), so a file like
 - [Decisions](docs/decisions.md): what we chose for each task and why
 - [Authentication](docs/auth.md): where the token lives and why
 - [Performance](docs/performance.md): what we measured, what we fixed, what we skipped
+- [Monitoring](docs/monitoring.md): how errors are caught and logged, and what we'd track
 - [AI notes](docs/ai-notes.md)

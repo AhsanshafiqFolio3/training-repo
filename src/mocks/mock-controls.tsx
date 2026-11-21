@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { ReactElement } from 'react'
-import { MOCK_LATENCIES, readMockSettings, saveMockSettings } from './mock-settings'
+import { CRASH_EVENT, MOCK_LATENCIES, readMockSettings, saveMockSettings } from './mock-settings'
 import { dropStockSockets } from './mock-stock-socket'
 import type { MockLatency, MockSettings } from './mock-settings'
 
@@ -73,6 +73,13 @@ export function MockControls(): ReactElement {
         />
         Live stock server is down (drops the connection)
       </label>
+      <button
+        type="button"
+        className="button secondary"
+        onClick={() => window.dispatchEvent(new Event(CRASH_EVENT))}
+      >
+        Crash this page (render error)
+      </button>
     </details>
   )
 }

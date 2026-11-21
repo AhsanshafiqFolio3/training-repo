@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import type { ReactElement } from 'react'
 import { Link, useLocation } from 'react-router'
 import { USE_MOCK_API } from '../api/config'
+import { CrashTrigger } from '../mocks/crash-trigger'
 import { MockControls } from '../mocks/mock-controls'
 import { ErrorBoundary } from '../shared/error-boundary'
 import type { ErrorFallbackProps } from '../shared/error-boundary'
@@ -45,8 +46,11 @@ export default function App(): ReactElement {
       </a>
       <SiteHeader />
       <div id="main-content" tabIndex={-1}>
+        {/* A crash inside a page replaces only the page, not the header or footer.
+            The key resets the boundary when you go to another page. */}
         <ErrorBoundary key={pathname} fallback={PageError}>
           <AppRoutes />
+          {USE_MOCK_API && <CrashTrigger />}
         </ErrorBoundary>
       </div>
       <footer className="footer">
