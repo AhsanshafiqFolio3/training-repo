@@ -20,7 +20,29 @@ to AI.
 - **Changed:** Asked for no extra libraries that the brief doesn't mention, so MSW was dropped
   in favour of a hand-written mock. <!-- add anything else you changed -->
 
+### 3. Debounced search with the Back button (D2-5)
+
+- **Prompt:** "Extract typed custom hooks such as debouncing input, and make search
+  update the URL only after typing pauses."
+- **Kept:** `useDebouncedValue` and the search box that syncs from the URL.
+- **Changed:** <!-- your own words -->
+
 ## AI mistakes caught
+
+### The first debounced search broke the Back button (Day 2)
+
+The AI's first version re-applied the old search after pressing Back. The page test
+"saves the search to the URL once typing pauses, and Back clears it" failed and showed
+why: React Router's setter changes identity on every navigation, which re-ran the effect.
+**Lesson:** write the test for the behaviour you care about (Back works), not only the happy path.
+
+### A git command undid a change (Day 2)
+
+While removing a debug log, the AI ran `git checkout` on a file, which also threw away an
+uncommitted edit to that file. The next test run failed and `git diff --stat` showed the
+file was missing from the changes, so the edit was re-applied.
+**Lesson:** `git checkout <file>` drops every uncommitted change in that file, not just the
+line you meant.
 
 ### Unused-CSS cleanup removed live styles (Day 1)
 

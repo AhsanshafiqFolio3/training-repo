@@ -77,3 +77,83 @@ For each task: what we used, what else we considered, and why.
 - **Known trade-off:** The client trusts the server to follow the contract and does not
   re-check response bodies at runtime. A schema library such as zod could do that; for a
   mock we control, it would add code without catching real bugs.
+
+## D2-1: Product list
+
+- **Used:** A responsive CSS grid of product cards, each with image, name, price, stock and
+  rating. Each name links to `/products/:id`. The grid is a `<ul>` so screen readers announce
+  "list, 24 items". Tab reaches every link and button. On top of that, arrow keys, Home and
+  End move between product links, using the number of columns the CSS grid currently shows.
+  Prices are only converted from cents in `formatPrice` (with `Intl.NumberFormat`).
+- **Considered:** `role="grid"` with a full roving tabindex, so one Tab stop enters the grid.
+- **Why:** `role="grid"` promises spreadsheet behaviour for every cell, including the Add
+  buttons, which is a lot to get right. A plain list keeps native Tab order working and adds
+  arrow keys as a shortcut, with no change to what screen readers expect.
+
+## D2-2: Filters
+
+- **Used:** Search, category, in-stock and sort live in the URL query string
+  (`?search=duck&category=ducks&inStock=true&sort=price-asc&page=2`). `useProductFilters`
+  reads them with `readFilters` (unknown values fall back to defaults) and writes them with
+  `toProductSearchParams`, the **same** function the API client uses. Category, stock, sort
+  and page changes add a history entry. Clear filters keeps the sort. Pagination is
+  page-numbered, 24 per page.
+- **Considered:** Keeping filters in React state, with or without copying them into
+  `localStorage`.
+- **Why:** The URL is the one place that survives a refresh, can be copied, and works with
+  Back. React state is lost on refresh, and `localStorage` isn't shared by a copied link.
+  Since the page URL and the API query use the same format and the same helper, they can't
+  drift apart.
+
+## D2-3: UI states
+
+- **Used:** `AsyncContent` takes a `RequestState` and render functions for loading, error,
+  empty and success. Every data area (list, details, related products) goes through it, with
+  the shared `LoadingGrid`/`LoadingDetails`, `ErrorState` and `EmptyState` views.
+  Errors have Try again, except "not found", which links back to the shop instead.
+- **How to trigger each state:** Slow response speed in the Mock API controls (loading),
+  "Product requests fail with 500" (error), a search like `zzz` (empty), and normal use (success).
+- **Considered:** Writing `if (loading) … else if (error) …` in each page.
+- **Why:** Doing it in one place means no page can forget a state, and they all look the same.
+  The `switch` over `status` is exhaustive, so TypeScript flags a missing case.
+
+## D2-4: useEffect and cleanup
+
+- **Used:** `useAsync` creates an `AbortController` per request and aborts it in the effect
+  cleanup. React runs that cleanup when the loader changes (a new product id) and when the page
+  unmounts. Results from an old loader are ignored even if the abort doesn't reach the network.
+  Back to Top listens to `scroll` (passive) and removes the listener in cleanup.
+  "More from this category" lets you switch products quickly to see this in action.
+- **Considered:** An `isMounted`/`ignore` flag only, without aborting.
+- **Why:** A flag hides the stale result but leaves the request running. Aborting also frees
+  the network. We keep both: the abort saves work, and the "is this still the current request"
+  check is the safety net.
+
+## D2-5: Custom hooks
+
+| Hook                | What it does                                          | Used in                                                |
+| ------------------- | ----------------------------------------------------- | ------------------------------------------------------ |
+| `useAsync`          | Runs a loader, tracks `RequestState`, aborts, retries | Product list, product details, related products        |
+| `useProductFilters` | Reads/writes filters in the URL                       | List page, filter sidebar, toolbar, search box         |
+| `useDebouncedValue` | Returns a value only after it stops changing for N ms | Search box (and any future debounced input)            |
+| `useEventListener`  | Adds a window listener, removes it on unmount         | Back to Top (and later the live-stock reconnect, D4-4) |
+| `useQuantityInCart` | How many of a product are in the cart                 | Product card, product details                          |
+
+- **Why:** Each one replaces code that was written, or would be written, in more than one place,
+  and each is typed with generics or exact event types instead of `any`.
+- **A bug the tests caught:** after typing a search and pressing Back, the old search came
+  back. React Router's `setSearchParams` gets a new identity on every URL change, so
+  `updateFilters` changed too, and the search effect re-ran with the old debounced text.
+  The fix keeps `setSearchParams` in a ref so `updateFilters` stays stable.
+
+## D2-6: Race conditions
+
+- **Used:** The mock's "Random" response speed gives each request its own delay
+  (0.1–1.5 s), so later requests can finish first. The search waits for typing to pause
+  (fewer requests), and `useAsync` aborts the previous request and ignores results that
+  aren't from the current loader. `SearchRace.test.tsx` forces "old request slow, new
+  request fast" and checks the old results never appear. With the guard removed, the test fails.
+- **Considered:** Comparing a request counter (`latestRequestId`) against each response.
+- **Why:** That's the same idea. `useAsync` does it by comparing the loader and attempt
+  that produced the result with the current ones, and the abort comes from the platform.
+  Debouncing alone isn't enough: a pause in typing can still leave two requests in flight.
