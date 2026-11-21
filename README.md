@@ -70,6 +70,8 @@ list of ways to trigger each error is in [docs/api-contract.md](docs/api-contrac
 
 ## Folder structure
 
+More detail, with a data flow diagram, is in [docs/architecture.md](docs/architecture.md).
+
 ```text
 src/
   api/        The only code that talks to the server: client, endpoint functions, types
@@ -118,6 +120,7 @@ Lint enforces kebab-case file names (`unicorn/filename-case`), so a file like
 
 ## Docs
 
+- [Architecture](docs/architecture.md): folder structure, data flow, where state lives
 - [API contract](docs/api-contract.md)
 - [Decisions](docs/decisions.md): what we chose for each task and why
 - [Authentication](docs/auth.md): where the token lives and why
