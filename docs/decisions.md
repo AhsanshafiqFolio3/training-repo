@@ -401,3 +401,16 @@ to `sessionStorage`; `httpOnly` cookie in production).
 - **Considered:** Sentry from the start.
 - **Why not yet:** it needs an account and a key, and the brief asks for logging, not a
   service. `reportError` is the one place to change when we add one.
+
+## D5-1 to D5-4: Architecture docs
+
+- **Used:** Diagrams written in Mermaid inside the Markdown files (`architecture.md`,
+  `orders.md`), which GitHub draws as pictures. The architecture doc is named
+  `architecture.md` in lowercase to match every other file name in the repo.
+- **Considered:** Drawing the diagrams in a tool and committing PNG images.
+- **Why:** Mermaid diagrams are text, so they change in the same commit as the code they
+  describe and show up in a diff. An image goes out of date quietly.
+- **Order flow (D5-3):** the order service saves the order and its first job in one
+  database transaction (an "outbox"), so there can never be an order without a job.
+  Considered calling payment directly inside `POST /api/orders`: simpler, but the user would
+  wait for the card payment, and a payment outage would stop all orders.
