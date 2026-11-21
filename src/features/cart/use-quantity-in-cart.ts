@@ -1,7 +1,7 @@
-import { useCart } from './use-cart'
+import { useAppSelector } from '../../store/hooks'
+import { selectQuantityInCart } from './cart-slice'
 
 // How many of this product are already in the cart (0 if none).
 export function useQuantityInCart(productId: string): number {
-  const { items } = useCart()
-  return items.find((item) => item.product.id === productId)?.quantity ?? 0
+  return useAppSelector((state) => selectQuantityInCart(state, productId))
 }

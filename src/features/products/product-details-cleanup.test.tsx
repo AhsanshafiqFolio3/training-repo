@@ -1,11 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { Provider } from 'react-redux'
 import { Link, MemoryRouter, Route, Routes } from 'react-router'
-import { CartProvider } from '../cart/cart-provider'
 import { findProduct } from '../../mocks/mock-database'
 import { readMockSettings, saveMockSettings } from '../../mocks/mock-settings'
 import type { MockLatency } from '../../mocks/mock-settings'
+import { createAppStore } from '../../store/store'
 import { resetMockApi } from '../../test/render-app'
 import { wait } from '../../shared/wait'
 import { ProductDetailsPage } from './product-details-page'
@@ -22,15 +23,15 @@ function nameOf(id: string): string {
 // just like clicking a related product.
 function renderDetails(): ReturnType<typeof render> {
   return render(
-    <MemoryRouter initialEntries={['/products/prod-0001']}>
-      <CartProvider>
+    <Provider store={createAppStore()}>
+      <MemoryRouter initialEntries={['/products/prod-0001']}>
         <Link to="/products/prod-0002">Open second</Link>
         <Link to="/products/prod-0003">Open third</Link>
         <Routes>
           <Route path="/products/:id" element={<ProductDetailsPage />} />
         </Routes>
-      </CartProvider>
-    </MemoryRouter>,
+      </MemoryRouter>
+    </Provider>,
   )
 }
 
