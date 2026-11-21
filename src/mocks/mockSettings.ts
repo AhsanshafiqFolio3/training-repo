@@ -1,7 +1,7 @@
 // Switches that let us trigger slow responses and errors on purpose.
 // They are saved in sessionStorage so they survive a page reload.
 
-export const MOCK_LATENCIES = ['none', 'normal', 'slow'] as const
+export const MOCK_LATENCIES = ['none', 'normal', 'slow', 'random'] as const
 export type MockLatency = (typeof MOCK_LATENCIES)[number]
 
 export type MockSettings = {
@@ -20,10 +20,20 @@ export const DEFAULT_MOCK_SETTINGS: MockSettings = {
 
 const STORAGE_KEY = 'bug-bazaar:mock-settings'
 
-export const LATENCY_MS: Record<MockLatency, number> = {
-  none: 0,
-  normal: 300,
-  slow: 2000,
+// How long the mock waits before answering, in milliseconds.
+// 'random' gives every request its own delay, so a request sent later can
+// finish first. That's how real networks behave, and what D2-6 guards against.
+export function latencyMs(latency: MockLatency): number {
+  switch (latency) {
+    case 'none':
+      return 0
+    case 'normal':
+      return 300
+    case 'slow':
+      return 2000
+    case 'random':
+      return 100 + Math.round(Math.random() * 1400)
+  }
 }
 
 export function readMockSettings(): MockSettings {

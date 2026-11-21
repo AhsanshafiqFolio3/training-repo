@@ -80,7 +80,7 @@ Tests sit next to the file they test, as `<name>.test.ts` or `<name>.test.tsx`.
 | Components, types              | PascalCase        | `ProductCard`, `RequestState`        |
 | Functions and variables        | camelCase         | `getProducts`, `quantityInCart`      |
 | Booleans                       | `is`/`has` prefix | `isSoldOut`, `hasFilters`            |
-| Fixed values and lookup tables | UPPER_SNAKE_CASE  | `PAGE_SIZE`, `LATENCY_MS`            |
+| Fixed values and lookup tables | UPPER_SNAKE_CASE  | `PAGE_SIZE`, `SORT_LABELS`           |
 | API functions                  | HTTP-style verb   | `getProduct`, `createOrder`, `login` |
 
 Lint enforces the file name styles (`unicorn/filename-case`). Prettier handles formatting.

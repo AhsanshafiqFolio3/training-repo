@@ -4,7 +4,7 @@ import { createOrder, getOrder } from './handlers/orderHandlers'
 import { getProduct, listProducts } from './handlers/productHandlers'
 import { errorResponse } from './mockResponses'
 import type { MockRequest } from './mockRequest'
-import { LATENCY_MS, readMockSettings } from './mockSettings'
+import { latencyMs, readMockSettings } from './mockSettings'
 
 type Route = {
   method: 'GET' | 'POST'
@@ -47,7 +47,7 @@ export async function mockFetch(input: string, init: RequestInit = {}): Promise<
   const method = (init.method ?? 'GET').toUpperCase()
 
   // Rejects with an AbortError if the caller cancels while we "wait for the network".
-  await wait(LATENCY_MS[readMockSettings().latency], init.signal ?? undefined)
+  await wait(latencyMs(readMockSettings().latency), init.signal ?? undefined)
 
   for (const route of ROUTES) {
     const params = route.method === method ? matchPath(route.path, url.pathname) : null

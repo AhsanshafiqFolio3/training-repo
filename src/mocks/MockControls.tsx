@@ -33,6 +33,7 @@ export function MockControls(): ReactElement {
           <option value="none">Instant</option>
           <option value="normal">Normal (0.3 s)</option>
           <option value="slow">Slow (2 s)</option>
+          <option value="random">Random (0.1–1.5 s, out of order)</option>
         </select>
       </label>
       <label>
