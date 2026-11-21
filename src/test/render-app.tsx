@@ -1,0 +1,46 @@
+import type { ReactElement } from 'react'
+import { render } from '@testing-library/react'
+import type { RenderResult } from '@testing-library/react'
+import { MemoryRouter, Route, Routes, useLocation, useNavigate } from 'react-router'
+import { CartProvider } from '../features/cart/cart-provider'
+import { ProductDetailsPage } from '../features/products/product-details-page'
+import { ProductListPage } from '../features/products/product-list-page'
+import { resetMockDatabase } from '../mocks/mock-database'
+import { DEFAULT_MOCK_SETTINGS, saveMockSettings } from '../mocks/mock-settings'
+import type { MockSettings } from '../mocks/mock-settings'
+
+// Fresh mock data with instant responses, unless a test asks for something else.
+export function resetMockApi(settings: Partial<MockSettings> = {}): void {
+  sessionStorage.clear()
+  resetMockDatabase()
+  saveMockSettings({ ...DEFAULT_MOCK_SETTINGS, latency: 'none', ...settings })
+}
+
+// Shows the current URL and stands in for the browser's Back button.
+function HistoryControls(): ReactElement {
+  const location = useLocation()
+  const navigate = useNavigate()
+  return (
+    <>
+      <output data-testid="current-url">{location.pathname + location.search}</output>
+      <button type="button" onClick={() => void navigate(-1)}>
+        Browser back
+      </button>
+    </>
+  )
+}
+
+// Renders the real pages and routes at the given URL, backed by the mock API.
+export function renderApp(url = '/'): RenderResult {
+  return render(
+    <MemoryRouter initialEntries={[url]}>
+      <CartProvider>
+        <Routes>
+          <Route path="/" element={<ProductListPage />} />
+          <Route path="/products/:id" element={<ProductDetailsPage />} />
+        </Routes>
+        <HistoryControls />
+      </CartProvider>
+    </MemoryRouter>,
+  )
+}

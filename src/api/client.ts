@@ -1,5 +1,5 @@
-import { mockFetch } from '../mocks/mockFetch'
-import { ApiRequestError } from './ApiRequestError'
+import { mockFetch } from '../mocks/mock-fetch'
+import { ApiRequestError } from './api-request-error'
 import { API_BASE_URL, USE_MOCK_API } from './config'
 import type { ApiError } from './types'
 

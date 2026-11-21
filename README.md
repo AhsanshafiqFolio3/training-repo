@@ -70,20 +70,26 @@ Tests sit next to the file they test, as `<name>.test.ts` or `<name>.test.tsx`.
 
 ## Naming conventions
 
-| What                           | Style             | Example                              |
-| ------------------------------ | ----------------- | ------------------------------------ |
-| Folders                        | lowercase         | `features/store`, `mocks/handlers`   |
-| React component files          | PascalCase        | `ProductCard.tsx`                    |
-| Hook files                     | `use` + camelCase | `useAsync.ts`                        |
-| Other TypeScript files         | camelCase         | `formatPrice.ts`, `mockSettings.ts`  |
-| CSS files and class names      | kebab-case        | `mock-controls.css`, `.product-card` |
-| Components, types              | PascalCase        | `ProductCard`, `RequestState`        |
-| Functions and variables        | camelCase         | `getProducts`, `quantityInCart`      |
-| Booleans                       | `is`/`has` prefix | `isSoldOut`, `hasFilters`            |
-| Fixed values and lookup tables | UPPER_SNAKE_CASE  | `PAGE_SIZE`, `SORT_LABELS`           |
-| API functions                  | HTTP-style verb   | `getProduct`, `createOrder`, `login` |
+**Every file and folder name is kebab-case**: components, hooks, slices, tests, CSS, all of
+them. A file is named after the main thing it exports.
 
-Lint enforces the file name styles (`unicorn/filename-case`). Prettier handles formatting.
+| What                           | Style             | Example                                           |
+| ------------------------------ | ----------------- | ------------------------------------------------- |
+| Folders                        | kebab-case        | `features/cart`, `mocks/handlers`                 |
+| Files (`.ts`, `.tsx`, `.css`)  | kebab-case        | `product-card.tsx`, `use-async.ts`, `pages.css`   |
+| Test files                     | kebab-case        | `cart-slice.test.ts`, `checkout-page.test.tsx`    |
+| CSS class names                | kebab-case        | `.product-card`, `.cart-line`                     |
+| Components, types              | PascalCase        | `ProductCard` (in `product-card.tsx`), `CartLine` |
+| Hooks                          | `use` + camelCase | `useAsync` (in `use-async.ts`)                    |
+| Functions and variables        | camelCase         | `getProducts`, `quantityInCart`                   |
+| Booleans                       | `is`/`has` prefix | `isSoldOut`, `hasActiveFilters`                   |
+| Redux actions                  | past-tense event  | `itemAdded`, `sessionExpired`                     |
+| Redux selectors                | `select` + noun   | `selectCartCount`, `selectIsSignedIn`             |
+| Fixed values and lookup tables | UPPER_SNAKE_CASE  | `PAGE_SIZE`, `SORT_LABELS`                        |
+| API functions                  | HTTP-style verb   | `getProduct`, `createOrder`, `login`              |
+
+Lint enforces kebab-case file names (`unicorn/filename-case`), so a file like
+`ProductCard.tsx` fails `npm run lint`. Prettier handles formatting.
 
 ## Rules this codebase follows
 

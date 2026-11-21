@@ -87,7 +87,7 @@ Every error uses the `ApiError` shape. `code` is meant for code to check, and
 
 ## The mock API
 
-The app has no real backend yet. `src/mocks/mockFetch.ts` has the same signature as
+The app has no real backend yet. `src/mocks/mock-fetch.ts` has the same signature as
 `fetch`, and the API client uses it when `VITE_USE_MOCK_API` isn't `false`. It:
 
 - seeds 5,000 products from a fixed seed, so the data is the same on every load
@@ -113,4 +113,4 @@ mock is on).
 | 404 on an order           | Open an order id that doesn't exist                               |
 | Slow responses            | Set "Response speed" to Slow                                      |
 
-`src/mocks/mockFetch.test.ts` checks every status code above.
+`src/mocks/mock-fetch.test.ts` checks every status code above.

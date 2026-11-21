@@ -31,10 +31,7 @@
     "unicorn/filename-case": [
       "error",
       {
-        "cases": {
-          "camelCase": true,
-          "pascalCase": true
-        }
+        "case": "kebabCase"
       }
     ],
     "react/no-unstable-nested-components": [

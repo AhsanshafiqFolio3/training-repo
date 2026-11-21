@@ -151,7 +151,7 @@ For each task: what we used, what else we considered, and why.
 - **Used:** The mock's "Random" response speed gives each request its own delay
   (0.1–1.5 s), so later requests can finish first. The search waits for typing to pause
   (fewer requests), and `useAsync` aborts the previous request and ignores results that
-  aren't from the current loader. `SearchRace.test.tsx` forces "old request slow, new
+  aren't from the current loader. `search-race.test.tsx` forces "old request slow, new
   request fast" and checks the old results never appear. With the guard removed, the test fails.
 - **Considered:** Comparing a request counter (`latestRequestId`) against each response.
 - **Why:** That's the same idea. `useAsync` does it by comparing the loader and attempt
