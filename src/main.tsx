@@ -21,7 +21,8 @@ createRoot(root).render(
   <StrictMode>
     <ErrorBoundary fallback={AppError}>
       <Provider store={store}>
-        <BrowserRouter>
+        {/* basename: on GitHub Pages every route lives under /training-repo/. */}
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
           <App />
         </BrowserRouter>
       </Provider>

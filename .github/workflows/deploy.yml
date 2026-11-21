@@ -1,0 +1,63 @@
+# Bonus for D4-6: every push to main publishes the store to GitHub Pages, at
+# https://<user>.github.io/training-repo/. It runs the full check first, so a broken
+# main is never deployed. One-time setup: Settings → Pages → Source: "GitHub Actions".
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  # Lets you run it by hand from the Actions tab.
+  workflow_dispatch:
+
+# Never run two deploys at once, and never cancel one halfway.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: npm
+
+      - run: npm ci
+
+      - name: Check
+        run: npm run check
+
+      # The site lives under /training-repo/, not at the root of the domain.
+      - name: Build
+        run: npm run build
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+
+      # GitHub Pages has no "send every path to index.html" setting. It serves
+      # 404.html for unknown paths, so a copy of index.html lets the app handle
+      # deep links such as /training-repo/products/prod-0001.
+      - name: Make deep links work
+        run: cp dist/index.html dist/404.html
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

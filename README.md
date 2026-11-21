@@ -7,7 +7,8 @@ This project grew out of the Week 1 store project, and its git history is kept.
 
 ## Quick start
 
-You need **Node.js 22.12 or newer** (check with `node -v`) and npm.
+You need **Node.js 22.22.2, 24.15 or 26 and newer** (check with `node -v`) and npm. CI runs on
+Node 26.
 
 ```bash
 git clone https://github.com/AhsanshafiqFolio3/training-repo.git
@@ -35,6 +36,21 @@ Demo login: `ada@bugbazaar.dev` / `debug123`.
 | `npm run format`       | Format every file with Prettier                                      |
 | `npm run format:check` | Check formatting without changing files                              |
 | `npm run check`        | Formatting, lint, type check and tests together (run before pushing) |
+
+## CI and deploy
+
+- **CI** (`.github/workflows/ci.yml`) runs on every pull request and every push to `main`:
+  formatting, lint, type check, tests and a production build. Any failure fails the check.
+- **Deploy** (`.github/workflows/deploy.yml`) runs on every push to `main`. It runs the
+  checks again, builds the site for `/training-repo/`, and publishes it to GitHub Pages.
+
+Two settings have to be switched on once in the repository on GitHub (they can't be set
+from code):
+
+1. **Block merges when CI fails:** Settings → Branches → Add branch ruleset (or "Add rule")
+   for `main` → turn on **Require status checks to pass** → add the check
+   **Lint, type check, test and build**. Also turn on **Require a pull request before merging**.
+2. **Publish the site:** Settings → Pages → Source: **GitHub Actions**.
 
 ## Environment variables
 
