@@ -17,10 +17,19 @@ type RequestOptions = {
 // The mock has the same signature as fetch, so switching is one line.
 const send: typeof mockFetch = USE_MOCK_API ? mockFetch : (input, init) => fetch(input, init)
 
-let authToken: string | null = null
+type ClientHooks = {
+  // Where the current token comes from (the Redux session).
+  getToken: () => string | null
+  // Called when a request that carried a token gets a 401: the session is no longer valid.
+  onUnauthorized: () => void
+}
 
-export function setAuthToken(token: string | null): void {
-  authToken = token
+let hooks: ClientHooks = { getToken: () => null, onUnauthorized: () => {} }
+
+// Called once when the store is created (src/store/store.ts). The client doesn't
+// import the store itself, which keeps this file free of React and Redux.
+export function configureApiClient(nextHooks: ClientHooks): void {
+  hooks = nextHooks
 }
 
 function isApiError(body: unknown): body is ApiError {
@@ -39,7 +48,8 @@ export async function apiRequest<TResponse>(
 ): Promise<TResponse> {
   const requestHeaders: Record<string, string> = { Accept: 'application/json', ...headers }
   if (body !== undefined) requestHeaders['Content-Type'] = 'application/json'
-  if (authToken) requestHeaders.Authorization = `Bearer ${authToken}`
+  const token = hooks.getToken()
+  if (token) requestHeaders.Authorization = `Bearer ${token}`
 
   let response: Response
   try {
@@ -59,6 +69,9 @@ export async function apiRequest<TResponse>(
   }
 
   const responseBody: unknown = await response.json().catch(() => null)
+  // Only a request that sent a token can have an expired session. A 401 from the
+  // login form just means a wrong password.
+  if (response.status === 401 && token) hooks.onUnauthorized()
   if (!response.ok) {
     throw new ApiRequestError(
       response.status,
