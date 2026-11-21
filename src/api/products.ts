@@ -22,3 +22,13 @@ export function getProducts(query: ProductQuery = {}, signal?: AbortSignal): Pro
 export function getProduct(id: string, signal?: AbortSignal): Promise<Product> {
   return apiRequest<Product>(`/products/${encodeURIComponent(id)}`, { signal })
 }
+
+// Cache keys for useAsync. Both start with "product", so invalidateCache('product')
+// clears every product result at once (we do that after an order changes stock).
+export function productListCacheKey(query: ProductQuery): string {
+  return `products?${toProductSearchParams(query).toString()}`
+}
+
+export function productCacheKey(id: string): string {
+  return `product/${id}`
+}
