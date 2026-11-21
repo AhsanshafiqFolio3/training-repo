@@ -125,7 +125,7 @@ mock is on).
 
 | Error                     | How to trigger it                                                                                                             |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| 500 on products           | Tick "Product requests fail with 500", then reload or press Retry                                                             |
+| 500 on products           | Tick "Product requests fail with 500", then reload or press **Try again**                                                     |
 | 404 on a product          | Open a product id that doesn't exist, e.g. `/products/prod-9999`                                                              |
 | 400 on login              | Submit the login form with an empty or badly formed email                                                                     |
 | 401 on login              | Use a wrong password                                                                                                          |

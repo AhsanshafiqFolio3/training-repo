@@ -148,6 +148,17 @@ describe('POST /api/orders and GET /api/orders/:id', () => {
     expect(unauthorized).toBe(401)
   })
 
+  it('answers 400 INVALID_JSON when the body is not JSON', async () => {
+    const token = await signIn()
+    const [status, body] = await call<ApiError>('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: '{ not json',
+    })
+    expect(status).toBe(400)
+    expect(body.error.code).toBe('INVALID_JSON')
+  })
+
   it('answers 409 and names the product that ran out', async () => {
     const token = await signIn()
     const product = findProduct('prod-0001')
