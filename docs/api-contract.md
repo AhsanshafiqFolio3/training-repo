@@ -68,6 +68,11 @@ Response: `{ "token": string, "user": User }`. Send the token on protected reque
 
 Request: `{ "items": [{ "productId": string, "quantity": number }] }`. Needs a token.
 
+Optional header: `Idempotency-Key: <unique string>`. If an order was already created with
+this key (by the same user), the server returns that same order with 201 and creates nothing
+new. The app sends one key per checkout and reuses it on every retry, so a retry after a lost
+reply can't create a second order.
+
 Order status moves from `queued` to `processing` to `shipped`.
 
 ## Errors
@@ -101,16 +106,18 @@ Demo account: `ada@bugbazaar.dev` / `debug123`.
 Open **Mock API controls** in the bottom-left corner of the app (it only shows while the
 mock is on).
 
-| Error                     | How to trigger it                                                 |
-| ------------------------- | ----------------------------------------------------------------- |
-| 500 on products           | Tick "Product requests fail with 500", then reload or press Retry |
-| 404 on a product          | Open a product id that doesn't exist, e.g. `/products/prod-9999`  |
-| 400 on login              | Submit the login form with an empty or badly formed email         |
-| 401 on login              | Use a wrong password                                              |
-| 401 on `/api/me` / orders | Tick "Expire the session", or call without signing in             |
-| 400 on orders             | Send an order with no items                                       |
-| 409 on orders             | Order more than the stock, e.g. a product with only 1–3 left      |
-| 404 on an order           | Open an order id that doesn't exist                               |
-| Slow responses            | Set "Response speed" to Slow                                      |
+| Error                     | How to trigger it                                                                                                             |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| 500 on products           | Tick "Product requests fail with 500", then reload or press Retry                                                             |
+| 404 on a product          | Open a product id that doesn't exist, e.g. `/products/prod-9999`                                                              |
+| 400 on login              | Submit the login form with an empty or badly formed email                                                                     |
+| 401 on login              | Use a wrong password                                                                                                          |
+| 401 on `/api/me` / orders | Tick "Expire the session", or call without signing in                                                                         |
+| 400 on orders             | Send an order with no items                                                                                                   |
+| 409 on orders             | Order more than the stock, e.g. a product with only 1–3 left                                                                  |
+| 404 on an order           | Open an order id that doesn't exist                                                                                           |
+| Slow responses            | Set "Response speed" to Slow                                                                                                  |
+| Out-of-order responses    | Set "Response speed" to Random                                                                                                |
+| A lost order reply        | Tick "Lose the reply to new orders". The order is saved, the app sees a network error, and Try again gets the same order back |
 
 `src/mocks/mock-fetch.test.ts` checks every status code above.

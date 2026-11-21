@@ -10,12 +10,16 @@ export type MockSettings = {
   failProductRequests: boolean
   // Every token is treated as expired, so protected requests answer 401.
   rejectTokens: boolean
+  // A new order is saved, but the reply is "lost" (like a dropped connection),
+  // so the app has to retry. Retries with the same Idempotency-Key get the saved order.
+  loseOrderReplies: boolean
 }
 
 export const DEFAULT_MOCK_SETTINGS: MockSettings = {
   latency: 'normal',
   failProductRequests: false,
   rejectTokens: false,
+  loseOrderReplies: false,
 }
 
 const STORAGE_KEY = 'bug-bazaar:mock-settings'

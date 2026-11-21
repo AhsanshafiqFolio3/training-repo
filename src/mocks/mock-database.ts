@@ -10,6 +10,8 @@ export type StoredOrder = {
   userId: string
   items: OrderLine[]
   createdAt: number
+  // The Idempotency-Key the order was created with, if any.
+  idempotencyKey: string | null
 }
 
 export const DEMO_USER: StoredUser = {
@@ -23,6 +25,8 @@ export const mockDatabase = {
   products: seedProducts(),
   users: [DEMO_USER],
   orders: [] as StoredOrder[],
+  // Every request the mock received, e.g. "GET /api/products?page=2". Handy in tests.
+  requestLog: [] as string[],
 }
 
 export function findProduct(id: string): Product | undefined {
@@ -34,4 +38,5 @@ export function resetMockDatabase(): void {
   mockDatabase.products = seedProducts()
   mockDatabase.users = [DEMO_USER]
   mockDatabase.orders = []
+  mockDatabase.requestLog = []
 }

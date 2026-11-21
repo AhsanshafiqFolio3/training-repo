@@ -14,7 +14,7 @@
 }
 .shop-layout {
   display: grid;
-  grid-template-columns: 170px minmax(0, 1fr) 274px;
+  grid-template-columns: 180px minmax(0, 1fr);
   gap: 30px;
   padding: 38px 4.2% 60px;
   max-width: 1600px;
@@ -44,7 +44,7 @@
 }
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   column-gap: 18px;
   row-gap: 27px;
 }

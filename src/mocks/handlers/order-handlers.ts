@@ -2,6 +2,7 @@ import type { CreatedOrder, Order, OrderLine, OrderStatus } from '../../api/type
 import { findProduct, mockDatabase } from '../mock-database'
 import type { StoredOrder } from '../mock-database'
 import { errorResponse, jsonResponse } from '../mock-responses'
+import { readMockSettings } from '../mock-settings'
 import type { MockRequest } from '../mock-request'
 import { authenticate } from './auth-handlers'
 
@@ -31,6 +32,18 @@ function readOrderLines(body: unknown): OrderLine[] | null {
 export function createOrder(request: MockRequest): Response {
   const user = authenticate(request)
   if (user instanceof Response) return user
+
+  // Idempotency: a retry with the same key gets the first order back. Nothing new is
+  // created and no stock is taken twice, so the customer can't be charged twice.
+  const idempotencyKey = request.headers.get('Idempotency-Key')
+  const earlier = mockDatabase.orders.find(
+    (order) =>
+      idempotencyKey && order.idempotencyKey === idempotencyKey && order.userId === user.id,
+  )
+  if (earlier) {
+    const body: CreatedOrder = { id: earlier.id, status: 'queued' }
+    return jsonResponse(201, body)
+  }
 
   const lines = readOrderLines(request.body)
   if (!lines) {
@@ -66,8 +79,12 @@ export function createOrder(request: MockRequest): Response {
     userId: user.id,
     items: lines,
     createdAt: Date.now(),
+    idempotencyKey,
   }
   mockDatabase.orders.push(order)
+
+  // Simulates the connection dropping after the server saved the order.
+  if (readMockSettings().loseOrderReplies) throw new TypeError('Failed to fetch')
 
   const body: CreatedOrder = { id: order.id, status: 'queued' }
   return jsonResponse(201, body)

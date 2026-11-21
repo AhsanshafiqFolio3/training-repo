@@ -2,6 +2,7 @@ import { wait } from '../shared/wait'
 import { getCurrentUser, login } from './handlers/auth-handlers'
 import { createOrder, getOrder } from './handlers/order-handlers'
 import { getProduct, listProducts } from './handlers/product-handlers'
+import { mockDatabase } from './mock-database'
 import { errorResponse } from './mock-responses'
 import type { MockRequest } from './mock-request'
 import { latencyMs, readMockSettings } from './mock-settings'
@@ -45,6 +46,7 @@ function parseBody(body: RequestInit['body']): unknown {
 export async function mockFetch(input: string, init: RequestInit = {}): Promise<Response> {
   const url = new URL(input, window.location.origin)
   const method = (init.method ?? 'GET').toUpperCase()
+  mockDatabase.requestLog.push(`${method} ${url.pathname}${url.search}`)
 
   // Rejects with an AbortError if the caller cancels while we "wait for the network".
   await wait(latencyMs(readMockSettings().latency), init.signal ?? undefined)

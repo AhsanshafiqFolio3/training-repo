@@ -52,6 +52,14 @@ export function MockControls(): ReactElement {
         />
         Expire the session (401 on protected requests)
       </label>
+      <label>
+        <input
+          type="checkbox"
+          checked={settings.loseOrderReplies}
+          onChange={(event) => update({ loseOrderReplies: event.target.checked })}
+        />
+        Lose the reply to new orders (order is saved)
+      </label>
     </details>
   )
 }

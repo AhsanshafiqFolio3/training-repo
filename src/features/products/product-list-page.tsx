@@ -1,11 +1,11 @@
 import { useCallback, useRef } from 'react'
 import type { ReactElement } from 'react'
-import { getProducts } from '../../api/products'
+import { getProducts, productListCacheKey } from '../../api/products'
 import { PAGE_SIZE } from '../../api/types'
+import { ApiErrorView } from '../../shared/api-error-view'
 import { AsyncContent } from '../../shared/async-content'
-import { EmptyState, ErrorState, LoadingGrid } from '../../shared/status-views'
+import { EmptyState, LoadingGrid } from '../../shared/status-views'
 import { useAsync } from '../../shared/use-async'
-import { Cart } from '../cart/cart'
 import { FilterSidebar } from './filter-sidebar'
 import { Pagination } from './pagination'
 import { ProductGrid } from './product-grid'
@@ -31,7 +31,10 @@ export function ProductListPage(): ReactElement {
     (signal: AbortSignal) => getProducts({ search, category, inStock, sort, page }, signal),
     [search, category, inStock, sort, page],
   )
-  const [productsState, retry] = useAsync(loadProducts)
+  const [productsState, retry] = useAsync(
+    loadProducts,
+    productListCacheKey({ search, category, inStock, sort, page }),
+  )
 
   function goToPage(nextPage: number): void {
     updateFilters({ page: nextPage })
@@ -59,13 +62,7 @@ export function ProductListPage(): ReactElement {
           <AsyncContent
             state={productsState}
             loading={<LoadingGrid label="Loading products" />}
-            error={() => (
-              <ErrorState
-                title="We couldn’t load the products."
-                message="Something went wrong on our side. Please try again."
-                onRetry={retry}
-              />
-            )}
+            error={(error) => <ApiErrorView error={error} onRetry={retry} />}
             isEmpty={(data) => data.items.length === 0}
             empty={
               <EmptyState
@@ -92,7 +89,6 @@ export function ProductListPage(): ReactElement {
             )}
           </AsyncContent>
         </section>
-        <Cart />
       </div>
     </main>
   )

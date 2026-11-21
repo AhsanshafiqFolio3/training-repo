@@ -35,25 +35,6 @@ describe('product list', () => {
     await user.keyboard('{ArrowLeft}')
     expect(first).toHaveFocus()
   })
-
-  it('adds a product twice into one cart row, then decreases and removes it', async () => {
-    const user = userEvent.setup()
-    renderApp()
-    const { name, price } = seededProduct('prod-0001')
-    const addButton = await screen.findByRole('button', { name: `Add ${name} to cart` })
-    await user.click(addButton)
-    await user.click(addButton)
-
-    expect(screen.getAllByTestId('cart-row')).toHaveLength(1)
-    expect(screen.getByLabelText(`Quantity for ${name}`)).toHaveTextContent('2')
-    const cart = screen.getByRole('complementary', { name: 'Shopping cart' })
-    expect(within(cart).getByText(formatPrice(price * 2))).toBeInTheDocument()
-
-    await user.click(screen.getByRole('button', { name: `Decrease ${name}` }))
-    expect(screen.getByLabelText(`Quantity for ${name}`)).toHaveTextContent('1')
-    await user.click(screen.getByRole('button', { name: `Remove ${name}` }))
-    expect(screen.queryByTestId('cart-row')).not.toBeInTheDocument()
-  })
 })
 
 describe('product details', () => {
@@ -63,8 +44,11 @@ describe('product details', () => {
     const { name, price } = seededProduct('prod-0001')
     await user.click(await screen.findByRole('link', { name }))
 
-    expect(await screen.findByRole('heading', { level: 1, name })).toBeInTheDocument()
-    expect(screen.getByText(formatPrice(price))).toBeInTheDocument()
-    expect(screen.getByText(/in stock|out of stock/i)).toBeInTheDocument()
+    const heading = await screen.findByRole('heading', { level: 1, name })
+    // Scope to the main product: related products below have their own prices.
+    const details = heading.closest('.product-details-info')
+    if (!(details instanceof HTMLElement)) throw new Error('details panel not found')
+    expect(within(details).getByText(formatPrice(price))).toBeInTheDocument()
+    expect(within(details).getByText(/in stock|out of stock/i)).toBeInTheDocument()
   })
 })
