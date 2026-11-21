@@ -40,7 +40,7 @@
   },
   "overrides": [
     {
-      "files": ["**/*.test.ts", "**/*.test.tsx"],
+      "files": ["**/*.test.ts", "**/*.test.tsx", "src/test/**"],
       "rules": {
         "react/only-export-components": "off"
       }

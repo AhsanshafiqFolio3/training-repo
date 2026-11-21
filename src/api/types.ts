@@ -79,3 +79,12 @@ export type CreatedOrder = {
   id: string
   status: 'queued'
 }
+
+// Type guards for values read from URLs, where anything can appear.
+export function isCategory(value: string | null): value is Category {
+  return CATEGORIES.some((category) => category === value)
+}
+
+export function isProductSort(value: string | null): value is ProductSort {
+  return PRODUCT_SORTS.some((sort) => sort === value)
+}

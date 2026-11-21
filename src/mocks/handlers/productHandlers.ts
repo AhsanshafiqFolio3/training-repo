@@ -1,17 +1,9 @@
-import { CATEGORIES, PAGE_SIZE, PRODUCT_SORTS } from '../../api/types'
-import type { Category, Product, ProductList, ProductSort } from '../../api/types'
+import { isCategory, isProductSort, PAGE_SIZE } from '../../api/types'
+import type { Product, ProductList, ProductSort } from '../../api/types'
 import { findProduct, mockDatabase } from '../mockDatabase'
 import { errorResponse, jsonResponse } from '../mockResponses'
 import { readMockSettings } from '../mockSettings'
 import type { MockRequest } from '../mockRequest'
-
-function isCategory(value: string | null): value is Category {
-  return CATEGORIES.some((category) => category === value)
-}
-
-function isProductSort(value: string | null): value is ProductSort {
-  return PRODUCT_SORTS.some((sort) => sort === value)
-}
 
 function compareProducts(sort: ProductSort): (a: Product, b: Product) => number {
   switch (sort) {

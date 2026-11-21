@@ -55,7 +55,7 @@
   .cart-panel {
     padding: 17px 14px;
   }
-  .catalog-top h2 {
+  .catalog-top h1 {
     font-size: 20px;
   }
   .catalog-top p {
@@ -134,7 +134,7 @@
     padding: 28px 5% 40px;
     gap: 27px;
   }
-  .catalog-top h2 {
+  .catalog-top h1 {
     font-size: 23px;
   }
   .catalog-top p {
