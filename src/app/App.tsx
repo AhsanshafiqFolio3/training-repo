@@ -2,10 +2,11 @@ import { useEffect } from 'react'
 import type { ReactElement } from 'react'
 import { Link, NavLink, Route, Routes, useLocation } from 'react-router'
 import { ArrowRight, ShoppingBag } from 'lucide-react'
-import { Store } from '../features/store/Store'
-import { CartProvider } from '../features/store/CartProvider'
-import { useCart } from '../features/store/useCart'
-import { calculateTotals } from '../features/store/logic'
+import { CartProvider } from '../features/cart/CartProvider'
+import { calculateTotals } from '../features/cart/cartLogic'
+import { useCart } from '../features/cart/useCart'
+import { ProductDetailsPage } from '../features/products/ProductDetailsPage'
+import { ProductListPage } from '../features/products/ProductListPage'
 import { USE_MOCK_API } from '../api/config'
 import { MockControls } from '../mocks/MockControls'
 import { ErrorBoundary } from '../shared/ErrorBoundary'
@@ -53,7 +54,6 @@ function Shell(): ReactElement {
   return (
     <>
       <ScrollOnNavigate key={pathname} hash={hash} />
-      <title>The Bug Bazaar</title>
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
@@ -75,11 +75,13 @@ function Shell(): ReactElement {
       <div id="main-content" tabIndex={-1}>
         <ErrorBoundary key={pathname} fallback={PageError}>
           <Routes>
-            <Route path="/" element={<Store />} />
+            <Route path="/" element={<ProductListPage />} />
+            <Route path="/products/:id" element={<ProductDetailsPage />} />
             <Route
               path="*"
               element={
                 <main className="not-found page-container">
+                  <title>Page not found · The Bug Bazaar</title>
                   <span className="eyebrow">404 / PAGE NOT FOUND</span>
                   <h1>
                     This page

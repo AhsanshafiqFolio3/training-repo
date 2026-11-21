@@ -1,6 +1,6 @@
 import { useMemo, useReducer } from 'react'
 import type { ReactElement, ReactNode } from 'react'
-import { cartReducer } from './logic'
+import { cartReducer } from './cartLogic'
 import { CartContext } from './useCart'
 
 export function CartProvider({ children }: { children: ReactNode }): ReactElement {

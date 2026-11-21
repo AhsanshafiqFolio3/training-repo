@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react'
 import type { Dispatch } from 'react'
-import type { CartAction, CartItem } from './logic'
+import type { CartAction, CartItem } from './cartLogic'
 
 export type CartContextValue = {
   items: CartItem[]

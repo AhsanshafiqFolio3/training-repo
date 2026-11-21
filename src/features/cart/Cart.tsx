@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react'
 import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
 import { formatPrice } from '../../shared/formatPrice'
-import { calculateTotals } from './logic'
+import { calculateTotals } from './cartLogic'
 import { useCart } from './useCart'
 
 export function Cart(): ReactElement {

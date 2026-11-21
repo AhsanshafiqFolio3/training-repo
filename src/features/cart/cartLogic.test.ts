@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Product } from '../../api/types'
-import { calculateTotals, cartReducer } from './logic'
+import { calculateTotals, cartReducer } from './cartLogic'
 
 function makeProduct(overrides: Partial<Product> = {}): Product {
   return {
