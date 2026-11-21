@@ -35,7 +35,11 @@ export function listProducts({ url }: MockRequest): Response {
   const page = Math.max(1, Number.parseInt(url.searchParams.get('page') ?? '1', 10) || 1)
 
   const matches = mockDatabase.products
-    .filter((product) => !search || product.name.toLowerCase().includes(search))
+    // Search the name and the category, so "coffee" finds every coffee.
+    .filter(
+      (product) =>
+        !search || product.name.toLowerCase().includes(search) || product.category.includes(search),
+    )
     .filter((product) => !isCategory(category) || product.category === category)
     .filter((product) => !inStockOnly || product.stock > 0)
     .toSorted(compareProducts(isProductSort(sort) ? sort : 'featured'))

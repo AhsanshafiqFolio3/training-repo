@@ -55,6 +55,12 @@ describe('GET /api/products', () => {
     expect(prices).toEqual(prices.toSorted((a, b) => a - b))
   })
 
+  it('matches search text against the category as well as the name', async () => {
+    const [, body] = await call<ProductList>('/api/products?search=coffee')
+    expect(body.total).toBeGreaterThan(0)
+    expect(body.items.every((product) => product.category === 'coffee')).toBe(true)
+  })
+
   it('answers 500 when product requests are set to fail', async () => {
     saveMockSettings({ ...DEFAULT_MOCK_SETTINGS, latency: 'none', failProductRequests: true })
     const [status, body] = await call<ApiError>('/api/products')

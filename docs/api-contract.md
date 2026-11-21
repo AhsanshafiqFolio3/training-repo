@@ -43,13 +43,13 @@ type User = { id: string; name: string; email: string }
 
 ### GET /api/products
 
-| Param      | Values                                                        | Default    |
-| ---------- | ------------------------------------------------------------- | ---------- |
-| `search`   | Any text, matched against the product name (case-insensitive) | none       |
-| `category` | `keyboards`, `ducks`, `coffee`, `stickers`                    | all        |
-| `sort`     | `featured`, `price-asc`, `price-desc`, `rating`, `name`       | `featured` |
-| `page`     | 1, 2, 3, … Each page holds 24 products.                       | `1`        |
-| `inStock`  | `true` to hide sold-out products                              | off        |
+| Param      | Values                                                                    | Default    |
+| ---------- | ------------------------------------------------------------------------- | ---------- |
+| `search`   | Any text, matched against the product name or category (case-insensitive) | none       |
+| `category` | `keyboards`, `ducks`, `coffee`, `stickers`                                | all        |
+| `sort`     | `featured`, `price-asc`, `price-desc`, `rating`, `name`                   | `featured` |
+| `page`     | 1, 2, 3, … Each page holds 24 products.                                   | `1`        |
+| `inStock`  | `true` to hide sold-out products                                          | off        |
 
 `total` is the number of products that match the filters on all pages, not just this page.
 
