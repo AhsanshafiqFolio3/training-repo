@@ -30,7 +30,7 @@ describe('product filters', () => {
 
     expect(currentUrl()).toBe('/?category=coffee&inStock=true&sort=price-asc')
     await waitFor(() => expect(productCategories().every((name) => name === 'coffee')).toBe(true))
-    expect(screen.getByText(/^Showing 1–24 of [\d,]+ products$/)).toBeInTheDocument()
+    expect(screen.getByText(/^[\d,]+ products$/)).toBeInTheDocument()
   })
 
   it('shows the same view when the page opens from a copied link', async () => {

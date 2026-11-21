@@ -15,7 +15,7 @@ const LOADING = { status: 'loading' } as const
 
 // Runs `loader` and tracks its RequestState. A new loader (new id, new filters) starts a
 // new request and aborts the old one. With a cacheKey, a fresh cached result is shown
-// straight away and no request is sent (see requestCache.ts).
+// straight away and no request is sent (see request-cache.ts).
 export function useAsync<TData>(
   loader: Loader<TData>,
   cacheKey?: string,

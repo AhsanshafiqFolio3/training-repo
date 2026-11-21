@@ -32,8 +32,7 @@ export function useProductFilters(): UseProductFiltersResult {
   const updateFilters = useCallback(
     (changes: Partial<ProductFilters>, { replace = false }: UpdateOptions = {}) => {
       setParamsRef.current(
-        // Any filter change starts again from page 1, unless the page itself changed.
-        (current) => toProductSearchParams({ ...readFilters(current), page: 1, ...changes }),
+        (current) => toProductSearchParams({ ...readFilters(current), ...changes }),
         { replace },
       )
     },
