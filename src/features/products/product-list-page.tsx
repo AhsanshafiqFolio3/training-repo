@@ -6,12 +6,12 @@ import { AsyncContent } from '../../shared/async-content'
 import type { RequestState } from '../../shared/request-state'
 import { EmptyState, LoadingGrid } from '../../shared/status-views'
 import { FilterSidebar } from './filter-sidebar'
-import { ProductGrid } from './product-grid'
 import { ProductToolbar } from './product-toolbar'
 import { hasActiveFilters } from './product-filters'
 import { useProductFilters } from './use-product-filters'
 import { useProductPages } from './use-product-pages'
 import type { ProductPages } from './use-product-pages'
+import { VirtualProductGrid } from './virtual-product-grid'
 
 const countFormat = new Intl.NumberFormat('en-US')
 
@@ -124,7 +124,7 @@ export function ProductListPage(): ReactElement {
           >
             {(data) => (
               <>
-                <ProductGrid products={data} label="Products" />
+                <VirtualProductGrid products={data} label="Products" />
                 <LoadMore products={products} />
               </>
             )}

@@ -112,6 +112,15 @@
   font-weight: 650;
   letter-spacing: -0.15px;
   margin-top: 6px;
+  /* Always two lines tall, so every card and every row has the same height.
+     The virtual grid relies on that to know where each row is. */
+  line-height: 1.35;
+  min-height: 2.7em;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
 }
 .product-bottom {
   display: flex;
