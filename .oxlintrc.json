@@ -11,16 +11,45 @@
     "react/only-export-components": "error",
     "react/react-in-jsx-scope": "off",
     "typescript/no-explicit-any": "error",
-    "jsx-a11y/prefer-tag-over-role": "off"
+    "jsx-a11y/prefer-tag-over-role": "off",
+    "typescript/ban-ts-comment": "error",
+    "no-restricted-globals": [
+      "error",
+      {
+        "name": "fetch",
+        "message": "Components never make network calls. Use the functions in src/api instead."
+      },
+      {
+        "name": "XMLHttpRequest",
+        "message": "Components never make network calls. Use the functions in src/api instead."
+      },
+      {
+        "name": "WebSocket",
+        "message": "Open sockets in src/api only."
+      }
+    ],
+    "unicorn/filename-case": [
+      "error",
+      {
+        "cases": {
+          "camelCase": true,
+          "pascalCase": true
+        }
+      }
+    ]
   },
   "overrides": [
     {
-      "files": ["**/*.test.ts", "**/*.test.tsx", "e2e/**"],
-      "rules": { "react/only-export-components": "off" }
+      "files": ["**/*.test.ts", "**/*.test.tsx"],
+      "rules": {
+        "react/only-export-components": "off"
+      }
     },
     {
-      "files": ["src/test/assessment.test.ts"],
-      "rules": { "no-shadow": "off", "unicorn/consistent-function-scoping": "off" }
+      "files": ["src/api/client.ts"],
+      "rules": {
+        "no-restricted-globals": "off"
+      }
     }
   ],
   "ignorePatterns": ["dist", "node_modules"]

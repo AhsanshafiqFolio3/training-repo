@@ -1,0 +1,56 @@
+import { useState } from 'react'
+import type { ReactElement } from 'react'
+import { MOCK_LATENCIES, readMockSettings, saveMockSettings } from './mockSettings'
+import type { MockLatency, MockSettings } from './mockSettings'
+
+function isMockLatency(value: string): value is MockLatency {
+  return MOCK_LATENCIES.some((latency) => latency === value)
+}
+
+// A small panel for triggering slow responses and errors on purpose.
+// It only appears while the app runs on the mock API.
+export function MockControls(): ReactElement {
+  const [settings, setSettings] = useState<MockSettings>(readMockSettings)
+
+  function update(changes: Partial<MockSettings>): void {
+    const next = { ...settings, ...changes }
+    setSettings(next)
+    saveMockSettings(next)
+  }
+
+  return (
+    <details className="mock-controls">
+      <summary>Mock API controls</summary>
+      <p>Changes apply to the next request. Use Retry or reload to see them.</p>
+      <label>
+        Response speed
+        <select
+          value={settings.latency}
+          onChange={(event) => {
+            if (isMockLatency(event.target.value)) update({ latency: event.target.value })
+          }}
+        >
+          <option value="none">Instant</option>
+          <option value="normal">Normal (0.3 s)</option>
+          <option value="slow">Slow (2 s)</option>
+        </select>
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          checked={settings.failProductRequests}
+          onChange={(event) => update({ failProductRequests: event.target.checked })}
+        />
+        Product requests fail with 500
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          checked={settings.rejectTokens}
+          onChange={(event) => update({ rejectTokens: event.target.checked })}
+        />
+        Expire the session (401 on protected requests)
+      </label>
+    </details>
+  )
+}

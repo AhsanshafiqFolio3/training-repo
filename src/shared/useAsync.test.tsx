@@ -41,7 +41,9 @@ describe('async loading and race prevention', () => {
     const { result, rerender } = renderHook(({ loader }) => useAsync(loader)[0], {
       initialProps: { loader: failed },
     })
-    await waitFor(() => expect(result.current).toEqual({ status: 'error', message: 'Offline' }))
+    await waitFor(() =>
+      expect(result.current).toMatchObject({ status: 'error', error: { message: 'Offline' } }),
+    )
     rerender({ loader: (): Promise<string> => Promise.resolve('Recovered') })
     await waitFor(() => expect(result.current).toEqual({ status: 'success', data: 'Recovered' }))
   })
@@ -51,7 +53,9 @@ describe('async loading and race prevention', () => {
     const loader = (): Promise<string> =>
       ++calls === 1 ? Promise.reject(new Error('Offline')) : retryLater.promise
     const { result } = renderHook(() => useAsync(loader))
-    await waitFor(() => expect(result.current[0]).toEqual({ status: 'error', message: 'Offline' }))
+    await waitFor(() =>
+      expect(result.current[0]).toMatchObject({ status: 'error', error: { message: 'Offline' } }),
+    )
     act(() => {
       result.current[1]()
     })

@@ -1,15 +1,13 @@
 import { useEffect } from 'react'
 import type { ReactElement } from 'react'
 import { Link, NavLink, Route, Routes, useLocation } from 'react-router'
-import { ArrowUpRight, ArrowRight, ShoppingBag } from 'lucide-react'
+import { ArrowRight, ShoppingBag } from 'lucide-react'
 import { Store } from '../features/store/Store'
 import { CartProvider } from '../features/store/CartProvider'
 import { useCart } from '../features/store/useCart'
 import { calculateTotals } from '../features/store/logic'
-import { CustomerProvider } from '../features/customers/CustomerProvider'
-import { Customers } from '../features/customers/Customers'
-import { CustomerDetail } from '../features/customers/CustomerDetail'
-import { Guide } from '../features/Guide'
+import { USE_MOCK_API } from '../api/config'
+import { MockControls } from '../mocks/MockControls'
 import { ErrorBoundary } from '../shared/ErrorBoundary'
 import type { ErrorFallbackProps } from '../shared/ErrorBoundary'
 
@@ -19,26 +17,21 @@ function PageError({ reset }: ErrorFallbackProps): ReactElement {
       <span className="eyebrow">SOMETHING WENT WRONG</span>
       <h1>
         This page hit
-        <br />a snag.
+        <br />a bug.
       </h1>
-      <p>Try loading it again, or head back to the collection.</p>
+      <p>Try loading it again, or head back to the shop.</p>
       <div className="error-actions">
         <button className="button dark" onClick={reset}>
           Try again
         </button>
         <Link className="button secondary" to="/">
-          Back to the collection
+          Back to the shop
         </Link>
       </div>
     </main>
   )
 }
 
-function pageTitle(pathname: string): string {
-  if (pathname.startsWith('/customers')) return 'Customer workspace — Form'
-  if (pathname === '/project') return 'Project guide — Form'
-  return 'Everyday, considered. — Form'
-}
 function ScrollOnNavigate({ hash }: { hash: string }): null {
   useEffect(() => {
     if (!hash) {
@@ -60,34 +53,22 @@ function Shell(): ReactElement {
   return (
     <>
       <ScrollOnNavigate key={pathname} hash={hash} />
-      <title>{pageTitle(pathname)}</title>
+      <title>The Bug Bazaar</title>
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
-      <div className="announcement">
-        <span>
-          <span className="announcement-dot" /> GOOD THINGS, THOUGHTFULLY CHOSEN.
-        </span>
-        <span>
-          10% off above Rs. 5,000 <ArrowUpRight size={13} />
-        </span>
-      </div>
       <header className="header">
-        <Link to="/" className="brand" aria-label="Form home">
-          form<span>®</span>
+        <Link to="/" className="brand" aria-label="The Bug Bazaar home">
+          The Bug Bazaar
         </Link>
         <nav aria-label="Main navigation">
           <NavLink to="/" end>
-            The collection
-          </NavLink>
-          <NavLink to="/customers">Customer workspace</NavLink>
-          <NavLink to="/project">
-            Project guide <ArrowUpRight size={12} />
+            Shop
           </NavLink>
         </nav>
         <Link className="header-bag" to="/#bag">
           <ShoppingBag size={17} />
-          <span>Your bag</span>
+          <span>Your cart</span>
           <span className="header-count">{calculateTotals(items).count}</span>
         </Link>
       </header>
@@ -95,22 +76,19 @@ function Shell(): ReactElement {
         <ErrorBoundary key={pathname} fallback={PageError}>
           <Routes>
             <Route path="/" element={<Store />} />
-            <Route path="/customers" element={<Customers />} />
-            <Route path="/customers/:id" element={<CustomerDetail />} />
-            <Route path="/project" element={<Guide />} />
             <Route
               path="*"
               element={
                 <main className="not-found page-container">
-                  <span className="eyebrow">404 / A LITTLE OFF TRACK</span>
+                  <span className="eyebrow">404 / PAGE NOT FOUND</span>
                   <h1>
-                    Good things are
+                    This page
                     <br />
-                    this way.
+                    wandered off.
                   </h1>
-                  <p>We couldn’t find that page. Let’s get you back to the everyday.</p>
+                  <p>We couldn’t find that page. Let’s get you back to the shop.</p>
                   <Link className="button dark" to="/">
-                    Back to the collection <ArrowRight size={17} />
+                    Back to the shop <ArrowRight size={17} />
                   </Link>
                 </main>
               }
@@ -119,26 +97,19 @@ function Shell(): ReactElement {
         </ErrorBoundary>
       </div>
       <footer className="footer">
-        <div>
-          <Link to="/" className="brand">
-            form<span>®</span>
-          </Link>
-          <p>Everyday, considered.</p>
-        </div>
-        <span>Thoughtful tech. A little more joy.</span>
-        <Link to="/project">
-          Made with purpose <ArrowUpRight size={14} />
+        <Link to="/" className="brand">
+          The Bug Bazaar
         </Link>
+        <p>Developer gear: rubber ducks, mechanical keyboards, coffee and stickers.</p>
       </footer>
+      {USE_MOCK_API && <MockControls />}
     </>
   )
 }
 export default function App(): ReactElement {
   return (
     <CartProvider>
-      <CustomerProvider>
-        <Shell />
-      </CustomerProvider>
+      <Shell />
     </CartProvider>
   )
 }

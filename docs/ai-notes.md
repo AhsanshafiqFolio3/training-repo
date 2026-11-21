@@ -1,47 +1,35 @@
 # AI notes
 
-## Prompts and authorization
+A log of notable AI use during the week. D5-7 asks for three uses (prompt, what I kept,
+what I changed and why), one AI mistake and how I caught it, and one thing I wouldn't hand
+to AI.
 
-1. The user supplied two training-plan snapshots and requested a plan before implementation.
-2. The user asked whether every column was covered. The plan was expanded to preserve all 18 rows, their guide, work type and acceptance evidence.
-3. The user instructed: “As per plan start implmentations”.
-4. Asked for the unavailable guides, dataset, discount rate and remote, the user replied: “no i dont have you can create by yourself”. This authorized original data and project-defined rules. It does not establish that the original assessment has been passed.
+## Log
 
-## Accepted AI-assisted work
+### 1. Planning the week from the brief (Day 1)
 
-| Change                                         | Reason accepted                                                                             | Evidence                                                                       |
-| ---------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| 20-product dataset and 8 fictional customers   | Independent data modules meet the required separation and allow reproducible demonstrations | Dataset uniqueness/filter tests; API module                                    |
-| Explicit 10% discount strictly above Rs. 5,000 | Resolves the missing rate with an understandable documented rule                            | Pricing tests for 4,999, 5,000, 5,000.01, 5,001 and 10,000                     |
-| Reducer for cart mutations                     | Repeated Add updates quantity in one row and stock limits apply in one place                | Reducer and rendered-cart tests                                                |
-| Derived filtering and totals                   | Avoids synchronization bugs from duplicate state                                            | Pure filter/pricing functions and combined-filter interactions                 |
-| Abort plus generation guard                    | Stops stale updates even when a transport does not obey cancellation                        | Deferred-response regression test and browser rapid-navigation check           |
-| Keyboard modal and customer validation         | Provides accessible entry and avoids duplicate session records                              | Tab/Shift+Tab/Escape/focus tests, field validation, duplicate-email/save tests |
-| CSV export snapshot                            | Gives a real reviewable output after a simulated job                                        | CSV quoting/formula tests and browser download flow                            |
-| Original SVG product illustrations             | Keeps assets self-contained and consistent                                                  | Browser review screenshots and production build                                |
+- **Prompt:** "Read The Bug Bazaar PDF and create a plan according to the instructions."
+- **Kept:** The day-by-day task list and the idea of a branch per day.
+- **Changed:** <!-- your own words: what did you change in the plan and why? -->
 
-## Rejected approaches and reasons
+### 2. Building the mock API (D1-2)
 
-- Storing visible products, cart count, subtotal or discount in separate state: these values can be derived and otherwise drift out of sync.
-- Pushing a new cart line for every Add: violates the unchanged row-count requirement.
-- Using `subtotal >= 5000`: applies the discount at the wrong boundary.
-- A cancellation flag without handling request identity: transport cancellation alone may not prevent a late callback. Keep both abort and a generation check.
-- Disabling a Save button as the only duplicate guard: state updates are asynchronous; use a synchronous ref lock too. A production server would also require idempotency and uniqueness enforcement.
-- Claiming original-guide answers or reviewer sign-off: the source documents and human assessment were not provided. Practice material and pending external items are labeled accordingly.
+- **Prompt:** "Mock the shared API contract so the app runs without a backend, with 5,000
+  products and every error triggerable."
+- **Kept:** The fetch-compatible `mockFetch`, the seeded generator, the controls panel.
+- **Changed:** Asked for no extra libraries that the brief doesn't mention, so MSW was dropped
+  in favour of a hand-written mock. <!-- add anything else you changed -->
 
-## Review and corrections during implementation
+## AI mistakes caught
 
-- Initial compilation caught a TypeScript discriminated-union issue: grouping `remove | decrement` in one union branch did not narrow away the `product`-less branch. Each action now has its own discriminant.
-- A filter interaction test found two valid “Clear filters” controls. The test now scopes its query to the empty-state region instead of assuming a unique global button.
-- Dependency versions were pinned to the installed lockfile for repeatable installs.
-- Browser and build outcomes are recorded in `verification.md` after execution. Described features do not substitute for passing checks.
+### Unused-CSS cleanup removed live styles (Day 1)
 
-## AI review procedure
+The AI wrote a script to delete CSS rules whose class names no longer appear in the source.
+The class `active` is never written in our code, because React Router's `NavLink` adds it at
+runtime. So the script removed the nav link's active underline. It was caught by reading the
+diff of the stylesheet before committing, and the rule was restored.
+**Lesson:** a text search can't see class names that libraries add at runtime.
 
-Follow-up request: the user asked to complete the pending checks. Codex reviewed the written Parts A–D and Supplement, verified five Part B outputs through executable cases, performed eleven checks against the real hosted private Site, and produced review-report.md with an explicitly labeled AI artifact score of 92/100. No human review, learner performance or historical weekly-submission record was invented. Service credentials stayed in session memory and Node-side requests; sanitized evidence contains no token.
+## Something I wouldn't hand to AI
 
-Read the diff; trace source and derived state; check threshold, stock and validation boundaries; inspect failure/unmount paths; run tests and strict build; exercise keyboard and narrow layouts; record remaining external assessments. Reject generated statements that are not supported by the actual implementation or test evidence.
-
-## Final scope clarification
-
-The user clarified that this final project itself is the delivery and requested completion. Earlier course submission records and a formal training interview were removed from the project delivery gate. The completed AI review remains explicitly labeled; no human signature, interview result or historical delivery was fabricated. The project guide and readiness checklist now reflect completed project delivery.
+<!-- your own answer, for D5-7 -->
