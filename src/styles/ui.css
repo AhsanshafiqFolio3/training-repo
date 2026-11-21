@@ -79,50 +79,8 @@
   color: #878e78;
   margin: 11px 0 24px;
 }
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 25px;
-}
 .full {
   width: 100%;
-}
-.form-field {
-  margin-bottom: 17px;
-}
-.form-field label {
-  display: block;
-  font-size: 11px;
-  color: #677057;
-  margin-bottom: 8px;
-  font-weight: 550;
-}
-.form-field input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #dce0d0;
-  border-radius: 5px;
-  background: #fffefa;
-  color: #363e2e;
-  font-size: 12px;
-}
-.form-field input[aria-invalid='true'] {
-  border-color: #c2674d;
-}
-.field-error {
-  font-size: 10px;
-  color: #b44830;
-  margin-top: 6px;
-  line-height: 1.6;
-}
-.form-info {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 10px;
-  color: #959d83;
-  line-height: 1.5;
 }
 .order-lines > div {
   display: flex;

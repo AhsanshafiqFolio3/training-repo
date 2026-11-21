@@ -1,8 +1,4 @@
 @media (min-width: 1500px) {
-  .hero {
-    padding-left: 70px;
-    padding-right: 70px;
-  }
   .shop-layout {
     grid-template-columns: 190px minmax(0, 1fr) 300px;
     gap: 38px;
@@ -28,9 +24,6 @@
   }
   .cart-empty {
     padding: 38px 0;
-  }
-  .hero-visual {
-    margin-right: 45px;
   }
 }
 @media (max-width: 1190px) {
@@ -68,34 +61,6 @@
   .cart-panel {
     padding: 17px 14px;
   }
-  .hero {
-    min-height: 340px;
-  }
-  .hero-circle {
-    width: 310px;
-    height: 310px;
-    left: 23%;
-    top: 10px;
-  }
-  .hero-headphones {
-    left: 6%;
-    width: 330px;
-    top: -4px;
-  }
-  .hero-speaker {
-    left: -3%;
-    width: 180px;
-    bottom: 2px;
-  }
-  .hero-product-label {
-    right: -5px;
-  }
-  .hero-visual {
-    min-height: 340px;
-  }
-  .benefits {
-    gap: 30px;
-  }
   .filters-panel h2 {
     font-size: 17px;
   }
@@ -121,19 +86,6 @@
   }
   .sort-control select {
     max-width: 88px;
-  }
-  .stat-card {
-    padding: 20px 17px;
-  }
-  .stat-card > strong.stat-money {
-    font-size: 23px;
-  }
-  .workspace-actions .button {
-    padding: 10px 12px;
-    font-size: 10px;
-  }
-  .customer-filters .search-box {
-    width: 210px;
   }
 }
 @media (max-width: 1000px) {
@@ -179,92 +131,8 @@
     margin-left: 10px;
     gap: 25px;
   }
-  .benefits .benefits-end {
-    display: none;
-  }
-  .benefits {
-    justify-content: space-between;
-    gap: 20px;
-  }
-  .hero-headphones {
-    left: 0;
-    width: 310px;
-  }
-  .hero-speaker {
-    left: -8%;
-    width: 170px;
-    bottom: 7px;
-  }
-  .hero-product-label {
-    top: 60%;
-    font-size: 8px;
-  }
-  .hero-circle {
-    left: 8%;
-    width: 300px;
-    height: 300px;
-  }
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .stat-card > strong.stat-money {
-    font-size: 29px;
-    line-height: 1.65;
-  }
-  .workspace-heading {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .workspace-actions {
-    margin-top: 4px;
-  }
-  .customer-toolbar {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .customer-filters {
-    width: 100%;
-  }
-  .customer-filters .search-box {
-    flex: 1;
-    width: auto;
-  }
-  .detail-grid {
-    grid-template-columns: 280px 1fr;
-    gap: 22px;
-  }
-  .profile-card {
-    padding: 30px 22px;
-  }
-  .customer-overview > h2 {
-    font-size: 21px;
-  }
-  .detail-stats > div {
-    padding: 16px;
-  }
-  .detail-stats strong {
-    font-size: 21px;
-  }
-  .guide-cards {
-    gap: 13px;
-  }
-  .guide-cards > div {
-    padding: 20px;
-  }
-  .guide-cards h2 {
-    font-size: 15px;
-  }
 }
 @media (max-width: 700px) {
-  .announcement {
-    padding: 0 5%;
-    font-size: 7px;
-    letter-spacing: 1px;
-    height: 30px;
-  }
-  .announcement > span:last-child {
-    font-size: 8px;
-  }
   .header {
     height: auto;
     min-height: 78px;
@@ -289,93 +157,6 @@
   .header-bag {
     order: 1;
     font-size: 11px;
-  }
-  .hero {
-    grid-template-columns: 1.04fr 1fr;
-    padding: 0 5%;
-    min-height: 310px;
-  }
-  .hero-copy {
-    padding: 31px 0;
-  }
-  .hero .eyebrow {
-    font-size: 6px;
-    letter-spacing: 1.2px;
-    gap: 5px;
-  }
-  .hero h1 {
-    font-size: 39px;
-    letter-spacing: -2px;
-    line-height: 1.1;
-    margin-top: 18px;
-  }
-  .hero-copy > p {
-    font-size: 9px;
-    line-height: 1.8;
-    margin-top: 16px;
-  }
-  .hero-copy > p br {
-    display: none;
-  }
-  .hero-link {
-    font-size: 9px;
-    gap: 13px;
-    margin-top: 23px;
-  }
-  .hero-link svg {
-    width: 15px;
-  }
-  .hero-visual {
-    min-height: 310px;
-  }
-  .hero-circle {
-    width: 220px;
-    height: 220px;
-    left: 1%;
-    top: 35px;
-  }
-  .hero-headphones {
-    width: 250px;
-    left: -21%;
-    top: 28px;
-    transform: rotate(12deg);
-  }
-  .hero-speaker {
-    width: 130px;
-    bottom: 2px;
-    left: -29%;
-  }
-  .hero-product-label {
-    font-size: 6px;
-    right: -13px;
-    top: 63%;
-    letter-spacing: 1px;
-  }
-  .hero-product-label:before {
-    width: 16px;
-    left: -24px;
-  }
-  .hero-product-label > span {
-    font-size: 6px;
-  }
-  .hero-edition {
-    font-size: 5px;
-    bottom: 18px;
-    right: -7px;
-    letter-spacing: 1px;
-  }
-  .benefits {
-    padding: 12px 5%;
-    gap: 12px;
-    min-height: 48px;
-  }
-  .benefits > span {
-    font-size: 7px;
-    gap: 5px;
-  }
-  .benefits > span svg {
-    width: 13px;
-    height: 13px;
   }
   .shop-layout {
     grid-template-columns: minmax(0, 1fr);
@@ -564,205 +345,12 @@
   .page-container {
     padding: 35px 5% 45px;
   }
-  .workspace h1,
-  .detail-header h1 {
+  .workspace h1 {
     font-size: 34px;
     letter-spacing: -1.5px;
   }
-  .workspace .eyebrow,
-  .detail-header .eyebrow,
-  .guide-page > .eyebrow {
+  .workspace .eyebrow {
     font-size: 7px;
-  }
-  .workspace-heading p {
-    font-size: 11px;
-    max-width: 280px;
-  }
-  .workspace-heading {
-    margin-bottom: 25px;
-  }
-  .workspace-actions {
-    width: 100%;
-    gap: 8px;
-  }
-  .workspace-actions .button {
-    flex: 1;
-    font-size: 10px;
-    padding: 10px;
-  }
-  .stats-grid {
-    gap: 11px;
-    margin-bottom: 25px;
-  }
-  .stat-card {
-    padding: 17px 14px;
-  }
-  .stat-card > span {
-    font-size: 9px;
-  }
-  .stat-card > span svg {
-    height: 15px;
-    width: 15px;
-  }
-  .stat-card > strong {
-    font-size: 30px;
-    margin-top: 13px;
-  }
-  .stat-card > strong.stat-money {
-    font-size: 20px;
-    line-height: 2.1;
-  }
-  .stat-card > small {
-    font-size: 7px;
-  }
-  .customer-toolbar {
-    padding: 20px 16px;
-    gap: 20px;
-  }
-  .customer-toolbar h2 {
-    font-size: 19px;
-  }
-  .customer-toolbar p {
-    font-size: 10px;
-  }
-  .customer-filters {
-    gap: 7px;
-  }
-  .customer-filters select {
-    font-size: 9px;
-    padding: 11px 7px;
-    max-width: 115px;
-  }
-  .customer-filters .search-box {
-    padding: 0 9px;
-    gap: 6px;
-  }
-  .customer-filters .search-box input {
-    font-size: 9px;
-  }
-  .customer-table {
-    min-width: 660px;
-  }
-  .customer-table th,
-  .customer-table td {
-    padding-left: 14px;
-    padding-right: 14px;
-  }
-  .customer-table td:first-child,
-  .customer-table th:first-child {
-    padding-left: 16px;
-  }
-  .table-footer {
-    padding: 16px;
-    font-size: 8px;
-  }
-  .table-footer > span:last-child {
-    display: none;
-  }
-  .export-banner {
-    padding: 14px;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .export-banner strong {
-    font-size: 10px;
-  }
-  .export-banner small {
-    font-size: 9px;
-    line-height: 1.6;
-  }
-  .export-banner .button {
-    font-size: 9px;
-    min-height: 34px;
-    padding: 7px 10px;
-    margin-left: 30px;
-  }
-  .export-banner > .icon-button {
-    margin-left: auto;
-  }
-  .detail-header {
-    align-items: flex-start;
-    gap: 15px;
-  }
-  .detail-header .button {
-    font-size: 9px;
-    padding: 8px 10px;
-    min-height: 34px;
-    margin-top: 15px;
-    gap: 5px;
-  }
-  .detail-grid {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-  .profile-card {
-    padding: 28px;
-  }
-  .customer-overview {
-    padding: 20px 0;
-  }
-  .detail-stats {
-    gap: 14px;
-  }
-  .detail-stats strong {
-    font-size: 24px;
-  }
-  .back-link {
-    margin-bottom: 25px;
-  }
-  .guide-page > h1 {
-    font-size: 37px;
-    letter-spacing: -1.8px;
-    max-width: 300px;
-  }
-  .guide-intro {
-    font-size: 11px;
-  }
-  .guide-cards {
-    grid-template-columns: 1fr;
-    gap: 13px;
-    margin-top: 25px;
-  }
-  .guide-cards > div {
-    padding: 22px;
-  }
-  .guide-cards h2 {
-    font-size: 18px;
-    margin-top: 14px;
-  }
-  .guide-cards p {
-    font-size: 11px;
-  }
-  .state-lab {
-    padding: 22px 18px;
-    margin-top: 22px;
-  }
-  .state-lab > div:first-child {
-    align-items: flex-start;
-    gap: 10px;
-  }
-  .state-lab h2 {
-    font-size: 21px;
-  }
-  .state-lab p {
-    font-size: 10px;
-  }
-  .state-links {
-    grid-template-columns: 1fr;
-    gap: 24px;
-    margin-top: 25px;
-  }
-  .state-links h3 {
-    font-size: 9px;
-    margin-bottom: 4px;
-  }
-  .state-links a {
-    font-size: 11px;
-    padding: 14px 0;
-  }
-  .guide-footnote {
-    font-size: 9px;
-    padding: 17px;
   }
   .modal-backdrop {
     padding: 16px;

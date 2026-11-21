@@ -12,7 +12,6 @@ import { filterProducts, isSortOption, sortOptions, sortProducts } from './logic
 import type { SortOption } from './logic'
 import { useCart } from './useCart'
 import { Cart } from './Cart'
-import { StoreHero } from './StoreHero'
 import { FilterPanel } from './FilterPanel'
 import { ProductCard } from './ProductCard'
 
@@ -48,7 +47,6 @@ export function Store(): ReactElement {
   }
   return (
     <main>
-      <StoreHero />
       <div className="shop-layout" id="collection">
         <FilterPanel
           products={source}

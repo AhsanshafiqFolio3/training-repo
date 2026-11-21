@@ -40,20 +40,3 @@ export interface ApiResponse<T> {
 export type LoadState<T> =
   { status: 'loading' } | { status: 'error'; message: string } | { status: 'success'; data: T }
 export type DemoMode = 'success' | 'slow' | 'empty' | 'error'
-export interface Customer {
-  id: string
-  name: string
-  email: string
-  city: string
-  joined: string
-  status: 'Active' | 'Inactive'
-  orders: number
-  spent: number
-  color: string
-}
-export interface CustomerDraft {
-  name: string
-  email: string
-  city: string
-}
-export type ValidationErrors = Partial<Record<keyof CustomerDraft, string>>

@@ -1,12 +1,6 @@
 node_modules/
 dist/
-.sites/
-.npm-cache/
 coverage/
-test-results/
-playwright-report/
 *.local
 *.log
 *.tsbuildinfo
-.sites-runtime/
-artifacts/

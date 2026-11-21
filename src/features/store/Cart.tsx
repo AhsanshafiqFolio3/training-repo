@@ -159,7 +159,7 @@ export function Cart(): ReactElement {
           {orderPlaced ? (
             <div className="order-success">
               <CheckCircle2 size={48} />
-              <p>Your demo order has been placed. Thank you for shopping with Form.</p>
+              <p>Your demo order has been placed. Thank you for shopping at The Bug Bazaar.</p>
               <button
                 ref={backToCollection}
                 className="button dark"

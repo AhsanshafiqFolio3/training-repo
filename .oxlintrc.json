@@ -15,12 +15,10 @@
   },
   "overrides": [
     {
-      "files": ["**/*.test.ts", "**/*.test.tsx", "e2e/**"],
-      "rules": { "react/only-export-components": "off" }
-    },
-    {
-      "files": ["src/test/assessment.test.ts"],
-      "rules": { "no-shadow": "off", "unicorn/consistent-function-scoping": "off" }
+      "files": ["**/*.test.ts", "**/*.test.tsx"],
+      "rules": {
+        "react/only-export-components": "off"
+      }
     }
   ],
   "ignorePatterns": ["dist", "node_modules"]

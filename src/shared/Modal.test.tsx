@@ -11,7 +11,7 @@ function Harness(): ReactElement {
     <>
       <button onClick={() => setOpen(true)}>Open modal</button>
       {open && (
-        <Modal title="Edit customer" onClose={() => setOpen(false)}>
+        <Modal title="Edit details" onClose={() => setOpen(false)}>
           <input aria-label="Name" data-autofocus />
           <button>Save</button>
         </Modal>
@@ -24,7 +24,7 @@ it('focuses the input, traps both tab directions, closes with Escape and restore
   render(<Harness />)
   const trigger = screen.getByRole('button', { name: 'Open modal' })
   await user.click(trigger)
-  expect(screen.getByRole('dialog', { name: 'Edit customer' })).toBeInTheDocument()
+  expect(screen.getByRole('dialog', { name: 'Edit details' })).toBeInTheDocument()
   expect(screen.getByRole('textbox', { name: 'Name' })).toHaveFocus()
   await user.tab()
   expect(screen.getByRole('button', { name: 'Save' })).toHaveFocus()
