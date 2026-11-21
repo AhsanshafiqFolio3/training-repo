@@ -43,19 +43,34 @@ type User = { id: string; name: string; email: string }
 
 ### GET /api/products
 
-| Param      | Values                                                        | Default    |
-| ---------- | ------------------------------------------------------------- | ---------- |
-| `search`   | Any text, matched against the product name (case-insensitive) | none       |
-| `category` | `keyboards`, `ducks`, `coffee`, `stickers`                    | all        |
-| `sort`     | `featured`, `price-asc`, `price-desc`, `rating`, `name`       | `featured` |
-| `page`     | 1, 2, 3, … Each page holds 24 products.                       | `1`        |
-| `inStock`  | `true` to hide sold-out products                              | off        |
+| Param      | Values                                                                    | Default    |
+| ---------- | ------------------------------------------------------------------------- | ---------- |
+| `search`   | Any text, matched against the product name or category (case-insensitive) | none       |
+| `category` | `keyboards`, `ducks`, `coffee`, `stickers`                                | all        |
+| `sort`     | `featured`, `price-asc`, `price-desc`, `rating`, `name`                   | `featured` |
+| `page`     | 1, 2, 3, … Each page holds 24 products.                                   | `1`        |
+| `inStock`  | `true` to hide sold-out products                                          | off        |
 
 `total` is the number of products that match the filters on all pages, not just this page.
 
 `sort` values and the page size aren't given in the brief, so they are defined here.
 `inStock` is our addition for the "in stock only" filter (D2-2). It is optional, so the
 contract still works without it.
+
+### WebSocket /api/stock (our addition)
+
+Live stock for D4-4. It isn't in the brief's contract, so it is defined here. It only carries
+stock numbers; everything else still comes from the HTTP endpoints.
+
+| Direction        | Message                                              | When                                                                    |
+| ---------------- | ---------------------------------------------------- | ----------------------------------------------------------------------- |
+| Client to server | `{ type: "subscribe", productIds: string[] }`        | After connecting, and whenever the products on screen change            |
+| Server to client | `{ type: "stock", updates: { productId, stock }[] }` | Right after each subscribe (current stock), then whenever stock changes |
+
+A subscribe replaces the previous list. Because the server answers every subscribe with the
+current stock, a client that reconnects after a drop catches up on what it missed.
+
+On `http://` pages the URL is `ws://<host>/api/stock`, on `https://` pages `wss://`.
 
 ### POST /api/login
 
@@ -67,6 +82,11 @@ Response: `{ "token": string, "user": User }`. Send the token on protected reque
 ### POST /api/orders
 
 Request: `{ "items": [{ "productId": string, "quantity": number }] }`. Needs a token.
+
+Optional header: `Idempotency-Key: <unique string>`. If an order was already created with
+this key (by the same user), the server returns that same order with 201 and creates nothing
+new. The app sends one key per checkout and reuses it on every retry, so a retry after a lost
+reply can't create a second order.
 
 Order status moves from `queued` to `processing` to `shipped`.
 
@@ -87,12 +107,14 @@ Every error uses the `ApiError` shape. `code` is meant for code to check, and
 
 ## The mock API
 
-The app has no real backend yet. `src/mocks/mockFetch.ts` has the same signature as
+The app has no real backend yet. `src/mocks/mock-fetch.ts` has the same signature as
 `fetch`, and the API client uses it when `VITE_USE_MOCK_API` isn't `false`. It:
 
 - seeds 5,000 products from a fixed seed, so the data is the same on every load
 - keeps stock, orders and sign-ins in memory, so they reset on reload
 - waits a short time before answering, like a real network, and stops if the request is cancelled
+- runs a pretend WebSocket server for `/api/stock` (`src/mocks/mock-stock-socket.ts`): every
+  2.5 seconds one product that someone is watching sells a few units or gets restocked
 
 Demo account: `ada@bugbazaar.dev` / `debug123`.
 
@@ -101,16 +123,19 @@ Demo account: `ada@bugbazaar.dev` / `debug123`.
 Open **Mock API controls** in the bottom-left corner of the app (it only shows while the
 mock is on).
 
-| Error                     | How to trigger it                                                 |
-| ------------------------- | ----------------------------------------------------------------- |
-| 500 on products           | Tick "Product requests fail with 500", then reload or press Retry |
-| 404 on a product          | Open a product id that doesn't exist, e.g. `/products/prod-9999`  |
-| 400 on login              | Submit the login form with an empty or badly formed email         |
-| 401 on login              | Use a wrong password                                              |
-| 401 on `/api/me` / orders | Tick "Expire the session", or call without signing in             |
-| 400 on orders             | Send an order with no items                                       |
-| 409 on orders             | Order more than the stock, e.g. a product with only 1–3 left      |
-| 404 on an order           | Open an order id that doesn't exist                               |
-| Slow responses            | Set "Response speed" to Slow                                      |
+| Error                     | How to trigger it                                                                                                             |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| 500 on products           | Tick "Product requests fail with 500", then reload or press Retry                                                             |
+| 404 on a product          | Open a product id that doesn't exist, e.g. `/products/prod-9999`                                                              |
+| 400 on login              | Submit the login form with an empty or badly formed email                                                                     |
+| 401 on login              | Use a wrong password                                                                                                          |
+| 401 on `/api/me` / orders | Tick "Expire the session", or call without signing in                                                                         |
+| 400 on orders             | Send an order with no items                                                                                                   |
+| 409 on orders             | Order more than the stock, e.g. a product with only 1–3 left                                                                  |
+| 404 on an order           | Open an order id that doesn't exist                                                                                           |
+| Slow responses            | Set "Response speed" to Slow                                                                                                  |
+| Out-of-order responses    | Set "Response speed" to Random                                                                                                |
+| A lost order reply        | Tick "Lose the reply to new orders". The order is saved, the app sees a network error, and Try again gets the same order back |
+| Live stock disconnect     | Tick "Live stock server is down". Open sockets drop and new ones are refused; untick it and the app reconnects by itself      |
 
-`src/mocks/mockFetch.test.ts` checks every status code above.
+`src/mocks/mock-fetch.test.ts` checks every status code above.

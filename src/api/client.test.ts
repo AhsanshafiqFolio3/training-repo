@@ -1,16 +1,20 @@
-import { beforeEach, describe, expect, it } from 'vitest'
-import { DEMO_USER, resetMockDatabase } from '../mocks/mockDatabase'
-import { DEFAULT_MOCK_SETTINGS, saveMockSettings } from '../mocks/mockSettings'
-import { ApiRequestError } from './ApiRequestError'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { DEMO_USER } from '../mocks/mock-database'
+import { readMockSettings, saveMockSettings } from '../mocks/mock-settings'
+import { resetMockApi } from '../test/render-app'
+import { ApiRequestError } from './api-request-error'
 import { getCurrentUser, login } from './auth'
-import { setAuthToken } from './client'
+import { configureApiClient } from './client'
 import { getProduct } from './products'
 
+let token: string | null = null
+const onUnauthorized = vi.fn<() => void>()
+
 beforeEach(() => {
-  sessionStorage.clear()
-  saveMockSettings({ ...DEFAULT_MOCK_SETTINGS, latency: 'none' })
-  resetMockDatabase()
-  setAuthToken(null)
+  resetMockApi()
+  token = null
+  onUnauthorized.mockClear()
+  configureApiClient({ getToken: () => token, onUnauthorized })
 })
 
 describe('api client', () => {
@@ -20,16 +24,26 @@ describe('api client', () => {
     expect(error).toMatchObject({ httpStatus: 404, code: 'PRODUCT_NOT_FOUND' })
   })
 
-  it('sends the saved token on later requests', async () => {
+  it('sends the current token on requests', async () => {
     await expect(getCurrentUser()).rejects.toMatchObject({ httpStatus: 401 })
 
-    const { token } = await login({ email: DEMO_USER.email, password: DEMO_USER.password })
-    setAuthToken(token)
+    token = (await login({ email: DEMO_USER.email, password: DEMO_USER.password })).token
     await expect(getCurrentUser()).resolves.toMatchObject({ email: DEMO_USER.email })
   })
 
+  it('reports a 401 as an expired session only when a token was sent', async () => {
+    await expect(login({ email: DEMO_USER.email, password: 'wrong' })).rejects.toMatchObject({
+      httpStatus: 401,
+    })
+    expect(onUnauthorized).not.toHaveBeenCalled()
+
+    token = 'mock-token.user-1.0'
+    await expect(getCurrentUser()).rejects.toMatchObject({ httpStatus: 401 })
+    expect(onUnauthorized).toHaveBeenCalledTimes(1)
+  })
+
   it('passes cancellation through instead of reporting a failure', async () => {
-    saveMockSettings({ ...DEFAULT_MOCK_SETTINGS, latency: 'slow' })
+    saveMockSettings({ ...readMockSettings(), latency: 'slow' })
     const controller = new AbortController()
     const request = getProduct('prod-0001', controller.signal)
     controller.abort()

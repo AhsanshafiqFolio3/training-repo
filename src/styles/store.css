@@ -14,7 +14,7 @@
 }
 .shop-layout {
   display: grid;
-  grid-template-columns: 170px minmax(0, 1fr) 274px;
+  grid-template-columns: 180px minmax(0, 1fr);
   gap: 30px;
   padding: 38px 4.2% 60px;
   max-width: 1600px;
@@ -28,7 +28,7 @@
   align-items: center;
   gap: 10px;
 }
-.catalog-top h2 {
+.catalog-top h1 {
   font-family: 'Manrope', sans-serif;
   font-size: 23px;
   letter-spacing: -0.9px;
@@ -37,18 +37,6 @@
   align-items: center;
   gap: 10px;
 }
-.catalog-top h2 > span {
-  background: #eaeae2;
-  color: #7f8570;
-  font-size: 9px;
-  letter-spacing: 0;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 450;
-  padding: 4px 6px;
-  border-radius: 4px;
-  min-width: 22px;
-  text-align: center;
-}
 .catalog-top p {
   font-size: 10px;
   color: #939587;
@@ -56,7 +44,7 @@
 }
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   column-gap: 18px;
   row-gap: 27px;
 }
@@ -118,12 +106,21 @@
 .rating svg {
   color: #9e9263;
 }
-.product-card h3 {
+.product-title {
   font-family: 'Manrope', sans-serif;
   font-size: 12px;
   font-weight: 650;
   letter-spacing: -0.15px;
   margin-top: 6px;
+  /* Always two lines tall, so every card and every row has the same height.
+     The virtual grid relies on that to know where each row is. */
+  line-height: 1.35;
+  min-height: 2.7em;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
 }
 .product-bottom {
   display: flex;
@@ -172,4 +169,47 @@
   margin: 4px 0 10px;
   font-size: 13px;
   color: #5c6068;
+}
+/* Live stock just changed: a short highlight so the change is noticed. */
+.product-stock.stock-changed {
+  border-radius: 4px;
+  animation: stock-flash 1.6s ease-out;
+}
+.live-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 12px;
+  color: #5c6068;
+}
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+.live-status-live .live-dot {
+  background: var(--green);
+}
+.live-status-reconnecting .live-dot {
+  background: var(--orange);
+}
+
+.product-grid {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+}
+.product-link {
+  color: inherit;
+  text-decoration: none;
+}
+.product-link:hover {
+  text-decoration: underline;
+}
+.product-link:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 3px;
+  border-radius: 2px;
 }

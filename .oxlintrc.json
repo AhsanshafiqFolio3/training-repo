@@ -31,16 +31,19 @@
     "unicorn/filename-case": [
       "error",
       {
-        "cases": {
-          "camelCase": true,
-          "pascalCase": true
-        }
+        "case": "kebabCase"
+      }
+    ],
+    "react/no-unstable-nested-components": [
+      "error",
+      {
+        "allowAsProps": true
       }
     ]
   },
   "overrides": [
     {
-      "files": ["**/*.test.ts", "**/*.test.tsx"],
+      "files": ["**/*.test.ts", "**/*.test.tsx", "src/test/**"],
       "rules": {
         "react/only-export-components": "off"
       }

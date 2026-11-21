@@ -10,7 +10,8 @@
   font-size: 14px;
   --orange: #e65b32;
   --ink: #262922;
-  --muted: #85867b;
+  /* 5.1:1 on the page background, enough for small text (WCAG AA needs 4.5:1). */
+  --muted: #696a60;
   --line: #e5e4dd;
   --green: #516447;
 }
@@ -93,4 +94,16 @@ html {
 }
 .skip-link:focus {
   top: 10px;
+}
+/* Hidden on screen but still read by screen readers. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }

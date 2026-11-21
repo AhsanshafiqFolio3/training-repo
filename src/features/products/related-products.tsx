@@ -1,0 +1,50 @@
+import { useCallback } from 'react'
+import type { ReactElement } from 'react'
+import { getProducts, productListCacheKey } from '../../api/products'
+import type { Category } from '../../api/types'
+import { ApiErrorView } from '../../shared/api-error-view'
+import { AsyncContent } from '../../shared/async-content'
+import { LoadingGrid } from '../../shared/status-views'
+import { useAsync } from '../../shared/use-async'
+import { ProductGrid } from './product-grid'
+
+const RELATED_COUNT = 6
+
+type RelatedProductsProps = {
+  category: Category
+  currentProductId: string
+}
+
+export function RelatedProducts({
+  category,
+  currentProductId,
+}: RelatedProductsProps): ReactElement {
+  const loadRelated = useCallback(
+    (signal: AbortSignal) => getProducts({ category, inStock: true, sort: 'rating' }, signal),
+    [category],
+  )
+  const [relatedState, retry] = useAsync(
+    loadRelated,
+    productListCacheKey({ category, inStock: true, sort: 'rating' }),
+  )
+
+  return (
+    <section className="related-products" aria-labelledby="related-heading">
+      <h2 id="related-heading">More from this category</h2>
+      <AsyncContent
+        state={relatedState}
+        loading={<LoadingGrid label="Loading related products" />}
+        error={(error) => <ApiErrorView error={error} onRetry={retry} />}
+      >
+        {(data) => (
+          <ProductGrid
+            label="Related products"
+            products={data.items
+              .filter((product) => product.id !== currentProductId)
+              .slice(0, RELATED_COUNT)}
+          />
+        )}
+      </AsyncContent>
+    </section>
+  )
+}

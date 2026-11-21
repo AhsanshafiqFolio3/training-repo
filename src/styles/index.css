@@ -2,7 +2,9 @@
 @import './buttons.css';
 @import './layout.css';
 @import './store.css';
-@import './cart.css';
+@import './filters.css';
+@import './product-details.css';
+@import './pages.css';
 @import './ui.css';
 @import './type.css';
 @import './mock-controls.css';

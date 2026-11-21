@@ -7,7 +7,8 @@ This project grew out of the Week 1 store project, and its git history is kept.
 
 ## Quick start
 
-You need **Node.js 22.12 or newer** (check with `node -v`) and npm.
+You need **Node.js 22.22.2, 24.15 or 26 and newer** (check with `node -v`) and npm. CI runs on
+Node 26.
 
 ```bash
 git clone https://github.com/AhsanshafiqFolio3/training-repo.git
@@ -36,6 +37,21 @@ Demo login: `ada@bugbazaar.dev` / `debug123`.
 | `npm run format:check` | Check formatting without changing files                              |
 | `npm run check`        | Formatting, lint, type check and tests together (run before pushing) |
 
+## CI and deploy
+
+- **CI** (`.github/workflows/ci.yml`) runs on every pull request and every push to `main`:
+  formatting, lint, type check, tests and a production build. Any failure fails the check.
+- **Deploy** (`.github/workflows/deploy.yml`) runs on every push to `main`. It runs the
+  checks again, builds the site for `/training-repo/`, and publishes it to GitHub Pages.
+
+Two settings have to be switched on once in the repository on GitHub (they can't be set
+from code):
+
+1. **Block merges when CI fails:** Settings → Branches → Add branch ruleset (or "Add rule")
+   for `main` → turn on **Require status checks to pass** → add the check
+   **Lint, type check, test and build**. Also turn on **Require a pull request before merging**.
+2. **Publish the site:** Settings → Pages → Source: **GitHub Actions**.
+
 ## Environment variables
 
 None are required. To change them, copy `.env.example` to `.env.local`.
@@ -48,7 +64,8 @@ None are required. To change them, copy `.env.example` to `.env.local`.
 ## Triggering errors and slow responses
 
 While the mock API is on, a **Mock API controls** panel sits in the bottom-left corner. Use it
-to slow responses down, make product requests fail with a 500, or expire the session. The full
+to slow responses down, make product requests fail with a 500, expire the session, or take the
+live stock server down to watch the app reconnect. The full
 list of ways to trigger each error is in [docs/api-contract.md](docs/api-contract.md).
 
 ## Folder structure
@@ -70,20 +87,26 @@ Tests sit next to the file they test, as `<name>.test.ts` or `<name>.test.tsx`.
 
 ## Naming conventions
 
-| What                           | Style             | Example                              |
-| ------------------------------ | ----------------- | ------------------------------------ |
-| Folders                        | lowercase         | `features/store`, `mocks/handlers`   |
-| React component files          | PascalCase        | `ProductCard.tsx`                    |
-| Hook files                     | `use` + camelCase | `useAsync.ts`                        |
-| Other TypeScript files         | camelCase         | `formatPrice.ts`, `mockSettings.ts`  |
-| CSS files and class names      | kebab-case        | `mock-controls.css`, `.product-card` |
-| Components, types              | PascalCase        | `ProductCard`, `RequestState`        |
-| Functions and variables        | camelCase         | `getProducts`, `quantityInCart`      |
-| Booleans                       | `is`/`has` prefix | `isSoldOut`, `hasFilters`            |
-| Fixed values and lookup tables | UPPER_SNAKE_CASE  | `PAGE_SIZE`, `LATENCY_MS`            |
-| API functions                  | HTTP-style verb   | `getProduct`, `createOrder`, `login` |
+**Every file and folder name is kebab-case**: components, hooks, slices, tests, CSS, all of
+them. A file is named after the main thing it exports.
 
-Lint enforces the file name styles (`unicorn/filename-case`). Prettier handles formatting.
+| What                           | Style             | Example                                           |
+| ------------------------------ | ----------------- | ------------------------------------------------- |
+| Folders                        | kebab-case        | `features/cart`, `mocks/handlers`                 |
+| Files (`.ts`, `.tsx`, `.css`)  | kebab-case        | `product-card.tsx`, `use-async.ts`, `pages.css`   |
+| Test files                     | kebab-case        | `cart-slice.test.ts`, `checkout-page.test.tsx`    |
+| CSS class names                | kebab-case        | `.product-card`, `.cart-line`                     |
+| Components, types              | PascalCase        | `ProductCard` (in `product-card.tsx`), `CartLine` |
+| Hooks                          | `use` + camelCase | `useAsync` (in `use-async.ts`)                    |
+| Functions and variables        | camelCase         | `getProducts`, `quantityInCart`                   |
+| Booleans                       | `is`/`has` prefix | `isSoldOut`, `hasActiveFilters`                   |
+| Redux actions                  | past-tense event  | `itemAdded`, `sessionExpired`                     |
+| Redux selectors                | `select` + noun   | `selectCartCount`, `selectIsSignedIn`             |
+| Fixed values and lookup tables | UPPER_SNAKE_CASE  | `PAGE_SIZE`, `SORT_LABELS`                        |
+| API functions                  | HTTP-style verb   | `getProduct`, `createOrder`, `login`              |
+
+Lint enforces kebab-case file names (`unicorn/filename-case`), so a file like
+`ProductCard.tsx` fails `npm run lint`. Prettier handles formatting.
 
 ## Rules this codebase follows
 
@@ -97,4 +120,7 @@ Lint enforces the file name styles (`unicorn/filename-case`). Prettier handles f
 
 - [API contract](docs/api-contract.md)
 - [Decisions](docs/decisions.md): what we chose for each task and why
+- [Authentication](docs/auth.md): where the token lives and why
+- [Performance](docs/performance.md): what we measured, what we fixed, what we skipped
+- [Monitoring](docs/monitoring.md): how errors are caught and logged, and what we'd track
 - [AI notes](docs/ai-notes.md)

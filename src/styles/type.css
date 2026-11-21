@@ -1,14 +1,13 @@
 .catalog-top p,
 .product-meta,
-.cart-empty p,
 .footer p,
 .footer > span {
-  color: #6e7565;
+  color: var(--muted);
 }
-.empty-state p {
-  color: #68765a;
+.status-message p {
+  color: #56644a;
 }
-.product-card h3 {
+.product-title {
   font-size: 14px;
 }
 .product-meta {
@@ -25,15 +24,6 @@
   min-height: 32px;
 }
 .catalog-top p {
-  font-size: 11px;
-}
-.cart-heading h2 {
-  font-size: 17px;
-}
-.cart-empty h3 {
-  font-size: 12px;
-}
-.cart-empty p {
   font-size: 11px;
 }
 .cart-summary > div {
