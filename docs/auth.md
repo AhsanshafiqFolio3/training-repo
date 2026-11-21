@@ -11,8 +11,10 @@
    navigation state (`state.from`). After login you are sent back there.
 5. If any request that carried a token gets **401**, the client calls `onUnauthorized`, which
    dispatches `sessionExpired()`. The session is cleared, `RequireAuth` redirects to login, and
-   the login page says "Your session ended". A 401 from the login form itself only means a
-   wrong password, so it never clears anything.
+   the login page says "Your session ended". A 401 from the login form only means a wrong
+   password. When you're signed out, that request carries no token, so nothing is cleared.
+   (If you open `/login` while already signed in and type a wrong password, the request
+   carries your token, so you are signed out. That's the safe side to fail on.)
 6. The login button is disabled while a request is running. A `useRef` flag also blocks a
    second submit that arrives before React re-renders, which a double-click can do.
 

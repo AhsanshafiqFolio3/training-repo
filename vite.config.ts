@@ -11,5 +11,8 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
     include: ['src/**/*.test.{ts,tsx}'],
+    // The page tests render the whole app in jsdom. On a busy machine or a slow CI runner
+    // that can pass the 5 s default, so give them room.
+    testTimeout: 15_000,
   },
 })

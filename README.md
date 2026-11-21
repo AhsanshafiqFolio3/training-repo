@@ -70,13 +70,16 @@ list of ways to trigger each error is in [docs/api-contract.md](docs/api-contrac
 
 ## Folder structure
 
+More detail, with a data flow diagram, is in [docs/architecture.md](docs/architecture.md).
+
 ```text
 src/
   api/        The only code that talks to the server: client, endpoint functions, types
   app/        App shell and routes
-  features/   One folder per feature (store, cart, …) with its components, hooks and tests
+  features/   One folder per feature (products, cart, checkout, orders, session, stock)
   mocks/      The mock API: fetch replacement, seeded data, handlers, controls panel
   shared/     Reusable components, hooks and helpers used by several features
+  store/      Redux store, typed hooks, saving the cart and session to browser storage
   styles/     CSS, one file per area, imported in order from index.css
   test/       Test setup
 docs/         Written tasks: API contract, decisions, AI notes and so on
@@ -118,9 +121,13 @@ Lint enforces kebab-case file names (`unicorn/filename-case`), so a file like
 
 ## Docs
 
+- [Architecture](docs/architecture.md): folder structure, data flow, where state lives, design patterns
+- [Orders](docs/orders.md): the order service, queue and workers behind checkout
+- [Glossary](docs/glossary.md): latency, idempotency, scaling, CDN, caching, consistency
 - [API contract](docs/api-contract.md)
 - [Decisions](docs/decisions.md): what we chose for each task and why
 - [Authentication](docs/auth.md): where the token lives and why
 - [Performance](docs/performance.md): what we measured, what we fixed, what we skipped
 - [Monitoring](docs/monitoring.md): how errors are caught and logged, and what we'd track
 - [AI notes](docs/ai-notes.md)
+- [Reflection](docs/reflection.md): how I rate myself on each topic, and what to learn next

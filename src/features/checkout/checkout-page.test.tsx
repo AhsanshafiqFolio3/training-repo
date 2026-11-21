@@ -54,6 +54,8 @@ describe('checkout', () => {
     expect(alert).toHaveTextContent('Some items just sold out.')
     expect(alert).toHaveTextContent(product.name)
     expect(alert).toHaveTextContent(`only ${realStock} left`)
+    // Trying again can't help until the cart changes, so the button stays "Place order".
+    expect(screen.getByRole('button', { name: 'Place order' })).toBeDisabled()
 
     await user.click(screen.getByRole('button', { name: 'Update my cart' }))
     expect(store.getState().cart.lines[0]?.quantity).toBe(realStock)

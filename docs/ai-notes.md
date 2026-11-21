@@ -1,112 +1,72 @@
 # AI notes
 
-A log of notable AI use during the week. D5-7 asks for three uses (prompt, what I kept,
-what I changed and why), one AI mistake and how I caught it, and one thing I wouldn't hand
-to AI.
+I used Claude (in VS Code) through the week. Below are three places where it helped, what I
+kept and what I changed, a mistake it made that I caught, and something I wouldn't give it.
 
-## Log
+## Three times I used AI
 
-### 1. Planning the week from the brief (Day 1)
+### 1. Planning the week (Day 1)
 
-- **Prompt:** "Read The Bug Bazaar PDF and create a plan according to the instructions."
-- **Kept:** The day-by-day task list and the idea of a branch per day.
-- **Changed:** <!-- your own words: what did you change in the plan and why? -->
+- **Prompt:** "read the bug bazaar pdf and make me a plan, day by day. one branch per day and
+  every commit should start with the task id"
+- **What I kept:** the task list for each day, and one branch per day where each one starts
+  from the day before.
+- **What I changed:** my deadline was 23 November, so I squeezed the plan into fewer
+  calendar days. I also told it to keep working in my Week 1 repo instead of starting a new
+  one, so the history stays, and to drop anything the PDF doesn't ask for (the old customer
+  dashboard, the Playwright setup, the hero banner).
 
-### 2. Building the mock API (D1-2)
+### 2. The mock API (D1-2)
 
-- **Prompt:** "Mock the shared API contract so the app runs without a backend, with 5,000
-  products and every error triggerable."
-- **Kept:** The fetch-compatible `mockFetch`, the seeded generator, the controls panel.
-- **Changed:** Asked for no extra libraries that the brief doesn't mention, so MSW was dropped
-  in favour of a hand-written mock. <!-- add anything else you changed -->
+- **Prompt:** "mock the api contract from the pdf so the app works without a backend. need
+  5000 products and a way to trigger every error, 500, 401, 409, slow responses. don't add
+  libraries the pdf doesn't mention"
+- **What I kept:** `mockFetch`, which works like `fetch` and returns real `Response`
+  objects, the seeded product generator, and the small controls panel for errors.
+- **What I changed:** MSW (Mock Service Worker) was the obvious choice. It's a good tool, but
+  it's one more library the brief doesn't mention, so I went with a hand-written mock I can
+  explain line by line. The trade-off is that mock requests don't show in the browser's
+  Network tab.
 
-### 3. Debounced search with the Back button (D2-5)
+### 3. Checkout that can't create two orders (D3-2)
 
-- **Prompt:** "Extract typed custom hooks such as debouncing input, and make search
-  update the URL only after typing pauses."
-- **Kept:** `useDebouncedValue` and the search box that syncs from the URL.
-- **Changed:** <!-- your own words -->
+- **Prompt:** "how do i stop checkout making 2 orders if someone double clicks or the
+  request times out and they press try again? using redux toolkit"
+- **What I kept:** the idempotency key. One random key per cart, sent as an
+  `Idempotency-Key` header, and the same key on every retry, so the server hands back the
+  first order instead of making a new one.
+- **What I changed:** the files it created were named in two styles, PascalCase for
+  components (`CartPage.tsx`) and camelCase for the rest (`cartSlice.ts`). I wanted one style
+  for every file, so everything is kebab-case now (`cart-page.tsx`, `cart-slice.ts`) and a
+  lint rule (and so CI) fails if a file breaks it. I also made sure I could explain why
+  disabling the button isn't enough on its own: it stops a double click, but not a retry
+  after a timeout.
 
-### 4. Cart, checkout and auth with Redux Toolkit (Day 3)
+## A mistake I caught
 
-- **Prompt:** "Complete Day 3: Redux cart and session, cart page, checkout that can't create
-  a second order on retry, login with protected pages, one way of handling API errors, and
-  caching."
-- **Kept:** The slices and selectors, the idempotency key on checkout, `RequireAuth`, and the
-  single error mapping in `error-messages.ts`.
-- **Changed:** The AI first named component files in PascalCase and other files in camelCase.
-  I asked for one format everywhere, so every file is now kebab-case and lint enforces it.
-  <!-- add anything else you changed -->
+**The search broke the Back button (Day 2).** After I typed a search and pressed Back, the
+old search came back. The AI's code looked fine, but my page test ("saves the search to the
+URL once typing pauses, and Back clears it") failed. The cause was React Router's
+`setSearchParams`: it's a new function after every navigation, so the effect that depended
+on it ran again and wrote the old text back into the URL. The fix keeps it in a ref.
 
-### 5. Measuring and speeding up the product list (Day 4)
+What I took from it: test what the user does (type, then press Back), not just the happy
+path. The code review alone wouldn't have caught it.
 
-- **Prompt:** "Start Day 4: accessibility, performance with before and after numbers,
-  virtualization for the 5,000-item list, live stock over WebSockets, tests, CI and
-  monitoring."
-- **Kept:** Measuring before fixing (the numbers in `performance.md`), `memo` plus our own
-  window virtualization, the reconnecting stock feed, the two CI workflows.
-- **Changed:** <!-- your own words: e.g. anything you questioned or asked to be done differently -->
-
-## AI mistakes caught
-
-### The first debounced search broke the Back button (Day 2)
-
-The AI's first version re-applied the old search after pressing Back. The page test
-"saves the search to the URL once typing pauses, and Back clears it" failed and showed
-why: React Router's setter changes identity on every navigation, which re-ran the effect.
-**Lesson:** write the test for the behaviour you care about (Back works), not only the happy path.
-
-### A git command undid a change (Day 2)
-
-While removing a debug log, the AI ran `git checkout` on a file, which also threw away an
-uncommitted edit to that file. The next test run failed and `git diff --stat` showed the
-file was missing from the changes, so the edit was re-applied.
-**Lesson:** `git checkout <file>` drops every uncommitted change in that file, not just the
-line you meant.
-
-### Unused-CSS cleanup removed live styles (Day 1)
-
-The AI wrote a script to delete CSS rules whose class names no longer appear in the source.
-The class `active` is never written in our code, because React Router's `NavLink` adds it at
-runtime. So the script removed the nav link's active underline. It was caught by reading the
-diff of the stylesheet before committing, and the rule was restored.
-**Lesson:** a text search can't see class names that libraries add at runtime.
-
-### The performance doc claimed a tool we never used (Day 4)
-
-The first draft of `performance.md` said "React DevTools' Profiler showed why" every card
-re-rendered. No one had opened the Profiler: the evidence was the script-time numbers.
-It was caught by reading the draft against what had actually been run, and rewritten to
-say what the numbers show.
-**Lesson:** check every "we measured" and "we saw" in AI-written docs against what was
-really done. An evaluator can ask to see it.
-
-### Keyboard jumps broke in the virtual grid (Day 4)
-
-After virtualization, pressing Home far down the list scrolled only part of the way and
-focused nothing. The page has `scroll-behavior: smooth`, so `window.scrollTo` animated
-instead of jumping, and the card to focus wasn't drawn yet. The unit tests passed, because
-the test DOM has no layout or scrolling. It was caught by a check in real Chrome, and fixed
-with `behavior: 'instant'`.
-**Lesson:** anything that depends on layout (virtualization, scrolling, sizes) needs a check
-in a real browser.
-
-### A dependency added only to re-run an effect (Day 4)
-
-To make infinite scroll keep loading on tall screens, the AI added `items.length` to an
-effect's dependencies without using it inside. Lint flagged it as an extra dependency.
-The fix was to say what we meant: keep "is the button near the screen" in state, and load
-whenever it's near and nothing is loading.
-**Lesson:** a dependency the effect doesn't read is a sign the logic is hidden somewhere else.
-
-### The wrong minimum Node version since Day 1 (Day 4)
-
-`package.json` said Node `>=22.12`. While choosing a Node version for CI, we read what our
-dependencies require: jsdom and React Router need at least 22.22. Someone on 22.12 would
-have hit confusing errors. Fixed in the `engines` field and the README.
-**Lesson:** when you write down a requirement, check it against the dependencies instead of
-copying it from a template.
+A second one, from Day 4: the first draft of `performance.md` said "React DevTools'
+Profiler showed" why every card re-rendered. Nobody had opened the Profiler; the proof was
+the timing numbers. I caught it reading the draft against what we had actually run, and
+had it rewritten. If a doc says "we measured", it has to be true, because an evaluator can
+ask me to show it.
 
 ## Something I wouldn't hand to AI
 
-<!-- your own answer, for D5-7 -->
+**Secrets.** I don't paste API keys, tokens, passwords or a real `.env` file into Claude or
+any other AI tool. Once it's in a chat I've lost control of where it's stored, and the only
+safe fix is to change the key. In this project that was easy: the API is mocked, the demo
+login is fake, and `.env.example` only has two harmless settings. If the store had a real
+payment or email key, it would live in GitHub's repository secrets for CI, and I'd only
+ever tell the AI the variable's _name_, never its value.
+
+The same goes for real customer data: if I needed to debug with production data, I'd
+replace names, emails and addresses with fake ones first.
