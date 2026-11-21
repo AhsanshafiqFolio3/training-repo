@@ -48,7 +48,8 @@ None are required. To change them, copy `.env.example` to `.env.local`.
 ## Triggering errors and slow responses
 
 While the mock API is on, a **Mock API controls** panel sits in the bottom-left corner. Use it
-to slow responses down, make product requests fail with a 500, or expire the session. The full
+to slow responses down, make product requests fail with a 500, expire the session, or take the
+live stock server down to watch the app reconnect. The full
 list of ways to trigger each error is in [docs/api-contract.md](docs/api-contract.md).
 
 ## Folder structure
@@ -104,4 +105,5 @@ Lint enforces kebab-case file names (`unicorn/filename-case`), so a file like
 - [API contract](docs/api-contract.md)
 - [Decisions](docs/decisions.md): what we chose for each task and why
 - [Authentication](docs/auth.md): where the token lives and why
+- [Performance](docs/performance.md): what we measured, what we fixed, what we skipped
 - [AI notes](docs/ai-notes.md)

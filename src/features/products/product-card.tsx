@@ -4,9 +4,10 @@ import { Link } from 'react-router'
 import { Check, Plus, Star } from 'lucide-react'
 import type { Product } from '../../api/types'
 import { formatPrice } from '../../shared/format-price'
-import { useAppDispatch } from '../../store/hooks'
+import { useAppDispatch, useAppSelector } from '../../store/hooks'
 import { itemAdded } from '../cart/cart-slice'
 import { useQuantityInCart } from '../cart/use-quantity-in-cart'
+import { selectStock } from '../stock/stock-slice'
 
 type ProductCardProps = {
   product: Product
@@ -30,8 +31,11 @@ export const ProductCard = memo(function ProductCard({
 }: ProductCardProps): ReactElement {
   const dispatch = useAppDispatch()
   const quantityInCart = useQuantityInCart(product.id)
-  const isSoldOut = product.stock === 0
-  const isAtLimit = quantityInCart >= product.stock
+  // Live from the stock feed when we have it. Only this card re-renders when it changes.
+  const stock = useAppSelector((state) => selectStock(state, product))
+  const isSoldOut = stock === 0
+  const isAtLimit = quantityInCart >= stock
+  const hasChangedLive = stock !== product.stock
 
   return (
     <article className="product-card">
@@ -61,13 +65,16 @@ export const ProductCard = memo(function ProductCard({
           {product.name}
         </Link>
       </h3>
-      <p className="product-stock">{isSoldOut ? 'Out of stock' : `${product.stock} in stock`}</p>
+      {/* A new key restarts the highlight animation each time the live stock changes. */}
+      <p key={stock} className={`product-stock ${hasChangedLive ? 'stock-changed' : ''}`}>
+        {isSoldOut ? 'Out of stock' : `${stock} in stock`}
+      </p>
       <div className="product-bottom">
         <strong>{formatPrice(product.price)}</strong>
         <button
           className={`add-button ${quantityInCart > 0 ? 'added' : ''}`}
           disabled={isSoldOut || isAtLimit}
-          onClick={() => dispatch(itemAdded(product))}
+          onClick={() => dispatch(itemAdded({ ...product, stock }))}
           aria-label={`Add ${product.name} to cart`}
         >
           {quantityInCart > 0 && !isAtLimit ? <Check size={14} /> : <Plus size={14} />}{' '}

@@ -18,6 +18,7 @@ import {
   selectCheckoutKey,
   stockChecked,
 } from '../cart/cart-slice'
+import { stockReset } from '../stock/stock-slice'
 
 type OutOfStockProps = {
   lines: CartLine[]
@@ -77,8 +78,9 @@ export function CheckoutPage(): ReactElement {
       const items = lines.map(({ product, quantity }) => ({ productId: product.id, quantity }))
       const order = await createOrder({ items }, checkoutKey)
       dispatch(cartCleared())
-      // Stock just changed, so cached product data is out of date.
+      // Stock just changed, so cached product data and earlier live stock are out of date.
       invalidateCache('product')
+      dispatch(stockReset())
       void navigate(`/orders/${order.id}`, { replace: true })
     } catch (caught) {
       // A 401 clears the session in the API client; RequireAuth then sends us to login.

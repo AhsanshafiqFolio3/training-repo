@@ -80,6 +80,26 @@ export type CreatedOrder = {
   status: 'queued'
 }
 
+// WebSocket /api/stock: live stock levels. Not in the original contract; we added it
+// for D4-4. See docs/api-contract.md.
+export type StockUpdate = {
+  productId: string
+  stock: number
+}
+
+// Client to server: "these are the products I'm showing". Replaces the previous list.
+export type StockSubscribeMessage = {
+  type: 'subscribe'
+  productIds: string[]
+}
+
+// Server to client: new stock levels. Sent for every watched product right after a
+// subscribe (so a reconnect catches up on what it missed), then whenever stock changes.
+export type StockUpdateMessage = {
+  type: 'stock'
+  updates: StockUpdate[]
+}
+
 // Type guards for values read from URLs, where anything can appear.
 export function isCategory(value: string | null): value is Category {
   return CATEGORIES.some((category) => category === value)

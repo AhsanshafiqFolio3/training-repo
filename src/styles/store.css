@@ -170,6 +170,31 @@
   font-size: 13px;
   color: #5c6068;
 }
+/* Live stock just changed: a short highlight so the change is noticed. */
+.product-stock.stock-changed {
+  border-radius: 4px;
+  animation: stock-flash 1.6s ease-out;
+}
+.live-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 12px;
+  color: #5c6068;
+}
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+.live-status-live .live-dot {
+  background: var(--green);
+}
+.live-status-reconnecting .live-dot {
+  background: var(--orange);
+}
 
 .product-grid {
   list-style: none;

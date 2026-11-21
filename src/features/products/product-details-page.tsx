@@ -10,16 +10,22 @@ import { BackToTopButton } from '../../shared/back-to-top-button'
 import { formatPrice } from '../../shared/format-price'
 import { LoadingDetails } from '../../shared/status-views'
 import { useAsync } from '../../shared/use-async'
-import { useAppDispatch } from '../../store/hooks'
+import { useAppDispatch, useAppSelector } from '../../store/hooks'
 import { itemAdded } from '../cart/cart-slice'
 import { useQuantityInCart } from '../cart/use-quantity-in-cart'
+import { LiveStockStatus } from '../stock/live-stock-status'
+import { selectStock } from '../stock/stock-slice'
+import { useLiveStock } from '../stock/use-live-stock'
 import { RelatedProducts } from './related-products'
 
 function ProductDetails({ product }: { product: Product }): ReactElement {
   const dispatch = useAppDispatch()
   const quantityInCart = useQuantityInCart(product.id)
-  const isSoldOut = product.stock === 0
-  const isAtLimit = quantityInCart >= product.stock
+  // Watch this product's stock while its page is open.
+  const feedStatus = useLiveStock([product.id])
+  const stock = useAppSelector((state) => selectStock(state, product))
+  const isSoldOut = stock === 0
+  const isAtLimit = quantityInCart >= stock
 
   return (
     <div className="product-details-layout">
@@ -33,12 +39,18 @@ function ProductDetails({ product }: { product: Product }): ReactElement {
           of 5
         </p>
         <p className="product-details-price">{formatPrice(product.price)}</p>
-        <p className="product-stock">{isSoldOut ? 'Out of stock' : `${product.stock} in stock`}</p>
+        <p
+          key={stock}
+          className={`product-stock ${stock !== product.stock ? 'stock-changed' : ''}`}
+        >
+          {isSoldOut ? 'Out of stock' : `${stock} in stock`}
+        </p>
+        <LiveStockStatus status={feedStatus} />
         <button
           type="button"
           className="button dark"
           disabled={isSoldOut || isAtLimit}
-          onClick={() => dispatch(itemAdded(product))}
+          onClick={() => dispatch(itemAdded({ ...product, stock }))}
         >
           {isSoldOut ? 'Sold out' : isAtLimit ? 'All in your cart' : 'Add to cart'}
         </button>

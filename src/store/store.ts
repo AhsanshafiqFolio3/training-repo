@@ -2,11 +2,14 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { configureApiClient } from '../api/client'
 import { cartReducer } from '../features/cart/cart-slice'
 import { sessionExpired, sessionReducer } from '../features/session/session-slice'
+import { stockReducer } from '../features/stock/stock-slice'
 import { saveCart, saveSession } from './persistence'
 
 const rootReducer = combineReducers({
   cart: cartReducer,
   session: sessionReducer,
+  // Live stock is server data that changes all the time, so it is never saved.
+  stock: stockReducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

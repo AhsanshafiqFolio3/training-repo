@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { ReactElement } from 'react'
 import { MOCK_LATENCIES, readMockSettings, saveMockSettings } from './mock-settings'
+import { dropStockSockets } from './mock-stock-socket'
 import type { MockLatency, MockSettings } from './mock-settings'
 
 function isMockLatency(value: string): value is MockLatency {
@@ -59,6 +60,18 @@ export function MockControls(): ReactElement {
           onChange={(event) => update({ loseOrderReplies: event.target.checked })}
         />
         Lose the reply to new orders (order is saved)
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          checked={settings.stockFeedDown}
+          onChange={(event) => {
+            update({ stockFeedDown: event.target.checked })
+            // Going down cuts the open connections too. Turn it off to watch the feed recover.
+            if (event.target.checked) dropStockSockets()
+          }}
+        />
+        Live stock server is down (drops the connection)
       </label>
     </details>
   )

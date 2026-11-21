@@ -1,4 +1,5 @@
 import { mockFetch } from '../mocks/mock-fetch'
+import { MockStockSocket } from '../mocks/mock-stock-socket'
 import { ApiRequestError } from './api-request-error'
 import { API_BASE_URL, USE_MOCK_API } from './config'
 import type { ApiError } from './types'
@@ -82,4 +83,20 @@ export async function apiRequest<TResponse>(
   }
   // We trust the server to follow docs/api-contract.md, so the body is not re-checked here.
   return responseBody as TResponse
+}
+
+// The part of the WebSocket API we use: send, close, and the open, message and close
+// events. A real WebSocket has all of it, and so does the mock (src/mocks/mock-stock-socket.ts).
+export interface LiveSocket extends EventTarget {
+  send: (data: string) => void
+  close: () => void
+}
+
+// Sockets are network calls too, so they are opened here and nowhere else.
+// "/stock" becomes ws://<host>/api/stock (wss:// on an https page).
+export function openSocket(path: string): LiveSocket {
+  if (USE_MOCK_API) return new MockStockSocket(`${API_BASE_URL}${path}`)
+  const url = new URL(`${API_BASE_URL}${path}`, window.location.href)
+  url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:'
+  return new WebSocket(url)
 }

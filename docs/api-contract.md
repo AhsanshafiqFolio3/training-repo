@@ -57,6 +57,21 @@ type User = { id: string; name: string; email: string }
 `inStock` is our addition for the "in stock only" filter (D2-2). It is optional, so the
 contract still works without it.
 
+### WebSocket /api/stock (our addition)
+
+Live stock for D4-4. It isn't in the brief's contract, so it is defined here. It only carries
+stock numbers; everything else still comes from the HTTP endpoints.
+
+| Direction        | Message                                              | When                                                                    |
+| ---------------- | ---------------------------------------------------- | ----------------------------------------------------------------------- |
+| Client to server | `{ type: "subscribe", productIds: string[] }`        | After connecting, and whenever the products on screen change            |
+| Server to client | `{ type: "stock", updates: { productId, stock }[] }` | Right after each subscribe (current stock), then whenever stock changes |
+
+A subscribe replaces the previous list. Because the server answers every subscribe with the
+current stock, a client that reconnects after a drop catches up on what it missed.
+
+On `http://` pages the URL is `ws://<host>/api/stock`, on `https://` pages `wss://`.
+
 ### POST /api/login
 
 Request: `{ "email": string, "password": string }`
@@ -98,6 +113,8 @@ The app has no real backend yet. `src/mocks/mock-fetch.ts` has the same signatur
 - seeds 5,000 products from a fixed seed, so the data is the same on every load
 - keeps stock, orders and sign-ins in memory, so they reset on reload
 - waits a short time before answering, like a real network, and stops if the request is cancelled
+- runs a pretend WebSocket server for `/api/stock` (`src/mocks/mock-stock-socket.ts`): every
+  2.5 seconds one product that someone is watching sells a few units or gets restocked
 
 Demo account: `ada@bugbazaar.dev` / `debug123`.
 
@@ -119,5 +136,6 @@ mock is on).
 | Slow responses            | Set "Response speed" to Slow                                                                                                  |
 | Out-of-order responses    | Set "Response speed" to Random                                                                                                |
 | A lost order reply        | Tick "Lose the reply to new orders". The order is saved, the app sees a network error, and Try again gets the same order back |
+| Live stock disconnect     | Tick "Live stock server is down". Open sockets drop and new ones are refused; untick it and the app reconnects by itself      |
 
 `src/mocks/mock-fetch.test.ts` checks every status code above.

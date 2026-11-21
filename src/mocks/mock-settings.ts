@@ -13,6 +13,9 @@ export type MockSettings = {
   // A new order is saved, but the reply is "lost" (like a dropped connection),
   // so the app has to retry. Retries with the same Idempotency-Key get the saved order.
   loseOrderReplies: boolean
+  // The live stock socket server is down: open sockets are dropped and new ones are
+  // refused, so the app has to keep retrying until the switch is turned off.
+  stockFeedDown: boolean
 }
 
 export const DEFAULT_MOCK_SETTINGS: MockSettings = {
@@ -20,6 +23,7 @@ export const DEFAULT_MOCK_SETTINGS: MockSettings = {
   failProductRequests: false,
   rejectTokens: false,
   loseOrderReplies: false,
+  stockFeedDown: false,
 }
 
 const STORAGE_KEY = 'bug-bazaar:mock-settings'

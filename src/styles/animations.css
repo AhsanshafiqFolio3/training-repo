@@ -21,3 +21,11 @@
     margin-bottom: 0;
   }
 }
+@keyframes stock-flash {
+  from {
+    background: #fbe7a1;
+  }
+  to {
+    background: transparent;
+  }
+}

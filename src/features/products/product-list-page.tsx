@@ -5,6 +5,9 @@ import { ApiErrorView } from '../../shared/api-error-view'
 import { AsyncContent } from '../../shared/async-content'
 import type { RequestState } from '../../shared/request-state'
 import { EmptyState, LoadingGrid } from '../../shared/status-views'
+import { useDebouncedValue } from '../../shared/use-debounced-value'
+import { LiveStockStatus } from '../stock/live-stock-status'
+import { useLiveStock } from '../stock/use-live-stock'
 import { FilterSidebar } from './filter-sidebar'
 import { ProductToolbar } from './product-toolbar'
 import { hasActiveFilters } from './product-filters'
@@ -89,6 +92,12 @@ export function ProductListPage(): ReactElement {
   const products = useProductPages(filters)
   const { items, total, isLoading, error, retry } = products
 
+  // Watch live stock for the cards on screen. The list of ids waits until scrolling
+  // pauses, so a fast scroll sends one new subscription instead of dozens.
+  const [drawnIds, setDrawnIds] = useState('')
+  const watchedIds = useDebouncedValue(drawnIds, 400)
+  const feedStatus = useLiveStock(watchedIds === '' ? [] : watchedIds.split(','))
+
   return (
     <main>
       <title>Shop · The Bug Bazaar</title>
@@ -97,6 +106,7 @@ export function ProductListPage(): ReactElement {
         <section className="catalog" aria-labelledby="catalog-heading">
           <div className="catalog-top">
             <h1 id="catalog-heading">All products</h1>
+            <LiveStockStatus status={feedStatus} />
           </div>
           <ProductToolbar />
           <p className="result-count" aria-live="polite">
@@ -124,7 +134,7 @@ export function ProductListPage(): ReactElement {
           >
             {(data) => (
               <>
-                <VirtualProductGrid products={data} label="Products" />
+                <VirtualProductGrid products={data} label="Products" onDrawnChange={setDrawnIds} />
                 <LoadMore products={products} />
               </>
             )}

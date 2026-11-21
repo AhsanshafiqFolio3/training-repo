@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useRef } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef } from 'react'
 import type { KeyboardEvent, ReactElement } from 'react'
 import type { Product } from '../../api/types'
 import { targetIndexForKey } from './grid-navigation'
@@ -8,16 +8,28 @@ import { useVirtualRows } from './use-virtual-rows'
 type VirtualProductGridProps = {
   products: Product[]
   label: string
+  // Called with the ids of the drawn cards, joined by commas, whenever they change.
+  // The shop uses it to watch live stock for what's on screen only.
+  onDrawnChange?: (productIds: string) => void
 }
 
 // The shop's grid. With thousands of products loaded, only the rows near the screen
 // are in the DOM (about 30 cards), so scrolling, adding to the cart and loading the
 // next page stay fast however long the list gets. See docs/performance.md.
-export function VirtualProductGrid({ products, label }: VirtualProductGridProps): ReactElement {
+export function VirtualProductGrid({
+  products,
+  label,
+  onDrawnChange,
+}: VirtualProductGridProps): ReactElement {
   const listRef = useRef<HTMLUListElement>(null)
   const { firstIndex, lastIndex, paddingTop, paddingBottom, columns, scrollToIndex } =
     useVirtualRows(listRef, products.length)
   const drawn = products.slice(firstIndex, lastIndex)
+
+  const drawnIds = drawn.map((product) => product.id).join(',')
+  useEffect(() => {
+    onDrawnChange?.(drawnIds)
+  }, [drawnIds, onDrawnChange])
 
   // A card the keyboard wants to move to, but that isn't drawn yet.
   const pendingFocusRef = useRef<number | null>(null)
