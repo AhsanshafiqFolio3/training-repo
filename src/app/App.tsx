@@ -6,6 +6,8 @@ import { Store } from '../features/store/Store'
 import { CartProvider } from '../features/store/CartProvider'
 import { useCart } from '../features/store/useCart'
 import { calculateTotals } from '../features/store/logic'
+import { USE_MOCK_API } from '../api/config'
+import { MockControls } from '../mocks/MockControls'
 import { ErrorBoundary } from '../shared/ErrorBoundary'
 import type { ErrorFallbackProps } from '../shared/ErrorBoundary'
 
@@ -100,6 +102,7 @@ function Shell(): ReactElement {
         </Link>
         <p>Developer gear: rubber ducks, mechanical keyboards, coffee and stickers.</p>
       </footer>
+      {USE_MOCK_API && <MockControls />}
     </>
   )
 }
