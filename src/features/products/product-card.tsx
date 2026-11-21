@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import type { KeyboardEvent, ReactElement } from 'react'
 import { Link } from 'react-router'
 import { Check, Plus, Star } from 'lucide-react'
@@ -19,7 +20,14 @@ function addButtonLabel(isSoldOut: boolean, isAtLimit: boolean, quantity: number
   return quantity > 0 ? `Add (${quantity})` : 'Add'
 }
 
-export function ProductCard({ product, index, onLinkKeyDown }: ProductCardProps): ReactElement {
+// memo: when the list gets a new page or the cart changes, only cards whose props
+// changed render again. The product objects, index and key handler stay the same for
+// cards that were already on screen, so those are skipped (see docs/performance.md).
+export const ProductCard = memo(function ProductCard({
+  product,
+  index,
+  onLinkKeyDown,
+}: ProductCardProps): ReactElement {
   const dispatch = useAppDispatch()
   const quantityInCart = useQuantityInCart(product.id)
   const isSoldOut = product.stock === 0
@@ -68,4 +76,4 @@ export function ProductCard({ product, index, onLinkKeyDown }: ProductCardProps)
       </div>
     </article>
   )
-}
+})
