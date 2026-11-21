@@ -11,7 +11,8 @@
     "react/only-export-components": "error",
     "react/react-in-jsx-scope": "off",
     "typescript/no-explicit-any": "error",
-    "jsx-a11y/prefer-tag-over-role": "off"
+    "jsx-a11y/prefer-tag-over-role": "off",
+    "typescript/ban-ts-comment": "error"
   },
   "overrides": [
     {

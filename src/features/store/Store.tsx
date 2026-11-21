@@ -120,7 +120,7 @@ export function Store(): ReactElement {
           ) : state.status === 'error' ? (
             <EmptyState
               title="A small interruption."
-              message={state.message}
+              message={state.error.message}
               error
               action={retryLoad}
             />

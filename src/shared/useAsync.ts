@@ -1,37 +1,41 @@
 import { useCallback, useEffect, useState } from 'react'
-import type { LoadState } from './types'
+import { toApiRequestError } from '../api/ApiRequestError'
+import type { RequestState } from './requestState'
 
-type Loader<T> = (signal: AbortSignal) => Promise<T>
-interface Settled<T> {
-  loader: Loader<T>
+type Loader<TData> = (signal: AbortSignal) => Promise<TData>
+
+type SettledResult<TData> = {
+  loader: Loader<TData>
   attempt: number
-  state: LoadState<T>
+  state: RequestState<TData>
 }
-const loading = { status: 'loading' } as const
 
-export function useAsync<T>(loader: Loader<T>): [LoadState<T>, () => void] {
+const LOADING = { status: 'loading' } as const
+
+export function useAsync<TData>(loader: Loader<TData>): [RequestState<TData>, () => void] {
   const [attempt, setAttempt] = useState(0)
-  const [settled, setSettled] = useState<Settled<T> | null>(null)
+  const [settled, setSettled] = useState<SettledResult<TData> | null>(null)
+
   useEffect(() => {
     const controller = new AbortController()
-    const settle = (state: LoadState<T>): void => {
+    function settle(state: RequestState<TData>): void {
+      // An aborted request belongs to an old loader or an unmounted component.
       if (!controller.signal.aborted) setSettled({ loader, attempt, state })
     }
     loader(controller.signal).then(
       (data) => settle({ status: 'success', data }),
-      (error: unknown) =>
-        settle({
-          status: 'error',
-          message: error instanceof Error ? error.message : 'Something went wrong.',
-        }),
+      (error: unknown) => settle({ status: 'error', error: toApiRequestError(error) }),
     )
     return (): void => {
       controller.abort()
     }
   }, [loader, attempt])
+
   const retry = useCallback((): void => {
     setAttempt((current) => current + 1)
   }, [])
+
+  // Only show a result if it came from the current loader and attempt.
   const isCurrent = settled?.loader === loader && settled.attempt === attempt
-  return [isCurrent ? settled.state : loading, retry]
+  return [isCurrent ? settled.state : LOADING, retry]
 }
