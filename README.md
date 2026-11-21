@@ -121,6 +121,7 @@ Lint enforces kebab-case file names (`unicorn/filename-case`), so a file like
 ## Docs
 
 - [Architecture](docs/architecture.md): folder structure, data flow, where state lives, design patterns
+- [Orders](docs/orders.md): the order service, queue and workers behind checkout
 - [API contract](docs/api-contract.md)
 - [Decisions](docs/decisions.md): what we chose for each task and why
 - [Authentication](docs/auth.md): where the token lives and why
