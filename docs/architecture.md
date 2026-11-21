@@ -159,3 +159,61 @@ The cost: there's no single place to see all the app's data in Redux DevTools, a
 fetches its own data. If more pages shared the same server data, we'd move it to RTK Query
 (Redux Toolkit's data-fetching layer) instead of writing more of our own cache. See D3-5 in
 `decisions.md`.
+
+## Design patterns
+
+### 1. Custom hooks
+
+- **Where:** `useAsync`, `useProductPages`, `useProductFilters`, `useLiveStock`,
+  `useVirtualRows`, `useDebouncedValue`, `useEventListener`, `useQuantityInCart`.
+- **What it is:** a function that starts with `use` and combines React's own hooks (state,
+  effects, refs) into one behaviour with a small, typed result.
+- **Why:** the tricky parts are written and tested once. Every effect that needs cleanup
+  (aborting a request, closing a socket, removing a listener, disconnecting an observer)
+  lives inside a hook, so a page can't forget it. Pages read like a description of what
+  they show:
+
+  ```ts
+  const { filters } = useProductFilters()
+  const products = useProductPages(filters)
+  const liveStatus = useLiveStock(watchedIds)
+  ```
+
+### 2. Container and presentational components
+
+- **Where:**
+  - **Containers** know where data comes from: the pages (`ProductListPage`,
+    `ProductDetailsPage`, `OrderConfirmationPage`, `CheckoutPage`). They call hooks, read
+    the store and decide what to do.
+  - **Presentational** components only get props and render them: `AsyncContent`,
+    `ErrorState`, `EmptyState`, `LoadingGrid`, `LoadingDetails`, `ApiErrorView`,
+    `LiveStockStatus`.
+- **Why:** the views can be used on any page, and they look the same everywhere. Every page
+  that loads data hands its `RequestState` to `AsyncContent`, so none of them can forget the
+  loading or error state (D2-3).
+- **Where we bent it:** `ProductCard` reads its own stock and cart quantity from the store
+  instead of getting them as props. With 5,000 products, passing them down would make the
+  whole grid render again on every cart change. Reading them in the card means only that
+  card renders (D4-2, D4-4).
+
+### 3. Adapter
+
+- **Where:**
+  - `src/api/client.ts`: `send` is either the browser's `fetch` or `mockFetch`, which has
+    the same signature and returns a real `Response`. `openSocket()` returns either a
+    `WebSocket` or `MockStockSocket`, both shaped as our `LiveSocket` interface.
+  - `src/api/error-messages.ts`: turns any `ApiRequestError` (status, code, details) into
+    one of six kinds and the words the user sees.
+- **What it is:** a layer that makes something fit the shape the rest of the code expects,
+  so the rest of the code doesn't care what's behind it.
+- **Why:** pages, hooks and tests don't know if the backend is real. Switching to a real
+  server is one environment variable (`VITE_USE_MOCK_API=false`), with no change to any
+  component. In the same way, no page reads status codes: they ask `errorKind(error)` and
+  get `'out-of-stock'` or `'offline'`.
+
+Two smaller ones, for completeness:
+
+- **Error boundary:** `ErrorBoundary` catches render errors around each page and around the
+  whole app (D4-7).
+- **Observer:** the store's `subscribe` (saving the cart), the stock feed's event listeners,
+  and the `IntersectionObserver` that loads the next page.
