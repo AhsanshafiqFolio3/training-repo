@@ -157,3 +157,95 @@ For each task: what we used, what else we considered, and why.
 - **Why:** That's the same idea. `useAsync` does it by comparing the loader and attempt
   that produced the result with the current ones, and the abort comes from the platform.
   Debouncing alone isn't enough: a pause in typing can still leave two requests in flight.
+
+## D3-1: Redux Toolkit
+
+- **Used:** One store (`src/store/store.ts`) with two slices: `cart` (`cart-slice.ts`) and
+  `session` (`session-slice.ts`). State changes only through the slice's actions, named as
+  events (`itemAdded`, `quantityChanged`, `stockChecked`, `cartCleared`, `signedIn`,
+  `sessionExpired`). The header badge reads `selectCartCount`, a memoised selector
+  (`createSelector`) derived from the cart lines; there is no stored count that could drift.
+  Typed hooks `useAppDispatch`/`useAppSelector` live in `src/store/hooks.ts`.
+- **Considered:** Keeping the Week 1 `useReducer` + Context, or Zustand.
+- **Why:** The brief asks for Redux Toolkit. Compared with Context, Redux only re-renders the
+  components whose selected value changed, and every change is a named action you can follow
+  in Redux DevTools. Immer lets reducers be written as plain updates while state stays
+  immutable.
+- **What's _not_ in Redux:** server data (products, orders). That lives in the request cache
+  (D3-5). Filters live in the URL (D2-2). Redux holds only what the client owns: the cart and
+  the session.
+
+## D3-2: Cart
+
+- **Used:**
+  - A `/cart` page with −/+ buttons and a number input. The reducer clamps every quantity to
+    `0..stock`, so no UI path can exceed stock, and 0 removes the line.
+  - The cart is saved to `localStorage` on every change and loaded when the app starts.
+  - Checkout (`/checkout`, signed-in only) sends `POST /api/orders` and shows `/orders/:id`.
+  - **409:** the error's `details` map product id → units left. The page names each item
+    ("only 2 left (you asked for 4)") and **Update my cart** applies the real stock via
+    `stockChecked`.
+  - **No double orders:** the button is disabled while sending, and a ref blocks a second
+    click before re-render. More importantly, each checkout gets an **idempotency key**
+    (`crypto.randomUUID()`, made in the action's `prepare` step so the reducer stays pure).
+    It is saved with the cart and sent as `Idempotency-Key` on every retry. If the first
+    request reached the server but the reply was lost, the retry returns the same order
+    instead of creating a second one. Changing the cart clears the key, because it's a
+    different order.
+- **How to see it:** in Mock API controls tick "Lose the reply to new orders", place an order
+  (the order is saved but the app sees a network error), untick it, press **Try again**: you
+  get the same order number, and only one order exists.
+- **Considered:** Only disabling the button.
+- **Why:** Disabling stops double clicks, but not a retry after a timeout, a refresh, or a
+  flaky network. Only the server can know "I already did this", and the key is how it knows.
+
+## D3-3: Auth
+
+See [auth.md](auth.md) for the flow and the token storage trade-off (token in Redux, copied
+to `sessionStorage`; `httpOnly` cookie in production).
+
+## D3-4: Backend errors
+
+- **Used:** `src/api/error-messages.ts` maps every `ApiRequestError` to one kind, and each
+  kind has one response:
+
+  | Status | Kind            | What the user sees                                                 |
+  | ------ | --------------- | ------------------------------------------------------------------ |
+  | 400    | `invalid-input` | Field errors under each input (`aria-invalid`, `aria-describedby`) |
+  | 401    | `signed-out`    | Session cleared, sent to login with "Your session ended"           |
+  | 404    | `not-found`     | The Not Found page                                                 |
+  | 409    | `out-of-stock`  | The items that ran out, by name, and **Update my cart**            |
+  | 500    | `server`        | "Something went wrong on our side" and **Try again**               |
+  | none   | `offline`       | "We couldn't reach the store" and **Try again**                    |
+
+  `ApiErrorView` renders this for any page, and the 401 handling happens once in the API
+  client.
+
+- **Raw messages never reach the screen:** pages only show text from `error-messages.ts`.
+  `error.message` is for developers (logs, D4-7). The only server text shown is 400 field
+  details, which the contract defines as short user-facing hints ("Enter your email address.").
+  A test checks that no description contains the server's message.
+- **Considered:** Handling errors separately in each page.
+- **Why:** One mapping means the same status always looks the same, and a new page gets
+  correct error handling by using `ApiErrorView`.
+
+## D3-5: Caching
+
+- **Used:** `useAsync` takes an optional cache key. Results are kept in a small in-memory
+  cache (`src/shared/request-cache.ts`) for 60 seconds. While a result is fresh, revisiting
+  the page shows it immediately and sends no request. **Try again** skips the cache. After an
+  order, `invalidateCache('product')` drops every product result, so the next visit shows
+  the new stock. Orders and `/api/me` are never cached, because their whole point is the
+  current status.
+- **When stale data is acceptable:** product names, prices, images and ratings change rarely,
+  so a minute-old copy is fine. Stock is the risky field: it can be a minute out of date.
+  That's acceptable because the server checks stock again when the order is placed (409),
+  and live stock updates come in D4-4. It wouldn't be acceptable for an order's status, a
+  payment result, or the signed-in user, so those always come from the server.
+- **Considered:** RTK Query (part of Redux Toolkit), which caches by endpoint and argument
+  and has tag-based invalidation.
+- **Why we didn't:** RTK Query would replace `useAsync`, including the request cancelling and
+  race protection built and tested on Day 2. A 40-line cache on top of the existing hook
+  gives the behaviour the task asks for, and every line can be explained. What we give up:
+  RTK Query also merges identical requests in flight, refreshes in the background, and has
+  DevTools support. With more server data or more pages sharing it, we would switch.

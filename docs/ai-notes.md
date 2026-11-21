@@ -27,6 +27,17 @@ to AI.
 - **Kept:** `useDebouncedValue` and the search box that syncs from the URL.
 - **Changed:** <!-- your own words -->
 
+### 4. Cart, checkout and auth with Redux Toolkit (Day 3)
+
+- **Prompt:** "Complete Day 3: Redux cart and session, cart page, checkout that can't create
+  a second order on retry, login with protected pages, one way of handling API errors, and
+  caching."
+- **Kept:** The slices and selectors, the idempotency key on checkout, `RequireAuth`, and the
+  single error mapping in `error-messages.ts`.
+- **Changed:** The AI first named component files in PascalCase and other files in camelCase.
+  I asked for one format everywhere, so every file is now kebab-case and lint enforces it.
+  <!-- add anything else you changed -->
+
 ## AI mistakes caught
 
 ### The first debounced search broke the Back button (Day 2)
