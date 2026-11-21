@@ -132,13 +132,13 @@ For each task: what we used, what else we considered, and why.
 
 ## D2-5: Custom hooks
 
-| Hook                | What it does                                          | Used in                                                |
-| ------------------- | ----------------------------------------------------- | ------------------------------------------------------ |
-| `useAsync`          | Runs a loader, tracks `RequestState`, aborts, retries | Product list, product details, related products        |
-| `useProductFilters` | Reads/writes filters in the URL                       | List page, filter sidebar, toolbar, search box         |
-| `useDebouncedValue` | Returns a value only after it stops changing for N ms | Search box (and any future debounced input)            |
-| `useEventListener`  | Adds a window listener, removes it on unmount         | Back to Top (and later the live-stock reconnect, D4-4) |
-| `useQuantityInCart` | How many of a product are in the cart                 | Product card, product details                          |
+| Hook                | What it does                                          | Used in                                                      |
+| ------------------- | ----------------------------------------------------- | ------------------------------------------------------------ |
+| `useAsync`          | Runs a loader, tracks `RequestState`, aborts, retries | Product list (until D4-3), details, related, order, account  |
+| `useProductFilters` | Reads/writes filters in the URL                       | List page, filter sidebar, toolbar, search box               |
+| `useDebouncedValue` | Returns a value only after it stops changing for N ms | Search box (and any future debounced input)                  |
+| `useEventListener`  | Adds a window listener, removes it on unmount         | Back to Top, and the virtual grid's scroll and resize (D4-3) |
+| `useQuantityInCart` | How many of a product are in the cart                 | Product card, product details                                |
 
 - **Why:** Each one replaces code that was written, or would be written, in more than one place,
   and each is typed with generics or exact event types instead of `any`.
@@ -154,6 +154,9 @@ For each task: what we used, what else we considered, and why.
   (fewer requests), and `useAsync` aborts the previous request and ignores results that
   aren't from the current loader. `search-race.test.tsx` forces "old request slow, new
   request fast" and checks the old results never appear. With the guard removed, the test fails.
+  (Since D4-3 the list loads through `useProductPages`, which keeps the same guard: it aborts
+  the old request and drops any page whose filters aren't the current ones. A test for a
+  late page from old filters is in `infinite-list.test.tsx`.)
 - **Considered:** Comparing a request counter (`latestRequestId`) against each response.
 - **Why:** That's the same idea. `useAsync` does it by comparing the loader and attempt
   that produced the result with the current ones, and the abort comes from the platform.
@@ -162,7 +165,7 @@ For each task: what we used, what else we considered, and why.
 ## D3-1: Redux Toolkit
 
 - **Used:** One store (`src/store/store.ts`) with two slices: `cart` (`cart-slice.ts`) and
-  `session` (`session-slice.ts`). State changes only through the slice's actions, named as
+  `session` (`session-slice.ts`). (A third, `stock`, came with live stock in D4-4.) State changes only through the slice's actions, named as
   events (`itemAdded`, `quantityChanged`, `stockChecked`, `cartCleared`, `signedIn`,
   `sessionExpired`). The header badge reads `selectCartCount`, a memoised selector
   (`createSelector`) derived from the cart lines; there is no stored count that could drift.
@@ -299,7 +302,7 @@ to `sessionStorage`; `httpOnly` cookie in production).
   such as `react-window` or TanStack Virtual.
 - **Why:** Numbered pages would avoid the problem rather than solve it, and the task is
   about a 5,000-item list. The libraries solve harder cases (rows of different heights),
-  while our rows are all one height, so about 100 lines of our own code do the job and we
+  while our rows are all one height, so about 250 lines of our own code (with comments) do the job and we
   can explain every one. The page number left the URL, since "page 7" means nothing when
   pages pile up; the filters are still in the URL. The cost: a copied link opens at the top
   of the list, not at the same scroll position. What we skipped and why is in
@@ -325,8 +328,10 @@ to `sessionStorage`; `httpOnly` cookie in production).
   only flows one way, but the client also tells the server what it watches, which with SSE
   needs a second channel (a POST). A WebSocket does both on one connection.
   When we'd pick polling instead: rare changes, or a network that blocks WebSockets.
-- **Where live stock lives:** in Redux, not inside the page, because the shop, the details
-  page and related products all show stock. After an order we reset it along with the
+- **Where live stock lives:** in Redux, not inside the page, because the shop's cards and the details
+  page both show it and read it the same way. Related products read the same slice, so they show any live
+  value we've already heard (for example on the shop page), but they don't subscribe to their
+  own. That keeps it to one small subscription per page. After an order we reset it along with the
   cache, since the newly fetched data is fresher. The cart doesn't follow live stock; the
   server still checks stock when the order is placed (409).
 - **Closing when the page closes:** leaving the page unmounts it, and the cleanup closes the

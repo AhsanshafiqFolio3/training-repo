@@ -58,7 +58,7 @@ doing work, not just the 24 new ones.
 
 **Why.** When a page arrives, `ProductListPage` renders with a longer array, so the grid
 renders, and by default React renders every child again: all 5,000 cards for 24 new ones.
-In React DevTools' Profiler this shows up as every `ProductCard` highlighted on each load.
+That's what the script time shows: about a second of rendering to add 24 cards.
 
 **Fix.** `ProductCard` is wrapped in `React.memo` (`src/features/products/product-card.tsx`).
 A memoized component skips rendering when its props are the same as last time. That
@@ -117,5 +117,5 @@ costs the same at 5,000 products as at 250, **Add** takes 19 ms, and memory is 1
   less if it stays the same. The card itself is already memoized. Skipped.
 - **A virtualization library** such as `react-window` or TanStack Virtual. They handle cases
   we don't have (rows of different heights, horizontal lists). Our rows are all the same
-  height, and the brief asks us to know what's in the code, so we wrote about 100 lines
+  height, and the brief asks us to know what's in the code, so we wrote about 250 lines (with comments)
   ourselves instead of adding a dependency.
