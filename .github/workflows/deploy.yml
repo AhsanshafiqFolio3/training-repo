@@ -42,11 +42,21 @@ jobs:
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
 
-      # GitHub Pages has no "send every path to index.html" setting. It serves
-      # 404.html for unknown paths, so a copy of index.html lets the app handle
-      # deep links such as /training-repo/products/prod-0001.
-      - name: Make deep links work
-        run: cp dist/index.html dist/404.html
+      # GitHub Pages has no "send every path to index.html" setting. For /cart it serves
+      # cart.html if there is one, so we give every page people share its own copy of
+      # index.html and Pages answers 200. Product ids are prod-0001 to prod-5000
+      # (PRODUCT_COUNT in src/mocks/seed-products.ts). Anything else, such as an order
+      # page or a typo, gets 404.html: also the app, but with a 404 status.
+      - name: Make shared links work
+        run: |
+          cp dist/index.html dist/404.html
+          for page in cart login checkout account; do
+            cp dist/index.html "dist/$page.html"
+          done
+          mkdir -p dist/products
+          for n in $(seq 1 5000); do
+            cp dist/index.html "dist/products/prod-$(printf '%04d' "$n").html"
+          done
 
       - uses: actions/upload-pages-artifact@v5
         with:

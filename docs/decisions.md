@@ -383,8 +383,11 @@ to `sessionStorage`; `httpOnly` cookie in production).
     `^22.22.2 || ^24.15.0 || >=26`.
   - GitHub Pages serves the site from `/training-repo/`, so the deploy builds with that
     base path (`BASE_PATH`), the router uses it as `basename`, and the font files use
-    relative URLs. Pages has no "send every path to index.html" rule, so the deploy copies
-    `index.html` to `404.html` to make deep links work.
+    relative URLs. Pages has no "send every path to index.html" rule. At first the deploy
+    only copied `index.html` to `404.html`: shared links worked, but answered with a 404
+    status. Now the deploy also writes `cart.html`, `login.html`, `checkout.html`,
+    `account.html` and one file per product, because Pages serves `cart.html` for `/cart`.
+    Those links answer 200. Order pages and typos still fall back to `404.html`.
 - **Considered:** Netlify or Vercel for the deploy.
 - **Why:** GitHub Pages needs no extra account, secret or token: the code, the checks and
   the site all stay in the same repository.
